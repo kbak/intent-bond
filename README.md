@@ -146,8 +146,8 @@ to maintain requirements, code, tests, and links during changes. Configure CI
 separately to enforce checks on pull requests.
 
 IntentBond also works manually and in CI. The
-[OpenHands adapter](https://github.com/kbak/openhands-traceability) and factory
-integration are optional.
+[OpenHands factory integration](https://github.com/kbak/openhands-factory/blob/main/docs/traceability.md)
+is optional.
 
 ## Add property tests
 
