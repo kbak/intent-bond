@@ -27,12 +27,12 @@ The revision-only control keeps the original promise and executable bodies uncha
 ## Reproduce change impact
 
 ```sh
-vt check --repo /path/to/repo --base BASE_COMMIT --out /tmp/cap-evidence
-vt impact --evidence /tmp/cap-evidence/evidence.json
-vt impact --evidence /tmp/cap-evidence/evidence.json --format json
+ib check --repo /path/to/repo --base BASE_COMMIT --out /tmp/cap-evidence
+ib impact --evidence /tmp/cap-evidence/evidence.json
+ib impact --evidence /tmp/cap-evidence/evidence.json --format json
 ```
 
-`vt impact` asks the pinned OFT engine for both retained graphs, using the same reporting code as `vt explain`. It compares declarations by stable type/name, exact source-to-target edges, normative declaration text, coverage policy and location changes. OFT remains responsible for graph validity. A report can describe rejected evidence; its recorded check status and trace statuses remain visible. Ambiguous multiple active declaration revisions are rejected instead of silently collapsing them. Multiple exact graph edges for one logical source/target pair (including OFT diagnostics around stale references) are retained as ambiguous pairs and excluded from inferred revision-update counts.
+`ib impact` asks the pinned OFT engine for both retained graphs, using the same reporting code as `ib explain`. It compares declarations by stable type/name, exact source-to-target edges, normative declaration text, coverage policy and location changes. OFT remains responsible for graph validity. A report can describe rejected evidence; its recorded check status and trace statuses remain visible. Ambiguous multiple active declaration revisions are rejected instead of silently collapsing them. Multiple exact graph edges for one logical source/target pair (including OFT diagnostics around stale references) are retained as ambiguous pairs and excluded from inferred revision-update counts.
 
 A separate source-line classification in new `review.json` records identifies implementation/test file edits and recognized annotation-line-only changes. The latter requires that all remaining UTF-8 file text and file mode match after removing **only standalone lines that OFT actually imported**. It does not parse program semantics. Inline/unrecognized tags, binary files, additions/deletions or mode changes are conservatively reported as source changes or unclassified. A declaration's metadata can be link/revision-only while its implementation or assertions changed, so read declaration and source categories together.
 

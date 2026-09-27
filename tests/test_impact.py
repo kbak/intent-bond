@@ -6,8 +6,8 @@ from unittest.mock import patch
 
 from test_workflow import WorkflowFixture
 
-from versioned_traceability.common import CheckError, read_json
-from versioned_traceability.impact import impact
+from intentbond.common import CheckError, read_json
+from intentbond.impact import impact
 
 
 class ImpactTests(WorkflowFixture):
@@ -90,7 +90,7 @@ class ImpactTests(WorkflowFixture):
         original = (self.out / "evidence.json").read_bytes()
         shutil.rmtree(self.repo)
         with patch(
-            "versioned_traceability.runner.execute_tests",
+            "intentbond.runner.execute_tests",
             side_effect=AssertionError("No test execution"),
         ):
             code, text, error = self.run_cli(

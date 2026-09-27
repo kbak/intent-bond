@@ -4,8 +4,8 @@ from pathlib import Path
 
 from test_recovery import RecoveryFixture
 
-from versioned_traceability.common import read_json
-from versioned_traceability.runner import check
+from intentbond.common import read_json
+from intentbond.runner import check
 
 REQ = "req~session-expiration~1"
 HANDOFF = """

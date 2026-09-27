@@ -1,6 +1,6 @@
 # Running the tests
 
-These instructions are for contributors testing Versioned Traceability itself.
+These instructions are for contributors testing IntentBond itself.
 To check your own project, follow [check a change](../README.md#check-a-change).
 
 From the project checkout, in a Python virtual environment with Git and Java
@@ -8,15 +8,15 @@ available:
 
 ```sh
 python3 -m pip install -e '.[test,smt]' ruff
-vt install-oft
-vt install-alloy
+ib install-oft
+ib install-alloy
 python3 -m unittest discover -s tests -v
 ruff check .
 ruff format --check .
 ```
 
 Tests run OFT, Alloy, Z3, and example test commands in temporary directories. Missing
-pinned JARs fail the suite. To use existing JARs, set `VT_OFT_JAR` and `VT_ALLOY_JAR`
+pinned JARs fail the suite. To use existing JARs, set `INTENTBOND_OFT_JAR` and `INTENTBOND_ALLOY_JAR`
 instead of running the respective installers. Alloy remains optional for application
 projects that do not use model checking. Runner tests execute the real analyzer,
 including counterexamples, impossible witnesses, missing commands and bad models.
@@ -47,7 +47,7 @@ with an omitted linked test must report `not_observed`. Opt-in required-executio
 tests cover rejection, deletion, skip policy, revision continuity, candidate
 policy edits, and independent enforcement when verifying retained evidence.
 The `test` extra installs
-pytest and Hypothesis for development; neither is a vt runtime dependency.
+pytest and Hypothesis for development; neither is a ib runtime dependency.
 
 Hypothesis properties cover JUnit completion, source identity, requirement
 revisions and evidence freshness. They run under both unittest and pytest.

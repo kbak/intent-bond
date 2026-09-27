@@ -13,7 +13,7 @@ from pathlib import Path
 from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
-from versioned_traceability.snapshot import archive_snapshot, git, snapshot
+from intentbond.snapshot import archive_snapshot, git, snapshot
 
 SEARCH = settings(max_examples=30, database=None, derandomize=True, deadline=None, print_blob=True)
 FILES = st.dictionaries(
@@ -44,7 +44,7 @@ class SnapshotPropertyTests(unittest.TestCase):
     @example(files={"a.txt": (b"", True)})
     @given(files=FILES)
     def test_git_and_archive_agree_before_and_after_staging(self, files):
-        with tempfile.TemporaryDirectory(prefix="vt-snapshot-property-") as directory:
+        with tempfile.TemporaryDirectory(prefix="ib-snapshot-property-") as directory:
             root = Path(directory)
             repo = root / "repo"
             repo.mkdir()
@@ -77,7 +77,7 @@ class SnapshotPropertyTests(unittest.TestCase):
     @example(data=b"", executable=False)
     @given(data=st.binary(max_size=32), executable=st.booleans())
     def test_path_bytes_and_mode_each_change_identity_and_restore_exactly(self, data, executable):
-        with tempfile.TemporaryDirectory(prefix="vt-identity-property-") as directory:
+        with tempfile.TemporaryDirectory(prefix="ib-identity-property-") as directory:
             root = Path(directory)
             repo = root / "repo"
             repo.mkdir()
@@ -102,7 +102,7 @@ class SnapshotPropertyTests(unittest.TestCase):
     @SEARCH
     @given(data=st.binary(max_size=32))
     def test_ignored_noise_is_excluded_but_tracked_ignored_source_is_retained(self, data):
-        with tempfile.TemporaryDirectory(prefix="vt-ignore-property-") as directory:
+        with tempfile.TemporaryDirectory(prefix="ib-ignore-property-") as directory:
             root = Path(directory)
             repo = root / "repo"
             repo.mkdir()

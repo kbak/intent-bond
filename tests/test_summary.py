@@ -6,10 +6,10 @@ from unittest.mock import patch
 
 from test_workflow import WorkflowFixture
 
-from versioned_traceability import runner
-from versioned_traceability.common import CheckError, read_json
-from versioned_traceability.runner import verify
-from versioned_traceability.summary import render_summary
+from intentbond import runner
+from intentbond.common import CheckError, read_json
+from intentbond.runner import verify
+from intentbond.summary import render_summary
 
 
 class SummaryTests(unittest.TestCase):

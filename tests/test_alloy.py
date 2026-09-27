@@ -8,9 +8,9 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from versioned_traceability import alloy
-from versioned_traceability.common import CheckError, read_json, write_json, xml_tree
-from versioned_traceability.testing import junit_counts
+from intentbond import alloy
+from intentbond.common import CheckError, read_json, write_json, xml_tree
+from intentbond.testing import junit_counts
 
 FIXTURE = Path(__file__).resolve().parents[1] / "examples/model-checking"
 
@@ -23,7 +23,7 @@ class AlloyTests(unittest.TestCase):
         alloy.validate_jar(cls.jar)
 
     def setUp(self):
-        temporary = tempfile.TemporaryDirectory(prefix="vt-alloy-test-")
+        temporary = tempfile.TemporaryDirectory(prefix="ib-alloy-test-")
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
         self.project = self.root / "project with spaces"

@@ -11,11 +11,11 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from versioned_traceability.cli import main
-from versioned_traceability.common import CheckError, digest, read_json, write_json
-from versioned_traceability.evidence import statement
-from versioned_traceability.oft import default_jar, validate_jar
-from versioned_traceability.runner import check, verify
+from intentbond.cli import main
+from intentbond.common import CheckError, digest, read_json, write_json
+from intentbond.evidence import statement
+from intentbond.oft import default_jar, validate_jar
+from intentbond.runner import check, verify
 
 FIXTURE = Path(__file__).resolve().parents[1] / "examples" / "session"
 
@@ -28,7 +28,7 @@ class WorkflowFixture(unittest.TestCase):
         validate_jar(cls.jar)
 
     def setUp(self):
-        self.directory = tempfile.TemporaryDirectory(prefix="vt-acceptance-")
+        self.directory = tempfile.TemporaryDirectory(prefix="ib-acceptance-")
         self.addCleanup(self.directory.cleanup)
         self.root = Path(self.directory.name)
         self.repo = self.root / "repository with spaces"
@@ -93,7 +93,7 @@ class WorkflowFixture(unittest.TestCase):
             contextlib.chdir(cwd or self.repo),
             contextlib.redirect_stdout(stdout),
             contextlib.redirect_stderr(stderr),
-            patch.dict("os.environ", {"VT_OFT_JAR": str(self.jar)}),
+            patch.dict("os.environ", {"INTENTBOND_OFT_JAR": str(self.jar)}),
             patch("tempfile.tempdir", str(temp_root or self.root)),
         ):
             code = main(list(args))
@@ -532,9 +532,7 @@ class WorkflowTests(WorkflowFixture):
                 self.assertNotIn("test-result.json", result["artifacts"])
 
     def test_unchecked_source_cannot_produce_a_test_attestation(self):
-        with patch(
-            "versioned_traceability.runner.changed_source", side_effect=OSError("unreadable source")
-        ):
+        with patch("intentbond.runner.changed_source", side_effect=OSError("unreadable source")):
             result = self.run_check()
         self.assertEqual(result["status"], "error")
         self.assertEqual(result["tests"]["status"], "passed")
@@ -542,14 +540,14 @@ class WorkflowTests(WorkflowFixture):
         self.assertFalse((self.out / "test-result.json").exists())
 
     def test_original_candidate_changes_during_validation(self):
-        from versioned_traceability.runner import execute_tests
+        from intentbond.runner import execute_tests
 
         def mutate(*args):
             result = execute_tests(*args)
             self.replace("session.py", "30 * 60", "1800")
             return result
 
-        with patch("versioned_traceability.runner.execute_tests", side_effect=mutate):
+        with patch("intentbond.runner.execute_tests", side_effect=mutate):
             result = self.run_check()
         self.assert_problem(result, "Original candidate changed")
         self.assertFalse((self.out / "test-result.json").exists())

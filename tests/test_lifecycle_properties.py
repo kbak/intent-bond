@@ -1,6 +1,6 @@
 """Sequential source/evidence lifecycle properties using real Git, OFT and tests.
 
-The reference model stores raw bytes and executable bits, not vt digests. Search
+The reference model stores raw bytes and executable bits, not ib digests. Search
 is bounded to a tiny valid project and sequential operations. No concurrency,
 external dependencies, malicious reporters or semantic requirement inference is
 modeled.
@@ -17,10 +17,10 @@ from hypothesis import settings
 from hypothesis import strategies as st
 from hypothesis.stateful import RuleBasedStateMachine, invariant, precondition, rule
 
-from versioned_traceability.common import CheckError, read_json, write_json
-from versioned_traceability.oft import default_jar, validate_jar
-from versioned_traceability.runner import check, verify
-from versioned_traceability.snapshot import git, snapshot
+from intentbond.common import CheckError, read_json, write_json
+from intentbond.oft import default_jar, validate_jar
+from intentbond.runner import check, verify
+from intentbond.snapshot import git, snapshot
 
 EXAMPLE = Path(__file__).resolve().parents[1] / "examples/session"
 EXTRA_PATHS = st.sampled_from(["notes/a.bin", "notes/b.bin", "notes/space name.bin"])
@@ -29,7 +29,7 @@ EXTRA_PATHS = st.sampled_from(["notes/a.bin", "notes/b.bin", "notes/space name.b
 class EvidenceLifecycle(RuleBasedStateMachine):
     def __init__(self):
         super().__init__()
-        self.directory = tempfile.TemporaryDirectory(prefix="vt-lifecycle-property-")
+        self.directory = tempfile.TemporaryDirectory(prefix="ib-lifecycle-property-")
         try:
             self.root = Path(self.directory.name)
             self.repo = self.root / "repo"

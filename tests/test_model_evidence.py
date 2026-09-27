@@ -4,9 +4,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from versioned_traceability.common import read_json, xml_tree
-from versioned_traceability.model_evidence import ReplayEvidence
-from versioned_traceability.testing import junit_counts
+from intentbond.common import read_json, xml_tree
+from intentbond.model_evidence import ReplayEvidence
+from intentbond.testing import junit_counts
 
 
 class ReplayEvidenceTests(unittest.TestCase):

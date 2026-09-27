@@ -7,8 +7,8 @@ from pathlib import Path
 from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
-from versioned_traceability.review import changes, revision_diagnostics
-from versioned_traceability.snapshot import Snapshot
+from intentbond.review import changes, revision_diagnostics
+from intentbond.snapshot import Snapshot
 
 SEARCH = settings(max_examples=100, database=None, derandomize=True, deadline=None, print_blob=True)
 SCOPE = {

@@ -1,9 +1,9 @@
 # Allocation loop
 
-Install `versioned-traceability[smt]`, then run:
+Install `intentbond[smt]`, then run:
 
 ```sh
-vt chc-check --root examples/chc-checking --manifest checks.json --out /tmp/allocation-chc
+ib chc-check --root examples/chc-checking --manifest checks.json --out /tmp/allocation-chc
 ```
 
 The loop transfers any nonnegative amount from remaining to allocated. Spacer

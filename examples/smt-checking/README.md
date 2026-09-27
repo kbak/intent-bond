@@ -1,9 +1,9 @@
 # Z3 arithmetic checks
 
-Install `versioned-traceability[smt]`, then run from the tool checkout:
+Install `intentbond[smt]`, then run from the tool checkout:
 
 ```sh
-vt smt-check --root examples/smt-checking --manifest checks.json --out /tmp/amount-check-1
+ib smt-check --root examples/smt-checking --manifest checks.json --out /tmp/amount-check-1
 ```
 
 `Conservation` checks an integer split and `CanSplit` requires a nontrivial witness.

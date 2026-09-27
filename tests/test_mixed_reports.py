@@ -3,9 +3,9 @@ from unittest.mock import patch
 
 from test_workflow import WorkflowFixture
 
-from versioned_traceability.common import CheckError, digest, read_json, write_json
-from versioned_traceability.config import validate_scope
-from versioned_traceability.runner import verify
+from intentbond.common import CheckError, digest, read_json, write_json
+from intentbond.config import validate_scope
+from intentbond.runner import verify
 
 
 class MixedReportTests(WorkflowFixture):
@@ -93,7 +93,7 @@ class MixedReportTests(WorkflowFixture):
         self.configure(lambda s: s["inputs"].append("component.unknown"))
         self.commit()
         self.base = self.git("rev-parse", "HEAD").strip()
-        with patch("versioned_traceability.runner.execute_tests") as tests:
+        with patch("intentbond.runner.execute_tests") as tests:
             result = self.run_check()
         tests.assert_not_called()
         self.assertEqual(result["status"], "error", result)

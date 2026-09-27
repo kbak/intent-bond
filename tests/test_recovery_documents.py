@@ -6,9 +6,9 @@ from pathlib import Path
 
 from test_recovery import FIXTURE, RecoveryFixture
 
-from versioned_traceability.common import read_json, write_json
-from versioned_traceability.oft import import_items
-from versioned_traceability.runner import check
+from intentbond.common import read_json, write_json
+from intentbond.oft import import_items
+from intentbond.runner import check
 
 REQ = "req~session-expiration~1"
 

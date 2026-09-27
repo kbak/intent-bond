@@ -8,18 +8,18 @@ from unittest.mock import patch
 
 from test_recovery import RecoveryFixture
 
-from versioned_traceability.cli import main
-from versioned_traceability.common import CheckError, read_json, write_json
-from versioned_traceability.oft import import_items
-from versioned_traceability.recovery import check_recovery, prepare, recovery_storage
-from versioned_traceability.runner import verify
+from intentbond.cli import main
+from intentbond.common import CheckError, read_json, write_json
+from intentbond.oft import import_items
+from intentbond.recovery import check_recovery, prepare, recovery_storage
+from intentbond.runner import verify
 
 
 class RecoveryFeedbackTests(RecoveryFixture):
     def test_preflight_validates_provenance_without_tests_or_passing_evidence(self):
         self.draft()
         out = self.root / "preflight"
-        with patch("versioned_traceability.runner.execute_tests") as tests:
+        with patch("intentbond.runner.execute_tests") as tests:
             result = check_recovery(self.bundle, None, out, self.jar, preflight=True)
         tests.assert_not_called()
         self.assertEqual(result["status"], "incomplete", result)

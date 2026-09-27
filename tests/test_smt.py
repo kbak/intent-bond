@@ -9,16 +9,16 @@ from unittest.mock import patch
 
 import z3
 
-from versioned_traceability import cli, smt
-from versioned_traceability.common import read_json, write_json, xml_tree
-from versioned_traceability.testing import junit_counts
+from intentbond import cli, smt
+from intentbond.common import read_json, write_json, xml_tree
+from intentbond.testing import junit_counts
 
 FIXTURE = Path(__file__).resolve().parents[1] / "examples/smt-checking"
 
 
 class SmtTests(unittest.TestCase):
     def setUp(self):
-        directory = tempfile.TemporaryDirectory(prefix="vt-smt-")
+        directory = tempfile.TemporaryDirectory(prefix="ib-smt-")
         self.addCleanup(directory.cleanup)
         self.root = Path(directory.name)
         self.project = self.root / "project with spaces"
@@ -38,7 +38,7 @@ class SmtTests(unittest.TestCase):
         write_json(self.project / "checks.json", config)
 
     def test_real_proof_witness_and_retained_queries(self):
-        self.out.mkdir()  # vt precreates report parents.
+        self.out.mkdir()  # ib precreates report parents.
         result = self.check()
         self.assertEqual(result["status"], "passed")
         self.assertFalse(list((self.out / "inputs").rglob("__pycache__")))
@@ -112,7 +112,7 @@ class SmtTests(unittest.TestCase):
     def test_unknown_is_inconclusive_with_reason_retained(self):
         # A native, deterministic unknown (incomplete nonlinear arithmetic).
         (self.project / "amounts.py").write_text(
-            "from z3 import *\nfrom versioned_traceability.smt import Obligation\n"
+            "from z3 import *\nfrom intentbond.smt import Obligation\n"
             "def obligations():\n"
             " x = Real('x')\n"
             " return {'Conservation': Obligation(BoolVal(True), x ** x != 2)}\n"

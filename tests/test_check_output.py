@@ -5,9 +5,9 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from versioned_traceability.check_output import render_check
-from versioned_traceability.cli import main
-from versioned_traceability.evidence import EXIT_CODES
+from intentbond.check_output import render_check
+from intentbond.cli import main
+from intentbond.evidence import EXIT_CODES
 
 
 class CheckOutputTests(unittest.TestCase):
@@ -91,7 +91,7 @@ class CheckOutputTests(unittest.TestCase):
                 self.result["status"] = status
                 output = io.StringIO()
                 with (
-                    patch("versioned_traceability.cli.check", return_value=self.result) as check,
+                    patch("intentbond.cli.check", return_value=self.result) as check,
                     contextlib.redirect_stdout(output),
                 ):
                     code = main(

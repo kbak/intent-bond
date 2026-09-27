@@ -9,16 +9,16 @@ from unittest.mock import patch
 
 import z3
 
-from versioned_traceability import chc, cli, smt
-from versioned_traceability.chc_worker import certify, reconstruct
-from versioned_traceability.common import read_json, write_json
+from intentbond import chc, cli, smt
+from intentbond.chc_worker import certify, reconstruct
+from intentbond.common import read_json, write_json
 
 FIXTURE = Path(__file__).resolve().parents[1] / "examples/chc-checking"
 
 
 class ChcTests(unittest.TestCase):
     def setUp(self):
-        temporary = tempfile.TemporaryDirectory(prefix="vt-chc-")
+        temporary = tempfile.TemporaryDirectory(prefix="ib-chc-")
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
         self.project = self.root / "project with spaces"
@@ -61,7 +61,7 @@ class ChcTests(unittest.TestCase):
             )
         self.assertIn("trace.smt2", witness["queries"])
         self.assertFalse(list((self.out / "inputs").rglob("__pycache__")))
-        from versioned_traceability.common import xml_tree
+        from intentbond.common import xml_tree
 
         embedded = json.loads(next(xml_tree(self.out / "junit.xml").iter("system-out")).text)
         self.assertEqual(embedded["result"]["receipt"], proof["receipt"])

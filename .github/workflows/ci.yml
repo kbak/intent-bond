@@ -16,8 +16,8 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
-      VT_OFT_JAR: ${{ github.workspace }}/.tools/openfasttrace-4.9.0.jar
-      VT_ALLOY_JAR: ${{ github.workspace }}/.tools/alloy-6.2.0.jar
+      INTENTBOND_OFT_JAR: ${{ github.workspace }}/.tools/openfasttrace-4.9.0.jar
+      INTENTBOND_ALLOY_JAR: ${{ github.workspace }}/.tools/alloy-6.2.0.jar
     strategy:
       fail-fast: false
       matrix:
@@ -38,8 +38,8 @@ jobs:
           python -m pip install build ruff==0.11.13
           python -m build
           python -m pip install dist/*.whl 'pytest>=8,<10' 'hypothesis>=6,<7' 'z3-solver==5.1.0.0'
-          vt install-oft --destination "$GITHUB_WORKSPACE/.tools"
-          vt install-alloy --destination "$GITHUB_WORKSPACE/.tools"
+          ib install-oft --destination "$GITHUB_WORKSPACE/.tools"
+          ib install-alloy --destination "$GITHUB_WORKSPACE/.tools"
           mkdir "$RUNNER_TEMP/source"
           tar -xzf dist/*.tar.gz --strip-components=1 -C "$RUNNER_TEMP/source"
       - name: Lint
@@ -51,7 +51,7 @@ jobs:
         env:
           PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
         run: |
-          python -c 'from importlib.resources import files; p = files("versioned_traceability") / "skills/property-testing"; assert (p / "SKILL.md").is_file(); assert all((p / "references" / (n + ".md")).is_file() for n in ("python", "typescript", "haskell", "hegel"))'
+          python -c 'from importlib.resources import files; p = files("intentbond") / "skills/property-testing"; assert (p / "SKILL.md").is_file(); assert all((p / "references" / (n + ".md")).is_file() for n in ("python", "typescript", "haskell", "hegel"))'
           python -m pytest -p hypothesispytest "$RUNNER_TEMP/source/tests" --junitxml="$RUNNER_TEMP/tests.xml" -q
       - uses: actions/upload-artifact@v7
         if: always()
@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
-      VT_OFT_JAR: ${{ github.workspace }}/.tools/openfasttrace-4.9.0.jar
+      INTENTBOND_OFT_JAR: ${{ github.workspace }}/.tools/openfasttrace-4.9.0.jar
     strategy:
       fail-fast: false
       matrix:
@@ -114,7 +114,7 @@ jobs:
           if [ '${{ matrix.language }}' = python ]; then
             python -m pip install -r examples/property-testing/python/requirements.txt
           fi
-          vt install-oft --destination "$GITHUB_WORKSPACE/.tools"
+          ib install-oft --destination "$GITHUB_WORKSPACE/.tools"
           mkdir "$RUNNER_TEMP/source"
           tar -xzf dist/*.tar.gz --strip-components=1 -C "$RUNNER_TEMP/source"
       - name: Check passing, failing and restored examples from sdist

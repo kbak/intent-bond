@@ -1,19 +1,26 @@
-# Model checking
+# Model checking and formal verification
 
-Use Alloy for relational and state-machine properties and Z3 for arithmetic or
-other SMT theories recovered during onboarding. The [model-checking skill](../versioned_traceability/skills/model-checking/SKILL.md)
-guides Codex to derive assertions from requirements and a native `.als` or Z3Py abstraction
-from their implementation. Store those models and their replay tests in the
-application repository, linked to the existing requirement revisions.
+Formal verification is an optional component of [IntentBond](../README.md).
+Use Alloy for relational and state-machine properties, Z3 SMT for arithmetic and
+other logical constraints, and CHC/Spacer for safety over arbitrary modeled step
+counts. Keep models and replay tests in the application repository.
 
-The tool reuses [Z3](https://github.com/Z3Prover/z3) and [Alloy 6.2.0](https://github.com/AlloyTools/org.alloytools.alloy/releases/tag/v6.2.0)
-and bundled SAT4J. No model-generation service, MCP server, source compiler or
-new property language is required. Z3 is an optional pinned Python package extra. The deterministic CLI accepts a small manifest
-of exact commands and explicitly captured input files. Its
-[execution reference](../versioned_traceability/skills/model-checking/references/execution.md)
-defines the Alloy manifest, commands, exit meanings and retained evidence; the
-[SMT reference](../versioned_traceability/skills/model-checking/references/smt.md)
-defines native Z3Py obligations and `vt smt-check`.
+## Authoring and checking
+
+Derive assertions from requirements and the model's behavior from implementation.
+Link them to requirement revisions. The [model-checking skill](../intentbond/skills/model-checking/SKILL.md)
+guides this work; committed checks run without an LLM.
+
+Review the property against intended behavior and the model against code.
+The checker establishes whether the property holds for that model. Changes to
+assumptions, model semantics, or bounds need the same review as changed assertions.
+
+The runners use pinned [Z3](https://github.com/Z3Prover/z3) and
+[Alloy 6.2.0](https://github.com/AlloyTools/org.alloytools.alloy/releases/tag/v6.2.0)
+with SAT4J. Manifests select commands and input files. See the
+[Alloy execution reference](../intentbond/skills/model-checking/references/execution.md)
+and [SMT reference](../intentbond/skills/model-checking/references/smt.md)
+for formats, commands, and retained evidence.
 
 ## Results and correspondence
 
@@ -40,13 +47,18 @@ or a soundness proof for a general source-to-model translation.
 
 ## Integration
 
-`vt alloy-check` writes `result.json`, `junit.xml`, native receipts and XML instances,
+Standalone formal checks accept a model manifest and captured inputs; they do
+not require a Git baseline or OFT graph. A manifest's optional `artifact_id`
+connects a reported case to a named OFT verification artifact when the enclosing
+traceability workflow uses execution links.
+
+`ib alloy-check` writes `result.json`, `junit.xml`, native receipts and XML instances,
 logs and copies of selected inputs. JUnit embeds native receipts/traces and input
-metadata so ordinary `vt check` retention preserves them. Standalone results bind
-only listed inputs. The enclosing `vt check` supplies whole-candidate identity and
+metadata so ordinary `ib check` retention preserves them. Standalone results bind
+only listed inputs. The enclosing `ib check` supplies whole-candidate identity and
 the existing requirement revision/review policy.
 
-`vt smt-check` similarly retains native SMT-LIB queries, model receipts, source
+`ib smt-check` similarly retains native SMT-LIB queries, model receipts, source
 hashes and JUnit. Both runners retain per-command outcomes.
 
 Run the selected backend alongside the project's normal test command and include the fresh
@@ -57,7 +69,7 @@ policy for selected model artifacts after the scope is reviewed and adopted.
 
 ## Unbounded reachability
 
-`vt chc-check` uses Z3 Spacer on linear Horn clauses derived from native Z3 state
+`ib chc-check` uses Z3 Spacer on linear Horn clauses derived from native Z3 state
 and transition formulas. It can establish safety for arbitrary modeled step
 counts. It does not automatically remove other bounds or prove liveness.
 
@@ -68,8 +80,5 @@ vacuity, unsupported traces, unknown results and failed certificates cannot pass
 Standard Horn satisfiability and native fixedpoint reachability have opposite
 SAT/UNSAT conventions; both formats are retained with their meaning explicit.
 
-The [CHC reference](../versioned_traceability/skills/model-checking/references/chc.md)
-describes the authoring API, portable export, certificates, trace format and shared
-`ReplayEvidence` recorder. Application models and replay adapters remain in the
-application repository. The reusable capture, validation and evidence machinery
-belongs to Versioned Traceability.
+The [CHC reference](../intentbond/skills/model-checking/references/chc.md)
+covers the authoring API, certificates, trace format, and `ReplayEvidence` recorder.

@@ -6,8 +6,8 @@ from unittest.mock import patch
 
 from test_workflow import WorkflowFixture
 
-from versioned_traceability.common import CheckError, run
-from versioned_traceability.explain import explain, explain_many, render_context
+from intentbond.common import CheckError, run
+from intentbond.explain import explain, explain_many, render_context
 
 REQ = "req~session-expiration~1"
 
@@ -38,7 +38,7 @@ class ExplainTests(WorkflowFixture):
         shutil.move(self.out, relocated)
         shutil.rmtree(self.repo)
         with patch(
-            "versioned_traceability.runner.execute_tests",
+            "intentbond.runner.execute_tests",
             side_effect=AssertionError("must not rerun"),
         ):
             code, output, error = self.run_cli(
@@ -109,9 +109,7 @@ class ExplainTests(WorkflowFixture):
         self.run_check()
         path = self.out / "candidate-items.xml"
         path.write_text(path.read_text().replace("session-expiration", "invented"))
-        with patch(
-            "versioned_traceability.explain.run", side_effect=AssertionError("must not run")
-        ):
+        with patch("intentbond.explain.run", side_effect=AssertionError("must not run")):
             with self.assertRaisesRegex(CheckError, "artifact missing or changed"):
                 self.explained()
 
@@ -132,7 +130,7 @@ class ExplainTests(WorkflowFixture):
         implementation = next(
             ref for ref in single["artifact"]["covered_by"] if ref.startswith("impl~")
         )
-        with patch("versioned_traceability.explain.run", wraps=run) as traced:
+        with patch("intentbond.explain.run", wraps=run) as traced:
             batch = explain_many([REQ, implementation, REQ], self.out / "evidence.json", self.jar)
         self.assertEqual(traced.call_count, 1)
         self.assertEqual([e["artifact"]["id"] for e in batch["artifacts"]], [REQ, implementation])

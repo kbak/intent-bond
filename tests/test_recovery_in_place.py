@@ -8,11 +8,11 @@ from unittest.mock import patch
 
 from test_recovery import RecoveryFixture
 
-from versioned_traceability.cli import main
-from versioned_traceability.common import CheckError, read_json, write_json
-from versioned_traceability.oft import import_items
-from versioned_traceability.recovery import active_recovery, prepare
-from versioned_traceability.runner import check
+from intentbond.cli import main
+from intentbond.common import CheckError, read_json, write_json
+from intentbond.oft import import_items
+from intentbond.recovery import active_recovery, prepare
+from intentbond.runner import check
 
 
 class InPlaceRecoveryTests(RecoveryFixture):
@@ -111,14 +111,14 @@ class InPlaceRecoveryTests(RecoveryFixture):
 
     def test_concurrent_commit_invalidates_checked_proposal(self):
         self.draft()
-        from versioned_traceability.runner import check as real_check
+        from intentbond.runner import check as real_check
 
         def commit_after_check(*args, **kwargs):
             result = real_check(*args, **kwargs)
             self.empty_commit()
             return result
 
-        with patch("versioned_traceability.recovery.check", side_effect=commit_after_check):
+        with patch("intentbond.recovery.check", side_effect=commit_after_check):
             result = self.run_check()
         self.assertEqual(result["status"], "rejected", result)
         self.assertIn("starting commit or branch", " ".join(result["diagnostics"]))
@@ -201,7 +201,7 @@ class InPlaceRecoveryTests(RecoveryFixture):
             code = main(["recover-check", "--oft-jar", str(self.jar)])
         self.assertEqual(code, 4, (stdout.getvalue(), stderr.getvalue()))
         self.assertIn("working-tree changes", stdout.getvalue())
-        self.assertIn(".git/versioned-traceability/recovery/checks", stdout.getvalue())
+        self.assertIn(".git/intentbond/recovery/checks", stdout.getvalue())
 
     def test_git_worktree_uses_its_own_storage_and_preserves_original_checkout(self):
         worktree = self.root / "linked-worktree"

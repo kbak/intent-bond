@@ -32,7 +32,7 @@ lifecycle model. Existing example tests cover additional cases.
 ## Check sensitivity to mutations
 
 ```sh
-python scripts/evaluate_properties.py --out /tmp/vt-property-mutations
+python scripts/evaluate_properties.py --out /tmp/ib-property-mutations
 ```
 
 Use a new output directory. The script checks the unmodified tests in a disposable

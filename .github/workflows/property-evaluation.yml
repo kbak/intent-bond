@@ -13,7 +13,7 @@ jobs:
     timeout-minutes: 15
     env:
       PYTHONDONTWRITEBYTECODE: '1'
-      VT_OFT_JAR: ${{ github.workspace }}/.tools/openfasttrace-4.9.0.jar
+      INTENTBOND_OFT_JAR: ${{ github.workspace }}/.tools/openfasttrace-4.9.0.jar
     steps:
       - uses: actions/checkout@v7
         with:
@@ -27,7 +27,7 @@ jobs:
           java-version: '17'
       - run: |
           python -m pip install '.[test]'
-          vt install-oft --destination "$GITHUB_WORKSPACE/.tools"
+          ib install-oft --destination "$GITHUB_WORKSPACE/.tools"
           python scripts/evaluate_properties.py --out "$RUNNER_TEMP/property-evaluation"
       - uses: actions/upload-artifact@v7
         if: always()

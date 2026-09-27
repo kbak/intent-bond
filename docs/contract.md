@@ -1,21 +1,23 @@
 # Command and evidence reference
 
+IntentBond uses the `ib` command from the `intentbond` package.
+
 Scope schema 1 and evidence schema 2 are provisional and may change.
 
-The [concepts and result meanings](../versioned_traceability/skills/versioned-traceability/references/semantics.md)
-defines how humans and agents interpret the artifacts and results below,
-including which conclusions the evidence supports.
+See [result meanings](../intentbond/skills/intentbond/references/semantics.md)
+for how to interpret evidence.
 
 ## Commands
 
 | Command | Required arguments | Result |
 | --- | --- | --- |
-| `vt install-oft` | None; optional `--destination DIRECTORY` | Downloads and checksum-verifies the configured OFT release. |
-| `vt check` | None | Traces both versions, runs candidate tests, and writes evidence. |
-| `vt verify` | `--evidence` | Matches saved evidence to the selected scope, base, and candidate. |
-| `vt explain` | Complete OFT item IDs and `--evidence` | Explains selected items from the retained OFT graph and check evidence. |
-| `vt recover` | None; defaults to current clean repository at HEAD | Saves original source and prepares records for documenting existing requirements. `--isolated` creates a separate draft. No agent or tests run. |
-| `vt recover-check` | None for an active in-place recovery; `--recovery` for an isolated bundle | Checks proposed documentation, citations, links, and existing tests; review is still required. |
+| `ib install-oft` | None; optional `--destination DIRECTORY` | Downloads and checksum-verifies the configured OFT release. |
+| `ib check` | None | Traces both versions, runs candidate tests, and writes evidence. |
+| `ib verify` | `--evidence` | Matches saved evidence to the selected scope, base, and candidate. |
+| `ib explain` | Complete OFT item IDs and `--evidence` | Explains selected items from the retained OFT graph and check evidence. |
+| `ib impact` | `--evidence` | Compares retained declarations, links, and source-change categories; see [requirement evolution](requirement-granularity.md). |
+| `ib recover` | None; defaults to current clean repository at HEAD | Saves original source and prepares records for documenting existing requirements. `--isolated` creates a separate draft. No agent or tests run. |
+| `ib recover-check` | None for an active in-place recovery; `--recovery` for an isolated bundle | Checks proposed documentation, citations, links, and existing tests; review is still required. |
 
 `recover-check --preflight` validates edits, provenance and the OFT graph without
 running tests. An otherwise clean result is `incomplete` (exit 5), and `verify`
@@ -25,11 +27,24 @@ The command name `recover` refers to reconstructing requirements from existing
 sources. See [add traceability to an existing project](recovery.md) for that
 workflow and its record format.
 
+### Optional formal commands
+
+| Command | Required arguments | Result |
+| --- | --- | --- |
+| `ib install-alloy` | None; optional `--destination DIRECTORY` | Downloads and checksum-verifies the configured Alloy release. |
+| `ib alloy-check` | `--manifest`, `--out` | Checks Alloy assertions and witnesses; retains native results, bounds, and JUnit. |
+| `ib smt-check` | `--manifest`, `--out` | Checks Z3 obligations under explicit assumptions; retains native queries, results, and JUnit. |
+| `ib chc-check` | `--manifest`, `--out` | Checks modeled reachability with Z3 Spacer; validates invariants or concrete traces and retains results. |
+
+See [model checking and formal verification](model-checking.md) for authoring,
+backend contracts, result meanings, and integration with the core. `ib verify`
+matches retained evidence to source; it does not invoke a formal verifier.
+
 ### Explain saved evidence
 
 ```sh
-vt explain 'req~session-expiration~1' --evidence /path/to/check/evidence.json
-vt explain 'req~session-expiration~1' --evidence /path/to/check/evidence.json \
+ib explain 'req~session-expiration~1' --evidence /path/to/check/evidence.json
+ib explain 'req~session-expiration~1' --evidence /path/to/check/evidence.json \
   --snapshot base --format json
 ```
 
@@ -37,7 +52,7 @@ vt explain 'req~session-expiration~1' --evidence /path/to/check/evidence.json \
 (default) or `json`. `--oft-jar` and `--java` work as for `check`. No Git checkout
 is required. The command verifies retained artifact hashes and source/scope
 bindings, then runs the pinned OFT `trace -o aspec` reporter on the saved item
-export. OFT computes coverage and links; vt adds the recorded execution and
+export. OFT computes coverage and links; ib adds the recorded execution and
 review context. It does not run the project's test command or write to the bundle.
 
 The provisional JSON schema 1 exposes `artifact` (description, location, Needs,
@@ -67,7 +82,7 @@ not establish that the selection is complete, traverse all indirect dependencies
 or determine whether a requested behavior change is authorized.
 
 `linked_test_execution` remains `not_established` without the optional
-[execution-link profile](../versioned_traceability/skills/versioned-traceability/references/execution-links.md).
+[execution-link profile](../intentbond/skills/intentbond/references/execution-links.md).
 With that profile, `linked_tests` retains per-artifact and per-case observations,
 and `execution_link_diagnostics` explains invalid or unavailable evidence.
 Baseline explanations report
@@ -79,7 +94,7 @@ Exit 0 means successful inspection, including inspection of rejected checks.
 Missing IDs/revisions, incomplete exports, changed artifacts, or tool errors
 return exit 2. An explanation describes saved evidence; it does not match the
 current working tree, authenticate the unsigned producer, or establish program
-correctness. Use `vt verify` to match current source.
+correctness. Use `ib verify` to match current source.
 
 ### Check and verify inputs
 
@@ -99,7 +114,7 @@ For both `check` and `verify`:
 - `--scope` defaults to the root `scope.json` read from the resolved baseline
   commit. An explicit path is read as-is, relative to the current directory.
 
-`check` creates a fresh `vt-evidence-*/check` directory in system temporary
+`check` creates a fresh `ib-evidence-*/check` directory in system temporary
 storage and prints the evidence path. To retain evidence elsewhere, supply
 `--out`: it must be a new directory outside the repository. Keep the full output
 bundle when moving or retaining evidence. If the system temporary directory is
@@ -118,7 +133,7 @@ so the caller still reviews the full candidate Git diff, including new files.
 For `verify`, use the same baseline and scope as the original check. If the
 default baseline has moved, pass its original commit with `--base`.
 
-Checks use the JAR selected by `--oft-jar` or `VT_OFT_JAR`, falling back to the
+Checks use the JAR selected by `--oft-jar` or `INTENTBOND_OFT_JAR`, falling back to the
 user cache. `--java` selects the Java executable. Provision these tools before
 running a check.
 
@@ -267,7 +282,7 @@ or inconsistent reports, and reports already present in the candidate. Entirely
 skipped or empty suites fail. `policy.allow_skipped_tests` defaults to true;
 false also rejects mixed passing/skipped suites. Suite-level errors fail.
 
-With the optional [execution-link profile](../versioned_traceability/skills/versioned-traceability/references/execution-links.md),
+With the optional [execution-link profile](../intentbond/skills/intentbond/references/execution-links.md),
 `tests.execution_links.required_artifacts` can require passing observations for
 selected named OFT keys (`type~name`, without revisions). Each key must resolve
 to exactly one candidate revision inside the configured types and test paths.
@@ -319,7 +334,7 @@ than dereferenced contents.
 For a JUnit scope, `tests.execution_links` can select format
 `junit-properties-v1` and a nonempty `artifact_types` list. JUnit testcase
 properties named `oft_id` then identify the exact OFT test artifacts executed.
-See the [profile and producer example](../versioned_traceability/skills/versioned-traceability/references/execution-links.md)
+See the [profile and producer example](../intentbond/skills/intentbond/references/execution-links.md)
 for configuration, evidence fields, supported outcomes and limitations.
 
 This adds no runtime dependency or default execution-completeness gate. Unknown
@@ -342,7 +357,7 @@ disabled, existing behavior and bundles remain valid.
 `evidence.json` uses an unsigned [in-toto Statement
 v1](https://github.com/in-toto/attestation/blob/main/spec/v1/statement.md). Its
 subject is `candidate-manifest.json` and the source digest. The predicate type
-is `https://github.com/kbak/versioned-traceability/check/v0.2`. Error statements
+is `https://github.com/kbak/intent-bond/check/v0.2`. Error statements
 may have no subject if source capture failed.
 
 `test-result.json` uses the [in-toto Test Result
@@ -387,4 +402,4 @@ A file outside the selected semantic-review roots is still included in full sour
 
 Source identity, OFT structural coverage, executed assertions and semantic approval are separate results. `review_required` means the selected changes need external review; it is neither approval nor rejection. `passed` does not turn out-of-selection documents into semantically approved artifacts.
 
-`vt check`, the human summary and `vt explain` expose these boundaries. Verification recomputes new inventories from retained manifests and the trusted scope. Older schema-2 evidence remains readable: `vt explain` derives the inventory from its retained manifests without rewriting historical records.
+`ib check`, the human summary and `ib explain` expose these boundaries. Verification recomputes new inventories from retained manifests and the trusted scope. Older schema-2 evidence remains readable: `ib explain` derives the inventory from its retained manifests without rewriting historical records.

@@ -6,12 +6,12 @@ from pathlib import Path
 from test_recovery import RecoveryFixture
 from test_workflow import WorkflowFixture
 
-from versioned_traceability.common import CheckError, digest, read_json, write_json, xml_tree
-from versioned_traceability.oft import export_items
-from versioned_traceability.recovery import read_bundle
-from versioned_traceability.review import changes, review_diff
-from versioned_traceability.runner import verify
-from versioned_traceability.snapshot import archive_snapshot, changed_source, snapshot
+from intentbond.common import CheckError, digest, read_json, write_json, xml_tree
+from intentbond.oft import export_items
+from intentbond.recovery import read_bundle
+from intentbond.review import changes, review_diff
+from intentbond.runner import verify
+from intentbond.snapshot import archive_snapshot, changed_source, snapshot
 
 
 def add_links(repo):

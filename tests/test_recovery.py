@@ -10,11 +10,11 @@ from importlib.resources import files
 from pathlib import Path
 from unittest.mock import patch
 
-from versioned_traceability.cli import main
-from versioned_traceability.common import CheckError, read_json, write_json
-from versioned_traceability.oft import default_jar, import_items, validate_jar
-from versioned_traceability.recovery import check_recovery, claims_path, prepare
-from versioned_traceability.runner import check
+from intentbond.cli import main
+from intentbond.common import CheckError, read_json, write_json
+from intentbond.oft import default_jar, import_items, validate_jar
+from intentbond.recovery import check_recovery, claims_path, prepare
+from intentbond.runner import check
 
 FIXTURE = Path(__file__).resolve().parents[1] / "examples/session"
 
@@ -28,7 +28,7 @@ class RecoveryFixture(unittest.TestCase):
         validate_jar(cls.jar)
 
     def setUp(self):
-        temporary = tempfile.TemporaryDirectory(prefix="vt-recovery-acceptance-")
+        temporary = tempfile.TemporaryDirectory(prefix="ib-recovery-acceptance-")
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
         self.repo = self.root / "legacy project"
@@ -153,12 +153,12 @@ class RecoveryTests(RecoveryFixture):
         self.assertFalse((self.bundle / "draft/requirements.md").exists())
         self.assertTrue((self.bundle / "draft/.git").is_dir())
         semantics = (
-            files("versioned_traceability")
-            .joinpath("skills/versioned-traceability/references/semantics.md")
+            files("intentbond")
+            .joinpath("skills/intentbond/references/semantics.md")
             .read_text(encoding="utf-8")
         )
         self.assertIn(semantics, (self.bundle / "instructions.md").read_text(encoding="utf-8"))
-        property_directory = files("versioned_traceability") / "skills/property-testing"
+        property_directory = files("intentbond") / "skills/property-testing"
         instructions = (self.bundle / "instructions.md").read_text(encoding="utf-8")
         self.assertEqual(
             instructions.count((property_directory / "SKILL.md").read_text(encoding="utf-8")),
@@ -426,14 +426,14 @@ class RecoveryTests(RecoveryFixture):
 
     def test_concurrent_draft_edit_invalidates_result(self):
         self.draft()
-        from versioned_traceability.runner import check as real_check
+        from intentbond.runner import check as real_check
 
         def edit_after_check(*args, **kwargs):
             result = real_check(*args, **kwargs)
             (self.bundle / "draft/requirements.md").write_text("Changed during validation\n")
             return result
 
-        with patch("versioned_traceability.recovery.check", side_effect=edit_after_check):
+        with patch("intentbond.recovery.check", side_effect=edit_after_check):
             result = self.run_check()
         self.assertEqual(result["status"], "rejected", result)
         self.assertIn("Draft changed during validation", " ".join(result["diagnostics"]))

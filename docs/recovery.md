@@ -12,12 +12,12 @@ The tool preserves the original source, checks citations and allowed edits, and
 runs OFT and the existing tests. Once reviewed and committed, the documentation
 becomes a baseline for checking future changes.
 
-The [concepts and result meanings](../versioned_traceability/skills/versioned-traceability/references/semantics.md)
+The [concepts and result meanings](../intentbond/skills/intentbond/references/semantics.md)
 explain how source citations, approval, and test results differ.
 
 ## Start with your coding agent
 
-Give the agent the [existing-project skill](../versioned_traceability/skills/recover-baseline/SKILL.md)
+Give the agent the [existing-project skill](../intentbond/skills/recover-baseline/SKILL.md)
 and ask: **"Document the requirements for this feature and link them to the
 existing code and tests. Flag inferred behavior and missing checks."**
 
@@ -76,7 +76,7 @@ which missing tests would be most valuable.
 Preserve existing tests during this step so they remain evidence of the original
 behavior. After the requirements are reviewed, use the
 [property-testing workflow](property-testing.md) to add selected checks through
-the project's runner and normal `vt check`. Continue when that test work is
+the project's runner and normal `ib check`. Continue when that test work is
 already authorized; a request limited to documenting the project ends with the
 proposal and recommendations. Proposed tests are not evidence of past execution.
 
@@ -86,7 +86,7 @@ changes of meaning, and retain useful counterexamples as regressions.
 
 ## Workflow and responsibilities
 
-1. `vt recover` captures the original source snapshot, inventories selected files
+1. `ib recover` captures the original source snapshot, inventories selected files
    and creates reviewable provenance records. By default the current checkout is
    the workspace; `--isolated` prepares a separate draft and leaves the original
    checkout unchanged. No model or test command runs during preparation.
@@ -94,7 +94,7 @@ changes of meaning, and retain useful counterexamples as regressions.
    or retargets coverage comments, supplies an ordinary scope.json, and records
    original citations, changes and unresolved questions in claims.json. Original
    snapshots, implementation behavior and test assertions are preserved.
-3. `vt recover-check` validates citations against the captured original, checks
+3. `ib recover-check` validates citations against the captured original, checks
    the editing boundary, and uses the existing OFT/test checker on the assembled
    baseline. It also imports original specification IDs through OFT and requires
    explicit mappings for changed or removed requirements. It retains a proposed
@@ -102,7 +102,7 @@ changes of meaning, and retain useful counterexamples as regressions.
 4. A maintainer reviews the proposed promises, links, scope, and open questions.
    Passing automated checks still leave the proposal awaiting review. The caller
    establishes a checked repository baseline with
-   `vt check --base HEAD --candidate HEAD` after committing it.
+   `ib check --base HEAD --candidate HEAD` after committing it.
 
 Use the project's normal review process to choose the scope, resolve contradictions,
 and accept requirements. The tool supplies the source records and automated checks;
@@ -120,7 +120,7 @@ Follow the [installation instructions](../README.md#install) for the package and
 OFT. From a clean local clone:
 
 ```sh
-vt recover
+ib recover
 ```
 
 This records HEAD and the current branch and checks that the index and worktree
@@ -141,8 +141,8 @@ changes. Temporary drafts are fine; put the proposed edits into the recorded
 workspace before checking. Then run:
 
 ```sh
-vt recover-check --preflight
-vt recover-check
+ib recover-check --preflight
+ib recover-check
 ```
 
 Preflight checks the proposal and trace graph without executing tests. Use it to
@@ -160,7 +160,7 @@ and resolve any changes to that policy through the project's review process.
 
 The active recovery is discovered from Git metadata, including in linked Git
 worktrees. Snapshots and raw logs are kept under the worktree's Git directory in
-`versioned-traceability/recovery/`; each check creates a fresh result. They do not
+`intentbond/recovery/`; each check creates a fresh result. They do not
 appear in Git status. Use --repo to select another checkout, or --recovery to
 select a retained bundle explicitly. --input on preparation selects literal
 repository-relative paths; omit it to inventory the whole snapshot.
@@ -212,7 +212,7 @@ original path, a summary, original source citations, and an author assessment of
 meaning: preserved, changed or uncertain. Adding IDs/Needs/Status: draft metadata or editing
 coverage comments alone does not require a document-change entry. New requirements
 still need their ordinary claim citations. The
-[record format reference](../versioned_traceability/skills/recover-baseline/references/recovery.md)
+[record format reference](../intentbond/skills/recover-baseline/references/recovery.md)
 contains the exact schema and examples; the recovery skill guides the agent through it.
 
 OFT imports the original inventoried specification documents independently of
@@ -251,8 +251,8 @@ Use an isolated draft when the current checkout has unfinished work or a separat
 workspace is preferred:
 
 ```sh
-vt recover --isolated --repo /path/to/project --out /path/to/recovery
-vt recover-check --recovery /path/to/recovery --out /path/to/recovery-result
+ib recover --isolated --repo /path/to/project --out /path/to/recovery
+ib recover-check --recovery /path/to/recovery --out /path/to/recovery-result
 ```
 
 The author works in recovery/draft/ and writes recovery/claims.json. HEAD is the
@@ -283,14 +283,14 @@ process. Retain the source/claims records and review decision with the accepted
 baseline, commit the reviewed changes, then validate the actual adopted commit:
 
 ```sh
-vt check --repo /path/to/project --base HEAD --candidate HEAD
+ib check --repo /path/to/project --base HEAD --candidate HEAD
 ```
 
 If the reviewed scope is stored separately, pass it with --scope. Recovery checks
 use disposable validation commits; they cannot replace this check of the adopted
-commit. Subsequent feature work uses the existing vt check / vt verify workflow.
+commit. Subsequent feature work uses the existing ib check / ib verify workflow.
 Point the agent to the
-[development skill](../versioned_traceability/skills/versioned-traceability/SKILL.md)
+[development skill](../intentbond/skills/intentbond/SKILL.md)
 for those tasks. It handles standalone setup and the project's committed checking
 policy; retain its reference in the project's agent instructions for later sessions.
 

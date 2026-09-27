@@ -143,8 +143,8 @@ def main():
         HYPOTHESIS_STORAGE_DIRECTORY=str(output / "hypothesis-cache"),
     )
     local_jar = ROOT / ".tools/openfasttrace-4.9.0.jar"
-    if "VT_OFT_JAR" not in env and local_jar.exists():
-        env["VT_OFT_JAR"] = str(local_jar)
+    if "INTENTBOND_OFT_JAR" not in env and local_jar.exists():
+        env["INTENTBOND_OFT_JAR"] = str(local_jar)
     results = {
         "python": platform.python_version(),
         "libraries": {
@@ -153,10 +153,10 @@ def main():
         },
         "mutations": [],
     }
-    with tempfile.TemporaryDirectory(prefix="vt-property-evaluation-") as directory:
+    with tempfile.TemporaryDirectory(prefix="ib-property-evaluation-") as directory:
         source = Path(directory) / "source"
         source.mkdir()
-        for name in ("versioned_traceability", "examples/session"):
+        for name in ("intentbond", "examples/session"):
             shutil.copytree(
                 ROOT / name, source / name, ignore=shutil.ignore_patterns("__pycache__", "*.pyc")
             )
@@ -180,7 +180,7 @@ def main():
             print(f"Baseline failed; see {output / 'baseline/tests.log'}", flush=True)
             return 1
         for name, filename, before, after, selector in MUTATIONS:
-            path = source / "versioned_traceability" / filename
+            path = source / "intentbond" / filename
             original = path.read_text()
             if original.count(before) != 1:
                 raise RuntimeError(

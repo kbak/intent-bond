@@ -2,11 +2,11 @@
 
 from test_workflow import WorkflowFixture
 
-from versioned_traceability.check_output import render_check
-from versioned_traceability.common import CheckError, digest, read_json, write_json
-from versioned_traceability.evidence import statement
-from versioned_traceability.explain import explain, render_explanation
-from versioned_traceability.runner import verify
+from intentbond.check_output import render_check
+from intentbond.common import CheckError, digest, read_json, write_json
+from intentbond.evidence import statement
+from intentbond.explain import explain, render_explanation
+from intentbond.runner import verify
 
 
 class BoundaryTests(WorkflowFixture):

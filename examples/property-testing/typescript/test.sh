@@ -1,8 +1,8 @@
 #!/bin/sh
-# Install outside the captured source, including when vt runs a clean snapshot.
+# Install outside the captured source, including when ib runs a clean snapshot.
 set -eu
 source_root=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
-work=$(mktemp -d /tmp/vt-fast-check.XXXXXXXX)
+work=$(mktemp -d /tmp/ib-fast-check.XXXXXXXX)
 trap 'rm -rf -- "$work"' EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM

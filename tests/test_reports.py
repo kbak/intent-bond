@@ -2,13 +2,13 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from versioned_traceability.common import CheckError, run
-from versioned_traceability.testing import junit_counts
+from intentbond.common import CheckError, run
+from intentbond.testing import junit_counts
 
 
 class ReportTests(unittest.TestCase):
     def setUp(self):
-        self.directory = tempfile.TemporaryDirectory(prefix="vt-report-")
+        self.directory = tempfile.TemporaryDirectory(prefix="ib-report-")
         self.addCleanup(self.directory.cleanup)
         self.root = Path(self.directory.name)
         self.path = self.root / "report.xml"

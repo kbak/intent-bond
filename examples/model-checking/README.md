@@ -1,7 +1,7 @@
 # Alloy runner example
 
-Run `vt alloy-check --root examples/model-checking --manifest checks.json --out
-/tmp/ownership-check-1` from the tool checkout, after `vt install-alloy`.
+Run `ib alloy-check --root examples/model-checking --manifest checks.json --out
+/tmp/ownership-check-1` from the tool checkout, after `ib install-alloy`.
 The model checks a small access relation and requires an allowed-access witness.
 It tests runner behavior; it does not represent an application implementation.
 

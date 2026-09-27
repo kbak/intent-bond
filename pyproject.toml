@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "versioned-traceability"
+name = "intentbond"
 version = "0.4.6"
 description = "Check requirement links and tests, compare Git versions, and save source-linked results"
 readme = "README.md"
@@ -15,13 +15,13 @@ test = ["pytest>=8,<10", "hypothesis>=6,<7"]
 smt = ["z3-solver==5.1.0.0"]
 
 [project.scripts]
-vt = "versioned_traceability.cli:main"
+ib = "intentbond.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["versioned_traceability*"]
+include = ["intentbond*"]
 
 [tool.setuptools.package-data]
-versioned_traceability = ["skills/*/SKILL.md", "skills/*/references/*.md"]
+intentbond = ["skills/*/SKILL.md", "skills/*/references/*.md"]
 
 [tool.ruff]
 target-version = "py311"

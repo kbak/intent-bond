@@ -9,16 +9,16 @@ from pathlib import Path
 
 from test_workflow import WorkflowFixture
 
-from versioned_traceability.common import CheckError, read_json, write_json
-from versioned_traceability.config import validate_scope
-from versioned_traceability.evidence import statement
-from versioned_traceability.execution import (
+from intentbond.common import CheckError, read_json, write_json
+from intentbond.config import validate_scope
+from intentbond.evidence import statement
+from intentbond.execution import (
     collect_execution_links,
     explain_execution,
     required_execution_diagnostics,
 )
-from versioned_traceability.explain import explain
-from versioned_traceability.runner import verify
+from intentbond.explain import explain
+from intentbond.runner import verify
 
 REQ = "req~session-expiration~1"
 TEST = "utest~expiration-boundary~1"
@@ -29,7 +29,7 @@ EXAMPLES = Path(__file__).resolve().parents[1] / "examples"
 
 class ExecutionReportTests(unittest.TestCase):
     def setUp(self):
-        temporary = tempfile.TemporaryDirectory(prefix="vt-execution-report-")
+        temporary = tempfile.TemporaryDirectory(prefix="ib-execution-report-")
         self.addCleanup(temporary.cleanup)
         self.path = Path(temporary.name) / "tests.xml"
         self.scope = read_json(EXAMPLES / "session/scope.json")

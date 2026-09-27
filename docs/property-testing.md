@@ -7,10 +7,10 @@ the rule.
 
 Use property tests for selected requirements where broader input coverage is
 valuable. Keep the assertions and generators in the project's normal test suite.
-They run without vt, OFT, an agent, or a factory. Use OFT references to connect
-tests to requirements; vt records results tied to the checked source.
+They run without ib, OFT, an agent, or a factory. Use OFT references to connect
+tests to requirements; ib records results tied to the checked source.
 
-Give an agent the packaged [property-testing skill](../versioned_traceability/skills/property-testing/SKILL.md),
+Give an agent the packaged [property-testing skill](../intentbond/skills/property-testing/SKILL.md),
 or follow it manually. For example: "Add property tests for these scheduling
 requirements using the existing test workflow. Preserve their meaning and retain
 regression examples for any defects found." The skill reuses existing IDs and
@@ -24,7 +24,7 @@ domain, assumptions, and existing tests in the requirements or claim notes.
 Preserve executable tests and dependencies during that initial documentation step.
 
 After the starting requirements are reviewed, add selected property tests using
-the project's runner. Check the changes with `vt check` against that baseline.
+the project's runner. Check the changes with `ib check` against that baseline.
 This can continue the same task when test work is already authorized; unresolved
 intent still needs a decision through the project's normal review process.
 
@@ -91,7 +91,7 @@ narrowing a domain, or weakening a guarantee changes the promise and follows the
 normal revision and review policy.
 
 Readable logic is not automatically machine-checked. OFT imports it as requirement
-text and checks links; vt records changes and execution results. Tests and later
+text and checks links; ib records changes and execution results. Tests and later
 formalizations must reference the relevant property ID and revision using the
 existing traceability mechanism. Keep generator ranges, sample counts, and solver
 bounds in the checking configuration or its documentation; they do not redefine
@@ -112,7 +112,7 @@ properties, reusing these identities and assumptions.
 ## Record check results
 
 Use native JUnit or command results through the existing scope. Python can also
-use the optional [per-test execution links](../versioned_traceability/skills/versioned-traceability/references/execution-links.md).
+use the optional [per-test execution links](../intentbond/skills/intentbond/references/execution-links.md).
 One reported property case may execute many generated examples; the JUnit case
 count is not an input count or a proof count. Preserve native diagnostics, observed
 statistics when available, tool versions and replay details.
@@ -127,7 +127,7 @@ exactly one imported revision and reported passing results. Missing declarations
 or results, skips, and ambiguous revisions fail the check. Other linked test results
 are reported without this additional requirement. This detects absent artifacts;
 it cannot detect missing generated inputs or weakened generators.
-The [execution-link reference](../versioned_traceability/skills/versioned-traceability/references/execution-links.md#require-selected-artifacts-to-pass)
+The [execution-link reference](../intentbond/skills/intentbond/references/execution-links.md#require-selected-artifacts-to-pass)
 defines the policy and its limits.
 
 ## Choosing a library
@@ -138,7 +138,7 @@ reference. Hegel is an optional shared engine with language-specific bindings;
 its current beta/platform requirements are documented in the Hegel reference.
 There is no requirement to install every framework in a project or factory image.
 
-For Daml contracts, the [Daml guide](../versioned_traceability/skills/property-testing/references/daml.md)
+For Daml contracts, the [Daml guide](../intentbond/skills/property-testing/references/daml.md)
 describes using generated inputs with Daml Script and recording ledger-test results.
 
 The [runnable examples](../examples/property-testing/README.md) use the same small

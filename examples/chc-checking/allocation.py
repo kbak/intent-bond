@@ -2,7 +2,7 @@
 
 from z3 import And, Ints
 
-from versioned_traceability.chc import Reachability, System
+from intentbond.chc import Reachability, System
 
 
 def obligations():

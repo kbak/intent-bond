@@ -14,8 +14,8 @@ from pathlib import Path
 from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
-from versioned_traceability.common import CheckError
-from versioned_traceability.testing import counts_pass, junit_counts, merge_reports
+from intentbond.common import CheckError
+from intentbond.testing import counts_pass, junit_counts, merge_reports
 
 OUTCOMES = st.sampled_from(["passed", "failed", "errors", "skipped"])
 REPORTS = st.lists(st.lists(OUTCOMES, min_size=1, max_size=12), min_size=1, max_size=4)
@@ -47,7 +47,7 @@ class ReportPropertyTests(unittest.TestCase):
     def test_merge_preserves_outcomes_and_completion_policy(self, reports, wrapped, allow_skipped):
         """Splitting outcomes across reports cannot erase failures or strict-policy skips."""
         expected = Counter(outcome for outcomes in reports for outcome in outcomes)
-        with tempfile.TemporaryDirectory(prefix="vt-property-") as directory:
+        with tempfile.TemporaryDirectory(prefix="ib-property-") as directory:
             root = Path(directory)
             paths = []
             for index, outcomes in enumerate(reports):
@@ -84,7 +84,7 @@ class ReportPropertyTests(unittest.TestCase):
         self, passed, declared, failure, wrapped
     ):
         """A suite-level failure without a failed case still prevents completion."""
-        with tempfile.TemporaryDirectory(prefix="vt-property-") as directory:
+        with tempfile.TemporaryDirectory(prefix="ib-property-") as directory:
             root = Path(directory)
             broken, healthy, merged = (
                 root / name for name in ("broken.xml", "healthy.xml", "merged.xml")
@@ -108,7 +108,7 @@ class ReportPropertyTests(unittest.TestCase):
     )
     def test_missing_reported_cases_are_rejected(self, outcomes, omitted, wrapped):
         """A larger declared count cannot supply evidence for absent cases."""
-        with tempfile.TemporaryDirectory(prefix="vt-property-") as directory:
+        with tempfile.TemporaryDirectory(prefix="ib-property-") as directory:
             path = Path(directory) / "report.xml"
             tree = report(path, outcomes, wrapped=wrapped)
             tree.set("tests", str(len(outcomes) + omitted))

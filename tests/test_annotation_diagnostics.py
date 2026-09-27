@@ -8,8 +8,8 @@ from types import SimpleNamespace
 from test_recovery import RecoveryFixture
 from test_workflow import WorkflowFixture
 
-from versioned_traceability.common import read_json, write_json
-from versioned_traceability.oft import annotation_diagnostics
+from intentbond.common import read_json, write_json
+from intentbond.oft import annotation_diagnostics
 
 GUIDE = """# Annotation examples
 

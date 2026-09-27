@@ -1,6 +1,6 @@
 """Check a packaged example against boundary and incomplete-contract defects.
 
-Run with an installed vt wheel and the selected language's dependencies. Copies
+Run with an installed ib wheel and the selected language's dependencies. Copies
 come from this source tree (also included in the sdist); no original is modified.
 Native failures and version-bound evidence are retained in a new output directory.
 """
@@ -13,8 +13,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-from versioned_traceability.oft import default_jar
-from versioned_traceability.runner import check, verify
+from intentbond.oft import default_jar
+from intentbond.runner import check, verify
 
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = {
@@ -76,7 +76,7 @@ def main():
         raise RuntimeError("Example changed; update its deliberate mutations")
     summary = {
         "language": args.language,
-        "vt_version": importlib.metadata.version("versioned-traceability"),
+        "ib_version": importlib.metadata.version("intentbond"),
         "variants": {},
     }
     try:

@@ -2,7 +2,7 @@
 
 from z3 import And, If, Implies, Ints
 
-from versioned_traceability.smt import Obligation
+from intentbond.smt import Obligation
 
 
 def obligations():
