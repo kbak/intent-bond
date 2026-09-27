@@ -357,7 +357,7 @@ disabled, existing behavior and bundles remain valid.
 `evidence.json` uses an unsigned [in-toto Statement
 v1](https://github.com/in-toto/attestation/blob/main/spec/v1/statement.md). Its
 subject is `candidate-manifest.json` and the source digest. The predicate type
-is `https://github.com/kbak/intent-bond/check/v0.2`. Error statements
+is `https://github.com/kbak/intentbond/check/v0.2`. Error statements
 may have no subject if source capture failed.
 
 `test-result.json` uses the [in-toto Test Result

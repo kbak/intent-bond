@@ -12,7 +12,7 @@ EXIT_CODES = {
 }
 
 STATEMENT = "https://in-toto.io/Statement/v1"
-CHECK_TYPE = "https://github.com/kbak/intent-bond/check/v0.2"
+CHECK_TYPE = "https://github.com/kbak/intentbond/check/v0.2"
 TEST_TYPE = "https://in-toto.io/attestation/test-result/v0.1"
 
 

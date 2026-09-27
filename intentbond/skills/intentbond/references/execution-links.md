@@ -93,7 +93,7 @@ case corresponds to an artifact still needs the normal code/test review.
 
 ## Supported producer: pytest
 
-The runnable [pytest session example](https://github.com/kbak/intent-bond/tree/main/examples/pytest-session)
+The runnable [pytest session example](https://github.com/kbak/intentbond/tree/main/examples/pytest-session)
 uses a project-local collection hook to transfer `@pytest.mark.oft_id(...)`
 markers into `item.user_properties`. Collection-time metadata survives skips,
 expected failures and setup failures; adding a property inside the test body

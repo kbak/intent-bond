@@ -146,7 +146,7 @@ to maintain requirements, code, tests, and links during changes. Configure CI
 separately to enforce checks on pull requests.
 
 IntentBond also works manually and in CI. The
-[OpenHands factory integration](https://github.com/kbak/openhands-factory/blob/main/docs/traceability.md)
+[IntentMade integration](https://github.com/kbak/intentmade/blob/main/docs/traceability.md)
 is optional.
 
 ## Add property tests

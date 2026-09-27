@@ -28,7 +28,7 @@ full commit ID. Read SKILL.md and this reference from the resulting checkout and
 install from that checkout. A branch link such as main may advance: select its
 commit once for the run and use the code and guidance together. If no source/ref
 was supplied with an unversioned skill copy, use
-`https://github.com/kbak/intent-bond.git` at main. An unavailable pinned
+`https://github.com/kbak/intentbond.git` at main. An unavailable pinned
 revision is a blocker; do not silently substitute another one.
 
 For local development, use the supplied checkout including intended uncommitted

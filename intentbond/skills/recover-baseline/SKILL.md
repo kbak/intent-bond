@@ -28,7 +28,7 @@ clone that repository into a new agent-managed directory outside the target proj
 Honor the branch, tag or commit in the supplied URL; resolve it to a commit and
 read both this skill and references/recovery.md from that same checkout. For an
 unqualified copy of this skill, the upstream is
-`https://github.com/kbak/intent-bond.git`, branch `main`. Keep the
+`https://github.com/kbak/intentbond.git`, branch `main`. Keep the
 resolved tooling commit for the handoff. Use HTTPS for a public checkout; do not
 require the caller to clone the tool or configure GitHub SSH access.
 

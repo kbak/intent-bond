@@ -5,7 +5,7 @@ implementation, use the chosen tool checkout/revision and its matching skill.
 When only a skill link is supplied, clone its repository/ref over HTTPS into a
 new directory outside the target project and resolve it to a commit. For an
 unversioned copy without a supplied source, use
-`https://github.com/kbak/intent-bond.git` at main. Reread the matching
+`https://github.com/kbak/intentbond.git` at main. Reread the matching
 skill and references, and retain the tooling revision for the handoff.
 Resolve relative references there, not in the target project. Reuse a supplied
 local checkout, packaged skill/runtime or inline reference when available. If an
