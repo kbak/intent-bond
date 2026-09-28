@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,8 +7,21 @@ name = "intentbond"
 version = "0.4.6"
 description = "Check requirement links and tests, compare Git versions, and save source-linked results"
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["requirements", "traceability", "verification", "openfasttrace", "testing"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Software Development :: Testing",
+]
 requires-python = ">=3.11"
 dependencies = ["junitparser>=5.0.3,<6"]
+
+[project.urls]
+Documentation = "https://github.com/kbak/intentbond/tree/main/docs"
+Repository = "https://github.com/kbak/intentbond"
+Issues = "https://github.com/kbak/intentbond/issues"
 
 [project.optional-dependencies]
 test = ["pytest>=8,<10", "hypothesis>=6,<7"]

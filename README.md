@@ -196,5 +196,13 @@ Compare requirement declarations, links, and source changes. The
 [granularity guide](docs/requirement-granularity.md) explains how to give
 independently changing promises their own IDs.
 
-For configuration and evidence formats, see the [reference](docs/contract.md).
-For contributing, see [running the tests](docs/validation.md).
+## Documentation and contributing
+
+See the [documentation index](docs/README.md) for guides, examples, and the
+[command reference](docs/contract.md). Contributions are welcome; start with
+[CONTRIBUTING.md](CONTRIBUTING.md). Report vulnerabilities through
+[SECURITY.md](SECURITY.md).
+
+## License
+
+[MIT](LICENSE). Dependencies and optional tools retain their own licenses.

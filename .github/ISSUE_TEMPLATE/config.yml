@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security reports
+    url: https://github.com/kbak/intentbond/security/advisories/new
+    about: Report vulnerabilities through the documented private channel.
