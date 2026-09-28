@@ -1,0 +1,4 @@
+# Build and CI tools; runtime/test dependencies come from pyproject.toml.
+build==1.6.1
+setuptools==84.0.0
+ruff==0.11.13

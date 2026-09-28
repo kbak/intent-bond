@@ -21,23 +21,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ['3.11', '3.12']
+        python: ['3.11.16', '3.12.14']
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: ${{ matrix.python }}
-      - uses: actions/setup-java@v6
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '17.0.20+1'
       - name: Build wheel through sdist and install
         run: |
-          python -m pip install build ruff==0.11.13
-          python -m build
-          python -m pip install dist/*.whl 'pytest>=8,<10' 'hypothesis>=6,<7' 'z3-solver==5.1.0.0'
+          python -m pip install --require-hashes --only-binary=:all: -r requirements/ci.txt
+          python -m build --no-isolation
+          python -m pip install --no-index --no-deps dist/*.whl
+          python -m pip check
           ib install-oft --destination "$GITHUB_WORKSPACE/.tools"
           ib install-alloy --destination "$GITHUB_WORKSPACE/.tools"
           mkdir "$RUNNER_TEMP/source"
@@ -53,7 +54,7 @@ jobs:
         run: |
           python -c 'from importlib.resources import files; p = files("intentbond") / "skills/property-testing"; assert (p / "SKILL.md").is_file(); assert all((p / "references" / (n + ".md")).is_file() for n in ("python", "typescript", "haskell", "hegel"))'
           python -m pytest -p hypothesispytest "$RUNNER_TEMP/source/tests" --junitxml="$RUNNER_TEMP/tests.xml" -q
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: always()
         with:
           name: package-and-tests-${{ matrix.python }}
@@ -71,20 +72,20 @@ jobs:
       matrix:
         language: [python, typescript, haskell]
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
-          python-version: '3.12'
-      - uses: actions/setup-java@v6
+          python-version: '3.12.14'
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
         with:
           distribution: temurin
-          java-version: '17'
-      - uses: actions/setup-node@v7
+          java-version: '17.0.20+1'
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         if: matrix.language == 'typescript'
         with:
-          node-version: '24'
+          node-version: '24.21.0'
           package-manager-cache: false
       - name: Provision QuickCheck on the disposable runner
         if: matrix.language == 'haskell'
@@ -108,11 +109,11 @@ jobs:
           "$RUNNER_TEMP/haskell-bin/runghc" "$RUNNER_TEMP/quickcheck-preflight.hs"
       - name: Build and install
         run: |
-          python -m pip install build
-          python -m build
-          python -m pip install dist/*.whl
+          python -m pip install --require-hashes --only-binary=:all: -r requirements/ci.txt
+          python -m build --no-isolation
+          python -m pip install --no-index --no-deps dist/*.whl
           if [ '${{ matrix.language }}' = python ]; then
-            python -m pip install -r examples/property-testing/python/requirements.txt
+            python -m pip install --require-hashes --only-binary=:all: -r examples/property-testing/python/requirements.txt
           fi
           ib install-oft --destination "$GITHUB_WORKSPACE/.tools"
           mkdir "$RUNNER_TEMP/source"
@@ -120,7 +121,7 @@ jobs:
       - name: Check passing, failing and restored examples from sdist
         working-directory: ${{ runner.temp }}
         run: python "$RUNNER_TEMP/source/scripts/check_property_examples.py" '${{ matrix.language }}' --out "$RUNNER_TEMP/example-results"
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: always()
         with:
           name: property-example-${{ matrix.language }}

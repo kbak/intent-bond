@@ -10,7 +10,8 @@ Report vulnerabilities through
 Use Python 3.11+, Git, and Java 17+ on Linux or macOS. In a virtual environment:
 
 ```sh
-python -m pip install -e '.[test,smt]' ruff
+python -m pip install --require-hashes --only-binary=:all: -r requirements/ci.txt
+python -m pip install --no-index --no-deps --no-build-isolation -e .
 ib install-oft
 ib install-alloy
 python -m unittest discover -s tests -v

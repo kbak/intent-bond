@@ -7,7 +7,8 @@ From the project checkout, in a Python virtual environment with Git and Java
 available:
 
 ```sh
-python3 -m pip install -e '.[test,smt]' ruff
+python3 -m pip install --require-hashes --only-binary=:all: -r requirements/ci.txt
+python3 -m pip install --no-index --no-deps --no-build-isolation -e .
 ib install-oft
 ib install-alloy
 python3 -m unittest discover -s tests -v
@@ -26,7 +27,8 @@ portable Horn result polarity, reconstructed traces, vacuity, unknown outcomes,
 malformed evidence and mutation counterexamples.
 
 The [CI workflow](../.github/workflows/ci.yml) builds the source distribution and
-then its wheel, installs the wheel, and runs packaged tests/fixtures from a
+then its wheel without build isolation, installs the wheel without dependency
+resolution, and runs packaged tests/fixtures from a
 separate working directory. It checks Python 3.11 and 3.12, packaged skill
 references, lint, and the three language examples. Example smoke checks require
 passing behavior, rejection of boundary and equality-only defects, and passing
@@ -38,6 +40,30 @@ provisioned only in its dedicated disposable runner.
 
 The [property mutation checks](../.github/workflows/property-evaluation.yml) run
 on manual dispatch, separately from the normal pull-request checks.
+
+## Dependency updates
+
+CI installs exact Python versions and artifact hashes from
+[`requirements/ci.txt`](../requirements/ci.txt), including build tools and
+transitive dependencies. Published package metadata retains compatible ranges.
+GitHub Actions use full commit SHAs; Python, Java, and Node tool versions are
+also explicit. OS packages and the hosted runner image follow their upstream
+distribution updates.
+
+Regenerate locks with uv, then review the diff and run the checks above:
+
+```sh
+uv pip compile pyproject.toml requirements/ci.in --extra test --extra smt --python-version 3.11 --universal --generate-hashes --output-file requirements/ci.txt
+uv pip compile pyproject.toml --python-version 3.11 --universal --generate-hashes --constraint requirements/ci.txt --output-file requirements/runtime.txt
+uv pip compile examples/property-testing/python/requirements.in --python-version 3.11 --universal --generate-hashes --output-file examples/property-testing/python/requirements.txt
+```
+
+Existing locks retain selected versions. Use `--upgrade-package NAME` for an
+intentional update, changing exact inputs in `requirements/ci.in` where needed.
+Keep action version comments with their verified upstream SHAs. Changes to a
+runtime lock consumed by IntentMade also need its dependency lock refreshed.
+
+## Coverage
 
 Execution-link tests exercise the existing session fixture and a real pytest
 producer. They cover parameterized cases, deselection, skips, expected failures,

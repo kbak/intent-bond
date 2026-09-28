@@ -15,21 +15,23 @@ jobs:
       PYTHONDONTWRITEBYTECODE: '1'
       INTENTBOND_OFT_JAR: ${{ github.workspace }}/.tools/openfasttrace-4.9.0.jar
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
-          python-version: '3.12'
-      - uses: actions/setup-java@v6
+          python-version: '3.12.14'
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '17.0.20+1'
       - run: |
-          python -m pip install '.[test]'
+          python -m pip install --require-hashes --only-binary=:all: -r requirements/ci.txt
+          python -m pip install --no-index --no-deps --no-build-isolation .
+          python -m pip check
           ib install-oft --destination "$GITHUB_WORKSPACE/.tools"
           python scripts/evaluate_properties.py --out "$RUNNER_TEMP/property-evaluation"
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: always()
         with:
           name: controlled-property-evaluation
