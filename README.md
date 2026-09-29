@@ -200,7 +200,9 @@ independently changing promises their own IDs.
 ## Documentation and contributing
 
 See the [documentation index](docs/README.md) for guides, examples, and the
-[command reference](docs/contract.md). Contributions are welcome; start with
+[command reference](docs/contract.md). IntentBond's own
+[requirements](docs/requirements.md) are maintained with its code and tests.
+Contributions are welcome; start with
 [CONTRIBUTING.md](CONTRIBUTING.md). Report vulnerabilities through
 [SECURITY.md](SECURITY.md).
 

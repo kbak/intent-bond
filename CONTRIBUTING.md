@@ -25,6 +25,10 @@ tests the installed package outside the source checkout.
 
 ## Make a change
 
+- Start from the affected [requirements](docs/requirements.md) and follow their
+  implementation and test links. For each commit, keep the promises, reference
+  docs, code, and assertions consistent; unchanged behavior can keep unchanged
+  requirement wording and IDs.
 - Read the [command and evidence contract](docs/contract.md) before changing CLI
   behavior, scope handling, source capture, or evidence formats.
 - Keep source identity, structural coverage, test outcomes, and semantic review
@@ -33,6 +37,14 @@ tests the installed package outside the source checkout.
   assertions about what an agent or formal model should achieve.
 - Update guides and packaged skill references when their instructions change.
 - Use the upstream tool's supported capabilities before introducing an adapter.
+
+Use the [development skill](intentbond/skills/intentbond/SKILL.md) for the check
+and review workflow. Record the starting commit before editing, run `ib check`
+against that baseline before committing, and use the same baseline when verifying
+the committed result. This preserves the change being reviewed when working on
+`main`. Consider requirement splits when promises need to evolve independently;
+the [granularity guide](docs/requirement-granularity.md) describes how to migrate
+their links without losing obligations.
 
 Keep runtime data, credentials, local evidence bundles, and development diaries
 out of the repository. Documentation should describe current behavior and

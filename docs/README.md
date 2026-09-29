@@ -11,7 +11,7 @@ Start with the [README](../README.md) for installation and a first check.
 
 ## Reference
 
-- [IntentBond requirements](self-recovery.md) — accepted product promises and their code/test links.
+- [IntentBond requirements](requirements.md) — accepted product promises and their code/test links.
 - [Command and evidence contract](contract.md) — CLI, scope, snapshots, results, and verification.
 - [Artifact meanings](../intentbond/skills/intentbond/references/semantics.md) — what the evidence establishes.
 - [Execution links](../intentbond/skills/intentbond/references/execution-links.md) — associate observed tests with coverage.

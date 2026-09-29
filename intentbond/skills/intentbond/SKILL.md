@@ -3,7 +3,8 @@ name: intentbond
 description: Draft requirements or implement and review a task with OpenFastTrace, using the supplied scope and baseline to follow linked documentation, code, tests, and evidence.
 ---
 
-Maintain requirements, code, tests, and their links while completing the task.
+Maintain requirements, supporting documentation, code, tests, and their links
+in each commit prepared for the task.
 Compare changes with the agreed starting commit and retain check results for review.
 
 Use the [concepts and result meanings](references/semantics.md) from the matching tool
@@ -23,6 +24,10 @@ Retain the target repository's absolute path. Use the supplied scope and baselin
 in standalone use, the CLI defaults to the repository's adopted scope.json and
 merge base with the locally known default branch (HEAD on that branch or detached
 HEAD). Use an explicit baseline for work based on another feature/release branch.
+Resolve and retain the starting baseline before editing or committing. Reuse it
+for checking the intended change and verifying its committed result; resolving
+the default again after a commit on the default branch would select the new HEAD
+and omit the change from the comparison.
 Ask only about unresolved task or scope decisions. If the project lacks reviewed starting requirements and links,
 use [the existing-project skill](../recover-baseline/SKILL.md) to document and
 review them first. Ordinary development does not repeat that initial work. Candidate scope edits cannot authorize their own policy.
@@ -58,8 +63,11 @@ copy. It strengthens selected obligations with ordinary executable tests and
 uses the existing review/evidence flow; it does not require property tests for
 every change. Load only the applicable framework guide.
 
-Review the full candidate Git diff, including new files, and related unchanged
-promises, code and assertions. Compare their meaning: does the implementation
+Before each commit or final handoff, review the full intended Git diff, including
+new files, and related unchanged promises, code and assertions. Keep the active
+requirements and supporting reference documentation consistent with the change.
+Unchanged promises do not need wording or ID edits just to accompany a code change.
+Compare their meaning: does the implementation
 satisfy the promise, and do tests check the affected behavior and boundary cases?
 Code-only changes need this assessment too. Use focused source reads around the
 links; avoid overlapping rereads or fixed small pages that fragment the review.

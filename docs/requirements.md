@@ -1,11 +1,11 @@
 # IntentBond requirements
 
-**The maintainer has accepted these 35 recovered requirements and the root checking scope.**
+**The maintainer has accepted these requirements and the root checking scope.**
 
-This map records documented promises recovered from commit
-`4fe67034f02cbf977e0aa0b5708ba9b921d6cd60`. Each requirement retains its documented
-origin and uses `Status: approved` to record the maintainer's acceptance of the
-expected behavior. The root [scope](../scope.json) selects the checking policy,
+This is the maintained product contract. Its initial 35 requirements were
+recovered from commit `4fe67034f02cbf977e0aa0b5708ba9b921d6cd60`.
+Each requirement retains its origin and uses `Status: approved` to record the
+maintainer's acceptance of the expected behavior. The root [scope](../scope.json) selects the checking policy,
 including `examples/` as additional review paths outside the product trace graph.
 
 The recovery source record retains its original preparation metadata. Exact
@@ -34,6 +34,19 @@ The recovery added standalone coverage comments to existing code and assertions.
 These links make the accepted promises navigable without changing executable
 behavior. Assertion adequacy, completeness, and future maintenance cost remain
 subjects for ongoing review.
+
+## Maintaining requirements
+
+For each commit, keep affected promises, reference documentation, implementation,
+and test assertions consistent through the [development workflow](../CONTRIBUTING.md#make-a-change).
+Update this contract as behavior evolves. The recovery claims preserve the original
+source evidence; they are historical records, not a second specification to rewrite
+on every change.
+
+Keep IDs stable for continuing promises, including document moves. Several clauses
+can describe the outcomes or exceptions of one operation. Consider a split when
+one promise needs to evolve independently, following the
+[granularity guide](requirement-granularity.md).
 
 ## Feature map
 
@@ -72,10 +85,10 @@ Any follow-up requires reviewed intent and subsequent development.
 | draft-reporting | Native OFT checks cover linked drafts with no uncovered types and drafts with a genuinely missing test link. | Review whether wording makes the distinction clear to maintainers; no user-study result is claimed. |
 | recovery-citations, recovery-lineage | Exact citation and original-ID accounting regressions. | High: inspect the map for omitted exceptions, combined clauses and unjustified links; automation cannot perform this semantic review. |
 
-## Recovered requirements
+## Requirements
 
-Every claim below is classified as documented in original source at the fixes
-commit. Its selection and wording have been accepted. `Needs: impl, utest` requires
+The initial requirements are documented in the original source at the fixes
+commit. Their selection and wording have been accepted. `Needs: impl, utest` requires
 structural links; it does not mean one assertion proves the whole statement.
 Exact source quotations and line ranges are retained in claims.json.
 

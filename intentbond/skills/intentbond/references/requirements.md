@@ -29,7 +29,7 @@ through their links; preserve work and decisions that still apply.
 
 Reuse OFT names for continuing promises. Search before assigning a new unique
 name and initial revision. Follow the project's revision policy; editorial edits
-need not increase the revision unless that policy requires it.
+and document moves need not increase the revision unless that policy requires it.
 
 Use existing Markdown structure, OFT types and Needs/Covers chains; preserve
 design/architecture links. Put meaningful rationale and rejected alternatives
@@ -56,7 +56,11 @@ step is required; drafting does not authorize implementation or scope changes.
 Choose stable IDs for independently reviewable behavior (for example ordering,
 visibility, retry timing and errors), rather than requiring every consumer of a
 large umbrella interface declaration to acknowledge every change. Avoid splitting
-sentences mechanically. For an intentional split, record the old ID/revision,
+sentences mechanically. Multiple clauses can define the outcomes, exceptions or
+invariants of one operation. When a change affects one promise independently of
+the others, assess whether separate IDs would let their wording and assertions
+evolve independently while preserving the accepted obligations.
+For an intentional split, record the old ID/revision,
 successor IDs, preserved obligations, authorized changes and migrated consumers;
 keep one authoritative active set and preserve history separately. Advancing a
 reference requires review of continued assertion coverage, never just a bulk bump.

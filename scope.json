@@ -30,7 +30,8 @@
     ".github"
   ],
   "review_paths": [
-    "examples"
+    "examples",
+    "AGENTS.md"
   ],
   "required_coverage": {
     "req": [
