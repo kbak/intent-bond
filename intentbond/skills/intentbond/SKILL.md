@@ -70,13 +70,14 @@ uses the existing review/evidence flow; it does not require property tests for
 every change. Load only the applicable framework guide.
 
 Before each commit or final handoff, review the full intended Git diff, including
-new files, and related unchanged promises, code and assertions. Keep the active
-requirements and supporting reference documentation consistent with the change.
-Unchanged promises do not need wording or ID edits just to accompany a code change.
-Compare their meaning: does the implementation
-satisfy the promise, and do tests check the affected behavior and boundary cases?
-Code-only changes need this assessment too. Use focused source reads around the
-links; avoid overlapping rereads or fixed small pages that fragment the review.
+new files. Start from each substantive behavior change and its boundary cases,
+then follow the relevant requirements, implementation and test assertions; do not
+start and stop with the links that already exist. Include related unchanged
+promises and keep supporting documentation consistent. Existing relationships can
+suffice; unchanged promises need no wording or ID edits, and individual files or
+functions need no arbitrary annotations. Check whether the implementation satisfies
+the promise and the assertions verify the affected behavior. Code-only changes
+need this assessment too. Use focused source reads around the links.
 After a repair, inspect its delta and affected relationships; repeat a full
 review if the repair changes the scope or invalidates earlier conclusions.
 
@@ -87,14 +88,15 @@ establish semantic agreement or assertion adequacy.
 
 ## Run checks and report the result
 
-When the task asks to connect requirements, code, tests and their execution,
-inspect the supplied scope's `tests.format` and `tests.execution_links` before
-choosing a runner or reporting a tool gap. IntentBond already supports explicit
-JUnit `oft_id` associations and required passing artifacts; see
-[execution links](references/execution-links.md) for pytest and unittest producers.
-Command success, suite accounting and individual execution associations establish
-different evidence. Propose missing configuration/producer work separately from
-unsupported capability; changing trusted policy still follows the caller's authority.
+When the supplied scope enables `tests.execution_links`, review affected test
+artifacts and their execution associations without waiting for an explicit user
+request. Check the artifact declarations, runner mappings or JUnit `oft_id`
+properties, and recorded outcomes together. Maintain `required_artifacts` for
+tests whose passing execution is mandatory; not every test needs a link. Inspect
+`tests.format` before choosing a runner; see [execution links](references/execution-links.md)
+for pytest and unittest producers. Propose missing configuration/producer work
+separately from unsupported capability; changing trusted policy still follows
+the caller's authority.
 
 Run the configured check on the completed candidate and again after repairs:
 
