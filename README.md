@@ -70,8 +70,11 @@ ib recover-check
 ```
 
 Exit 4 means checks passed and review is pending. Read `recovery-review.md`,
-resolve open questions, and commit the accepted changes. Recovery records remain
-local under Git metadata; the guide explains how to retain and share them.
+resolve open questions, and commit the accepted requirements, links, and scope.
+Recovery creates review records in `.intentbond/recovery/` and keeps full bundles
+under local Git metadata. The records need not stay in the working tree after
+adoption; the [retention guidance](docs/recovery.md#review-commit-and-continue-development)
+explains how to preserve provenance in Git history or artifact storage.
 
 ## Check a change
 

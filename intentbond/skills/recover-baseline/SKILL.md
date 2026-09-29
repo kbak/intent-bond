@@ -239,8 +239,14 @@ and result directories with the review handoff; Git metadata is local, not pushe
 Leave adoption to the caller's existing review workflow. In-place edits already
 exist in the checkout; do not apply proposal.patch over them. For an isolated
 draft, transfer only the reviewed changes to the matching original source.
-Retain provenance and the review decision, then validate the actual committed
-baseline before normal development begins. Committing a draft alone does not
+Retain provenance and the review decision in Git history or durable artifact
+storage, and record where they can be retrieved. The checkout's source/claims
+files are needed through recovery checks and review, but need not be committed
+or remain in the current tree after acceptance and archival. Follow the
+[retention procedure](references/recovery.md#bundle-and-proposed-edits); keep
+unresolved questions in maintained documentation or the issue tracker. Validate
+the actual committed baseline after any cleanup before normal development begins.
+Committing a draft alone does not
 establish acceptance or activate a development policy.
 As part of authorized adoption, explicitly set `Status: approved` only for the
 items accepted through that review. Preserve their documented/inferred origin.

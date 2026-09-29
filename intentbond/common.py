@@ -7,7 +7,7 @@ import time
 import xml.etree.ElementTree as ET
 from pathlib import Path, PurePosixPath
 
-RECOVERY_RECORDS = ".traceability/recovery"
+RECOVERY_RECORDS = ".intentbond/recovery"
 
 
 class CheckError(Exception):

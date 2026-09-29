@@ -185,10 +185,12 @@ including on unsupported file extensions. This is an import diagnostic, not a
 check of executable behavior or assertion adequacy. Other languages retain
 OFT's native annotation recognition.
 
-The `.traceability/recovery/` namespace is reserved for retained recovery records
-and excluded from OFT import, even under `inputs: ["."]`. Source citations can
+The `.intentbond/recovery/` namespace is reserved for recovery records and
+excluded from OFT import, even under `inputs: ["."]`. Source citations can
 quote historical annotations; these must not count as current trace links.
-Records still participate in source identities and test snapshots.
+Records present in the checkout still participate in source identities and test
+snapshots. Ordinary checks do not require them after adoption; see
+[retaining recovery provenance](recovery.md#review-commit-and-continue-development).
 
 `specification_paths` and `test_paths` must lie within inputs and must not
 overlap each other. Include test helpers, fixtures, and runner configuration in

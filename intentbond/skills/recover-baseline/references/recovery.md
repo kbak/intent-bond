@@ -130,12 +130,26 @@ and generated tests are never cited as original evidence.
 
 Preparation does not run a model or test command. In-place recovery requires a
 clean index and worktree, including untracked files, with contents matching HEAD.
-It creates two reviewable files under `.traceability/recovery/<id>/`: source.json
-identifies the original source and must remain unchanged; claims.json holds the
-author's evidence and open questions. The CLI prints their paths. Keep these files
-with the adopted baseline. This namespace is reserved for recovery evidence and
-is excluded from OFT import, so quoted historical annotations cannot supply live
-coverage. The files still participate in source digests and test snapshots.
+It creates two reviewable files under `.intentbond/recovery/<id>/`: source.json
+identifies the original source and must remain unchanged during recovery;
+claims.json holds the author's evidence and open questions. The CLI prints their
+paths. This namespace is reserved for recovery evidence and excluded from
+OFT import, so quoted historical annotations cannot supply live coverage. Files
+present in the checkout still participate in source digests and test snapshots.
+source.json's `status: proposed` records preparation, not the maintainer's later
+decision; acceptance is recorded through the project's review process.
+
+Keep these files available through recovery checks and review. After acceptance,
+ordinary `ib check` / `ib verify` does not require them. Preserve provenance and
+the review decision in retained Git history or durable artifact storage, with a
+reference from the maintained project documentation. Files committed with adoption
+may be removed in a later cleanup commit; records archived with the complete
+bundle and results need not be committed at all. Git cannot reconstruct claims
+or local-only evidence that was never committed. Git metadata is not pushed.
+Carry unresolved questions into maintained documentation or the issue tracker.
+Check the actual adopted source after removing records: cleanup changes its
+identity, so the earlier recovery evidence cannot verify it. Do not blanket-ignore
+`.intentbond/`; in-place preparation requires visible review records.
 
 For isolated authoring, run `ib recover --isolated --repo /project --out /new/recovery`.
 This preserves the original checkout, creates a draft Git repository in the bundle
@@ -170,7 +184,8 @@ the proposed scope's specification_paths may be rewritten, reorganized, moved or
 deleted with cited explanations. Preserve useful structure and surviving IDs.
 Existing file modes remain unchanged. Other files permit only standalone OFT
 coverage-comment additions, removals or replacements; all other lines remain
-unchanged. Existing recovery records are immutable.
+unchanged. Existing recovery records are immutable during recovery; later cleanup
+uses the normal development workflow after adoption.
 
 Keep the old and new document locations in specification_paths for a move; a
 containing scope input such as `docs` can cover a deleted file and its replacement.

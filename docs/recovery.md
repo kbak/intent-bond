@@ -129,8 +129,8 @@ HEAD bytes; use isolated mode for worktrees with checkout filters that change
 those bytes. The tool leaves the branch, index and HEAD unchanged.
 
 The CLI prints the retained snapshot/instructions location and creates
-`.traceability/recovery/<id>/source.json` and `claims.json` in the checkout.
-source.json identifies the captured original; preserve it. The author adds
+`.intentbond/recovery/<id>/source.json` and `claims.json` in the checkout.
+source.json identifies the captured original; preserve it during recovery. The author adds
 source citations and unresolved questions to claims.json, adds requirements and
 coverage annotations to project files, and proposes root scope.json. These are
 ordinary working-tree changes. Newly created files appear in Git status/editor
@@ -191,7 +191,7 @@ Review project changes together with the durable source/claims records. The
 result directory also retains proposal.patch, claims.json, normalized
 provenance.json, documentation-review.json, scope.json and check/evidence.json. Full original snapshots and
 raw logs should be retained as needed for the project's evidence policy.
-`.traceability/recovery/` is reserved for evidence and is excluded from OFT import,
+`.intentbond/recovery/` is reserved for evidence and excluded from OFT import,
 including when inputs contains `.`. Quoted historical links cannot satisfy live
 coverage. Those files remain included in source identities and test snapshots.
 Open issues remain in provenance and their count is shown in the result. A green
@@ -279,8 +279,28 @@ original snapshot and provenance when moving an isolated proposal.
 
 In-place changes are already in the checkout; do not reapply proposal.patch.
 Review and resolve relevant scope/intent questions using the project's usual
-process. Retain the source/claims records and review decision with the accepted
-baseline, commit the reviewed changes, then validate the actual adopted commit:
+process. Commit the accepted requirements, coverage links, and scope. Recovery
+records do not need to be committed or kept in the current tree for ordinary
+`ib check` / `ib verify` use. Retain provenance and the review decision in one
+of these ways:
+
+- Commit the source/claims records with adoption, then remove them in a later
+  cleanup change. Keep a commit-pinned reference to them in maintained documentation
+  and retain that Git history.
+- Archive the complete recovery bundle and result directory in the project's
+  durable artifact storage, record their location with the adoption decision,
+  and omit the checkout's source/claims files from the adoption commit.
+
+Git can recover committed source bytes and records. It cannot recover uncommitted
+claims, local-only snapshots, or test logs that were never stored there. Git
+metadata is local and is not included in a clone or push. Keep unresolved questions
+and actionable limitations in maintained documentation or the project's issue tracker.
+
+Keep the active source/claims files available through recovery checks and review.
+After acceptance and archival, they may be removed from the checkout. Do not
+blanket-ignore `.intentbond/`: in-place preparation requires its review records
+to appear in Git status. Cleanup changes source identity, so prior recovery
+evidence does not verify the cleaned source. Validate the actual adopted commit:
 
 ```sh
 ib check --repo /path/to/project --base HEAD --candidate HEAD
@@ -312,7 +332,8 @@ files permit only standalone OFT coverage-comment additions, removals and replac
 including `//` comments in `.mjs` and `.cjs` modules. All non-annotation lines and
 existing file modes must remain unchanged. New files are limited to Markdown within
 specification_paths, root scope.json, and the recorded source/claims files created
-by in-place preparation. Existing recovery records remain unchanged.
+by in-place preparation. Existing recovery records remain unchanged during recovery;
+post-adoption cleanup uses ordinary development checks.
 
 This is a textual editing check, not proof that comments are semantically inert
 inside every language construct, that Markdown is never executable, or that metadata
@@ -327,7 +348,8 @@ suite-level test results likewise do not prove individual requirement adequacy.
 Reports are unsigned and depend on the caller's custody of the recovery bundle.
 
 Repeated recovery starts a fresh bundle; in-place preparation again requires a
-clean checkout. Prior recovery records are preserved. Rechecking writes a fresh result
+clean checkout. Prior recovery records still in that checkout are preserved during
+recovery. Rechecking writes a fresh result
 directory, leaving earlier proposals and outcomes intact. A source change after
 capture does not update the proposal automatically; recover again or reconcile
 the changes before adoption. Incomplete/failed recovery is still a useful report,

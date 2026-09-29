@@ -112,6 +112,10 @@ are exercised as a currently unsupported recovery case.
 In-place tests cover reviewable checkout edits, retained originals/provenance,
 dirty/staged/untracked work, branch and commit changes, concurrent edits, linked
 Git worktrees, automatic storage discovery, schema 1 compatibility, and exclusion
-of quoted historical annotations from live coverage. Both modes exercise adoption
+of quoted historical annotations from live coverage under `.intentbond/recovery/`.
+Adoption tests cover archiving records outside the checkout without committing
+them, removing previously committed records, and checking and verifying the
+adopted source. Earlier evidence must reject source changed by cleanup.
+Both modes exercise adoption
 and subsequent development. They do not measure how accurately an agent reconstructs requirements. Assess
 that separately by reviewing the agent's proposed documentation against its sources.

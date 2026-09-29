@@ -11,8 +11,8 @@ from test_recovery import RecoveryFixture
 from intentbond.cli import main
 from intentbond.common import CheckError, read_json, write_json
 from intentbond.oft import import_items
-from intentbond.recovery import active_recovery, prepare
-from intentbond.runner import check
+from intentbond.recovery import active_recovery, prepare, read_bundle
+from intentbond.runner import check, verify
 
 
 class InPlaceRecoveryTests(RecoveryFixture):
@@ -36,8 +36,19 @@ class InPlaceRecoveryTests(RecoveryFixture):
         self.assertEqual(self.git("rev-parse", "HEAD").strip(), self.source_commit)
         self.assertEqual(self.git("diff", "--cached"), "")
         self.assertIn(
-            ".traceability/recovery/", self.git("status", "--porcelain", "--untracked-files=all")
+            ".intentbond/recovery/", self.git("status", "--porcelain", "--untracked-files=all")
         )
+
+    def test_bundle_rejects_unrecognized_record_paths(self):
+        self.prepare()
+        for path in (
+            self.record["claims_path"].replace(".intentbond", "other"),
+            f".intentbond/recovery/../{self.record['id']}/claims.json",
+        ):
+            with self.subTest(path=path):
+                write_json(self.bundle / "recovery.json", {**self.record, "claims_path": path})
+                with self.assertRaisesRegex(CheckError, "Invalid recovery record path"):
+                    read_bundle(self.bundle)
 
     def test_in_place_proposal_adopts_without_applying_a_patch(self):
         self.draft()
@@ -54,9 +65,40 @@ class InPlaceRecoveryTests(RecoveryFixture):
         self.commit()  # Represents this test caller's review and acceptance.
         adopted = check(self.repo, None, "HEAD", "HEAD", self.root / "adopted", self.jar)
         self.assertEqual(adopted["status"], "passed", adopted)
+        archived_claims = self.claims_file.read_text()
+        shutil.rmtree(self.claims_file.parent)
+        self.assertEqual(self.git("show", f"HEAD:{self.record['claims_path']}"), archived_claims)
+        with self.assertRaisesRegex(CheckError, "Candidate contents differ"):
+            verify(self.repo, None, "HEAD", "worktree", self.root / "adopted/evidence.json")
         path = self.repo / "session.py"
         path.write_text(path.read_text().replace("30 * 60", "1800"))
         subsequent = check(self.repo, None, "HEAD", "worktree", self.root / "subsequent", self.jar)
+        self.assertEqual(subsequent["status"], "passed", subsequent)
+
+    def test_recovery_records_can_be_archived_outside_the_adopted_tree(self):
+        self.draft()
+        result = self.run_check()
+        self.assertEqual(result["status"], "review_required", result)
+        # The bundle and result live outside the checkout and retain provenance.
+        self.assertEqual(read_json(self.out / "claims.json"), self.claims)
+        self.assertEqual(
+            read_json(self.bundle / "source-record.json")["source"]["commit"],
+            self.source_commit,
+        )
+        shutil.rmtree(self.claims_file.parent)
+        self.commit()  # Caller acceptance with provenance archived separately.
+        self.assertEqual(self.git("ls-files", ".intentbond"), "")
+        baseline = self.git("rev-parse", "HEAD").strip()
+        adopted = check(self.repo, None, baseline, baseline, self.root / "adopted", self.jar)
+        # [utest->req~ib-recovery-preservation~1]
+        self.assertEqual(adopted["status"], "passed", adopted)
+        matched = verify(self.repo, None, baseline, "HEAD", self.root / "adopted/evidence.json")
+        self.assertEqual(matched["status"], "matched")
+        path = self.repo / "session.py"
+        path.write_text(path.read_text().replace("30 * 60", "1800"))
+        subsequent = check(
+            self.repo, None, baseline, "worktree", self.root / "subsequent", self.jar
+        )
         self.assertEqual(subsequent["status"], "passed", subsequent)
 
     def test_dirty_checkouts_fail_before_writing_recovery_files(self):
@@ -150,17 +192,18 @@ class InPlaceRecoveryTests(RecoveryFixture):
         self.assertIn("Captured recovery source changed", " ".join(result["diagnostics"]))
 
     def test_ignored_record_location_is_rejected_without_overwriting_project(self):
-        (self.repo / ".gitignore").write_text(".traceability/\n")
+        (self.repo / ".gitignore").write_text(".intentbond/\n")
         self.commit()
         with self.assertRaisesRegex(CheckError, "Git ignores recovery records"):
             self.prepare()
-        self.assertFalse((self.repo / ".traceability").exists())
+        self.assertFalse((self.repo / ".intentbond").exists())
         self.assertEqual(self.git("status", "--porcelain"), "")
 
     def test_historical_quoted_annotations_cannot_supply_live_coverage(self):
-        history = self.repo / ".traceability/recovery/old"
+        history = self.repo / ".intentbond/recovery/old"
         history.mkdir(parents=True)
-        write_json(history / "claims.json", {"quote": "# [utest->req~session-expiration~1]"})
+        (history / "quotes.md").write_text("<!-- [utest->req~session-expiration~1] -->\n")
+        (history / "quotes.unknown").write_text("# [utest->req~session-expiration~1]\n")
         self.commit()
         self.draft()
         scope = read_json(self.repo / "scope.json")
@@ -174,12 +217,29 @@ class InPlaceRecoveryTests(RecoveryFixture):
         self.assertEqual(result["status"], "rejected", result)
         self.assertEqual(result["check_status"], "rejected", result)
         imported = import_items(self.out / "check/candidate-items.xml", self.repo)
-        self.assertFalse(
-            any(item["path"].startswith(".traceability/recovery/") for item in imported)
-        )
+        # [utest->req~ib-recovery-preservation~1]
+        self.assertFalse(any(item["path"].startswith(".intentbond/recovery/") for item in imported))
         self.assertEqual(
             read_json(self.out / "check/evidence.json")["predicate"]["tests"]["status"], "passed"
         )
+
+    def test_recovery_preserves_existing_records(self):
+        history = self.repo / ".intentbond/recovery/old"
+        history.mkdir(parents=True)
+        (history / "notes.md").write_text("Original provenance.\n")
+        self.commit()
+        self.draft()
+        scope = read_json(self.repo / "scope.json")
+        scope["inputs"] = ["."]
+        scope["specification_paths"].append(".intentbond")
+        write_json(self.repo / "scope.json", scope)
+        (history / "notes.md").write_text(
+            "Original provenance.\n<!-- [impl->req~session-expiration~1] -->\n"
+        )
+        result = self.run_check()
+        # [utest->req~ib-recovery-edits~1]
+        self.assertEqual(result["status"], "rejected", result)
+        self.assertIn(".intentbond/recovery/old/notes.md", str(result["diagnostics"]))
 
     def test_cli_recovers_into_git_storage_and_discovers_active_run(self):
         stdout, stderr = io.StringIO(), io.StringIO()

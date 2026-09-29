@@ -8,9 +8,11 @@ Each requirement retains its origin and uses `Status: approved` to record the
 maintainer's acceptance of the expected behavior. The root [scope](../scope.json) selects the checking policy,
 including `examples/` as additional review paths outside the product trace graph.
 
-The recovery source record retains its original preparation metadata. Exact
-original-source quotations and locations remain in the
-[claims record](../.traceability/recovery/5c74866e5bc3433399f9753758904f84/claims.json).
+Recovery provenance is retained in Git history at adoption commit
+`48fe9f4aa9d5718c35407443dd772b7f7b78f26f`: the
+[source and claims records](https://github.com/kbak/intentbond/commit/48fe9f4aa9d5718c35407443dd772b7f7b78f26f)
+preserve the original source identity, quotations, locations, and recovery notes.
+They are archived evidence and are no longer kept in the current tree.
 Acceptance records a review decision; structural links and suite outcomes provide
 supporting evidence within the limits described below.
 
@@ -39,9 +41,9 @@ subjects for ongoing review.
 
 For each commit, keep affected promises, reference documentation, implementation,
 and test assertions consistent through the [development workflow](../CONTRIBUTING.md#make-a-change).
-Update this contract as behavior evolves. The recovery claims preserve the original
-source evidence; they are historical records, not a second specification to rewrite
-on every change.
+Update this contract as behavior evolves. The archived recovery claims preserve
+the original source evidence; ongoing caveats and follow-ups belong in this
+maintained contract.
 
 Keep IDs stable for continuing promises, including document moves. Several clauses
 can describe the outcomes or exceptions of one operation. Consider a split when
@@ -90,7 +92,8 @@ Any follow-up requires reviewed intent and subsequent development.
 The initial requirements are documented in the original source at the fixes
 commit. Their selection and wording have been accepted. `Needs: impl, utest` requires
 structural links; it does not mean one assertion proves the whole statement.
-Exact source quotations and line ranges are retained in claims.json.
+Exact source quotations and line ranges are retained in the archived claims record
+linked above.
 
 ### Use the selected baseline policy
 `req~ib-policy-source~1`
@@ -378,13 +381,18 @@ Status: approved
 
 Recovery retains original source and inventory for citations. In-place preparation leaves HEAD and branch unchanged, saves review records and leaves changes uncommitted. Isolated mode prepares a separate draft. Preparation does not execute project tests.
 
+In-place records use `.intentbond/recovery/`, which stays outside the live trace
+graph. Records are required during recovery checks and review, but ordinary
+checks and verification after adoption do not require them in the current tree.
+Retain provenance in Git history or durable artifact storage before cleanup.
+
 Needs: impl, utest
 
 Original documentation: [intentbond/skills/recover-baseline/references/recovery.md](../intentbond/skills/recover-baseline/references/recovery.md).
 
 Implementation: [intentbond/recovery.py](../intentbond/recovery.py).
 
-Existing assertions: [test_default_preparation_preserves_snapshot_and_leaves_git_review_records](../tests/test_recovery_in_place.py); [test_prepare_preserves_source_and_records_inventory_without_tests](../tests/test_recovery.py).
+Existing assertions: [test_default_preparation_preserves_snapshot_and_leaves_git_review_records](../tests/test_recovery_in_place.py); [test_prepare_preserves_source_and_records_inventory_without_tests](../tests/test_recovery.py); [test_recovery_records_can_be_archived_outside_the_adopted_tree](../tests/test_recovery_in_place.py); [test_historical_quoted_annotations_cannot_supply_live_coverage](../tests/test_recovery_in_place.py).
 
 ### Require a clean HEAD checkout for in-place recovery
 `req~ib-recovery-clean-start~1`
