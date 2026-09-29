@@ -613,3 +613,41 @@ Implementation: [intentbond/explain.py](../intentbond/explain.py).
 Existing assertions: [test_draft_status_and_native_coverage_are_distinct_in_both_views](../tests/test_explain.py); [test_native_oft_uncovered_status_is_preserved](../tests/test_explain.py).
 
 Evidence limit: This presents native/report metadata. Requirement approval records the maintainer's review; the displayed metadata does not establish semantic correctness or independent review.
+
+
+### Stdlib unittest execution evidence
+`req~ib-unittest-evidence~1`
+Status: approved
+
+The optional unittest producer emits one JUnit result per collected test method
+with explicitly configured named OFT identities, including skipped and unexecuted
+methods. Subtest failures/errors/skips affect their parent result. Fixture errors,
+expected failures, unexpected successes and interrupted executions cannot become
+passing suite evidence. Zero discovery and invalid mappings fail. Existing
+reports are never overwritten.
+
+Needs: impl, utest
+
+### Exclude fixture annotations without losing source or review
+`req~ib-trace-exclusions~1`
+Status: approved
+
+Trusted scope may select literal paths or directory prefixes in `trace_exclude`
+inside its inputs. These paths are excluded only from OFT import, including import
+diagnostics and JSX aliases. Source capture, source identity, test access and
+specification/test/review path selection retain them. Candidate policy cannot
+suppress baseline obligations by adding an exclusion.
+
+Needs: impl, utest
+
+### Diagnose prose accidentally imported as a declaration
+`req~ib-markdown-declarations~1`
+Status: approved
+
+When OFT imports a Markdown declaration whose leading backtick-delimited ID is
+followed by prose on the same line, checking fails with its path, line and an
+explicit authoring remedy. Native OFT parsing is unchanged. Historical recovery
+inventory remains readable so accidental original declarations can be mapped or
+removed with review.
+
+Needs: impl, utest

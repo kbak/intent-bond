@@ -81,6 +81,15 @@ establish semantic agreement or assertion adequacy.
 
 ## Run checks and report the result
 
+When the task asks to connect requirements, code, tests and their execution,
+inspect the supplied scope's `tests.format` and `tests.execution_links` before
+choosing a runner or reporting a tool gap. IntentBond already supports explicit
+JUnit `oft_id` associations and required passing artifacts; see
+[execution links](references/execution-links.md) for pytest and unittest producers.
+Command success, suite accounting and individual execution associations establish
+different evidence. Propose missing configuration/producer work separately from
+unsupported capability; changing trusted policy still follows the caller's authority.
+
 Run the configured check on the completed candidate and again after repairs:
 
 ```sh

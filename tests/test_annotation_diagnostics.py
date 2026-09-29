@@ -52,6 +52,24 @@ class AnnotationDiagnosticTests(unittest.TestCase):
 
 
 class DocumentationWorkflowTests(WorkflowFixture):
+    def test_imported_prose_id_gets_actionable_authoring_error(self):
+        (self.repo / "guide.md").write_text(
+            "# Examples\n`req~illustration~1` is only an example.\n"
+        )
+        self.configure(lambda scope: scope["inputs"].append("guide.md"))
+        self.commit()
+        self.base = self.git("rev-parse", "HEAD").strip()
+        result = self.run_check()
+        # [utest->req~ib-markdown-declarations~1]
+        self.assert_problem(result, "guide.md:2")
+        self.assertIn("prefix an illustrative ID with prose", str(result["diagnostics"]))
+        (self.repo / "guide.md").write_text(
+            "# Examples\nExample: `req~illustration~1` is literal.\n"
+        )
+        self.commit()
+        self.base = self.git("rev-parse", "HEAD").strip()
+        self.assertEqual(self.run_check()["status"], "passed")
+
     def test_check_accepts_fenced_annotation_examples(self):
         for name in ("guide.md", "guide.markdown"):
             (self.repo / name).write_text(GUIDE)

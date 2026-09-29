@@ -8,6 +8,27 @@ This optional configuration uses JUnit testcase properties and needs no addition
 ib runtime dependency. The project supplies its test runner and emits the IDs.
 The fields and evidence format below are provisional.
 
+For stdlib unittest, use the packaged producer without changing test bodies:
+
+```sh
+python -m intentbond.unittest_junit --start tests --report results.xml --links tests/oft-links.json
+```
+
+The JSON file explicitly maps collected `module.Class.test_method` identities to
+lists of exact named OFT test IDs, for example
+`{"test_session.SessionTests.test_expiration": ["utest~expiration~1"]}`.
+Declare that same named artifact beside the relevant assertion. This is explicit
+metadata; the producer never guesses associations from filenames or comments.
+Keep the mapping within reviewed test inputs. Unknown/duplicate collection names
+fail; skipped tests and class/module setup errors cannot become passing linked
+cases. Subtest failures and skips contribute to their parent method's outcome.
+Expected failures are skipped; unexpected successes fail. Zero discovery exits
+nonzero, and reports are written exclusively to a new path.
+
+Configure `tests.format: junit`, `tests.report`, and `execution_links` together.
+Use `required_artifacts` below for tests whose passing execution is mandatory.
+Command format cannot enforce `allow_skipped_tests` or per-case completion.
+
 ## Enable for a scope
 
 Add this object inside the existing `tests` configuration:

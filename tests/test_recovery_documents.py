@@ -14,6 +14,19 @@ REQ = "req~session-expiration~1"
 
 
 class DocumentRecoveryTests(RecoveryFixture):
+    def test_accidental_original_prose_declaration_can_be_reconciled(self):
+        self.structured_draft("\n## Example\n`req~illustration~1` is only an example.\n")
+        with (self.workspace / "requirements.md").open("a") as target:
+            target.write("\n## Example\nExample: `req~illustration~1` is only an example.\n")
+        self.document_change("requirements.md")
+        self.mapping("req~illustration~1", [])
+        result = self.run_check()
+        # [utest->req~ib-markdown-declarations~1]
+        self.assertEqual(result["status"], "review_required", result)
+        mappings = read_json(self.out / "documentation-review.json")["requirement_mappings"]
+        removed = next(item for item in mappings if item["from"] == "req~illustration~1")
+        self.assertEqual(removed["proposed"], [])
+
     def structured_draft(self, extra=""):
         for name in ("requirements.md", "session.py", "tests/test_session.py"):
             shutil.copyfile(FIXTURE / name, self.repo / name)

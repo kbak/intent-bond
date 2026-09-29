@@ -36,7 +36,7 @@ def validate_scope(scope):
     }
     if (
         not isinstance(scope, dict)
-        or set(scope) - required - {"allow_empty", "policy", "review_paths"}
+        or set(scope) - required - {"allow_empty", "policy", "review_paths", "trace_exclude"}
         or required - set(scope)
     ):
         raise CheckError("Scope has unknown or missing fields; see docs/contract.md")
@@ -47,7 +47,7 @@ def validate_scope(scope):
     if type(scope.get("allow_empty", False)) is not bool:
         raise CheckError("allow_empty must be boolean")
     # [impl->req~ib-review-selection~1]
-    for key in ("inputs", "specification_paths", "test_paths", "review_paths"):
+    for key in ("inputs", "specification_paths", "test_paths", "review_paths", "trace_exclude"):
         if key not in scope:
             continue
         values = scope[key]
@@ -57,6 +57,9 @@ def validate_scope(scope):
             relative_path(value)
         if len(set(values)) != len(values):
             raise CheckError(f"Duplicate paths in {key}")
+    # [impl->req~ib-trace-exclusions~1]
+    if any(not within(p, scope["inputs"]) for p in scope.get("trace_exclude", [])):
+        raise CheckError("trace_exclude must be inside inputs")
     for group in ("specification_paths", "test_paths"):
         if any(not within(p, scope["inputs"]) for p in scope[group]):
             raise CheckError(f"{group} must be inside inputs")

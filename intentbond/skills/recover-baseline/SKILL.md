@@ -189,6 +189,13 @@ behind recovered promises, or record the boundary; avoid selecting only files
 already annotated. Include the runners needed for linked tests across stacks.
 Use existing aggregate commands or tests.reports for multiple JUnit outputs;
 record suites left unexecuted. Recovery does not add new test runners or tests.
+When execution traceability is requested, read the matching package's
+[execution-link reference](../intentbond/references/execution-links.md) before
+reporting a gap. `tests.execution_links` already joins explicit JUnit `oft_id`
+metadata and can require named artifacts to pass. Inspect existing producers and
+configuration; distinguish an unconfigured integration from an absent tool feature.
+If a producer or test edit is needed, record it as follow-up development rather
+than altering historical test evidence during recovery.
 For missing behavior/tests, preserve the gap and report it. Bug repairs and new
 characterization tests are separate tasks, not recovery shortcuts.
 

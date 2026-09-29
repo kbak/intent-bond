@@ -152,18 +152,19 @@ def import_items(path, root):
 
 
 # [impl->req~ib-safe-symlinks~1]
-def artifact_inputs(root, path, links=()):
+def artifact_inputs(root, path, links=(), exclude=()):
     """Exclude historical annotations and symlink aliases from OFT traversal."""
-    if within(path, [RECOVERY_RECORDS]) or path in links:
+    if within(path, [RECOVERY_RECORDS, *exclude]) or path in links:
         return []
     if (root / path).is_dir() and (
         (within(RECOVERY_RECORDS, [path]) and (root / RECOVERY_RECORDS).exists())
         or any(within(link, [path]) for link in links)
+        or any(within(omitted, [path]) for omitted in exclude)
     ):
         paths = [
             item
             for child in sorted((root / path).iterdir())
-            for item in artifact_inputs(root, child.relative_to(root).as_posix(), links)
+            for item in artifact_inputs(root, child.relative_to(root).as_posix(), links, exclude)
         ]
         return [f"./{item}" for item in paths] if path == "." else paths
     return [path]
@@ -196,7 +197,8 @@ def import_view(snap, inputs):
         yield root
 
 
-def export_items(snap, inputs, jar, java, out, label):
+# [impl->req~ib-trace-exclusions~1]
+def export_items(snap, inputs, jar, java, out, label, exclude=(), *, check_authoring=True):
     """Import artifacts through OFT without requiring an already complete graph."""
     for path in inputs:
         if not any(within(entry["path"], [path]) for entry in snap.manifest):
@@ -211,7 +213,7 @@ def export_items(snap, inputs, jar, java, out, label):
             raise CheckError(f"{label}: select the actual source path instead of symlink: {path}")
     # Do not let directory import follow aliases (duplicating IDs), dangling links,
     # or recursive directory links. Tests still receive the original links.
-    inputs = [item for path in inputs for item in artifact_inputs(snap.root, path, links)]
+    inputs = [item for path in inputs for item in artifact_inputs(snap.root, path, links, exclude)]
     selected_inputs = [Path(path).as_posix() for path in inputs]
     if not inputs:
         raise CheckError(f"{label}: select project artifacts outside {RECOVERY_RECORDS}")
@@ -272,6 +274,17 @@ def export_items(snap, inputs, jar, java, out, label):
             ET.ElementTree(tree).write(exported, encoding="utf-8", xml_declaration=True)
             convert["additional_import"] = imported
     items = import_items(exported, snap.root)
+    # [impl->req~ib-markdown-declarations~1]
+    for item in items:
+        if check_authoring and Path(item["path"]).suffix.lower() in {".md", ".markdown"}:
+            lines = (snap.root / item["path"]).read_text().splitlines()
+            text = lines[item["line"] - 1]
+            if re.match(r"^\s*`[A-Za-z]+~[A-Za-z0-9][A-Za-z0-9_.-]*~[0-9]+`\s*\S", text):
+                raise CheckError(
+                    f"{label}: {item['path']}:{item['line']}: OFT imported an ID followed by prose. "
+                    "Put a declaration on its own line; prefix an illustrative ID with prose "
+                    "(for example, 'Example: `type~name~1`')."
+                )
     missing = annotation_diagnostics(snap, selected_inputs, items)
     if missing:
         raise CheckError(
@@ -283,7 +296,9 @@ def export_items(snap, inputs, jar, java, out, label):
 
 
 def trace(snap, scope, jar, java, out, label):
-    items, convert, inputs = export_items(snap, scope["inputs"], jar, java, out, label)
+    items, convert, inputs = export_items(
+        snap, scope["inputs"], jar, java, out, label, scope.get("trace_exclude", ())
+    )
     command = [java, "-jar", str(jar)]
     result = run(
         command + ["trace", "-c", "BLACK_AND_WHITE", str(out / f"{label}-items.xml")],

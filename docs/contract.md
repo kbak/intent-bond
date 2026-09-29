@@ -442,3 +442,20 @@ A file outside the selected semantic-review roots is still included in full sour
 Source identity, OFT structural coverage, executed assertions and semantic approval are separate results. `review_required` means the selected changes need external review; it is neither approval nor rejection. `passed` does not turn out-of-selection documents into semantically approved artifacts.
 
 `ib check`, the human summary and `ib explain` expose these boundaries. Verification recomputes new inventories from retained manifests and the trusted scope. Older schema-2 evidence remains readable: `ib explain` derives the inventory from its retained manifests without rewriting historical records.
+
+
+### Fixture imports and illustrative IDs
+
+Optional `trace_exclude` is a nonempty, unique list of literal relative paths or
+directory prefixes within `inputs`. It affects only OFT import. Files remain in
+the captured source, available to tests, and selected for review according to
+`specification_paths`, `test_paths` and `review_paths`. For example, import `tests`
+and exclude `tests/fixtures` to keep fixture application IDs out of the product
+graph while reviewing fixture changes. This is trusted scope policy; editing a
+candidate scope does not change the policy used for a check.
+
+Write Markdown declaration IDs on their own lines. For a literal example, prefix
+the inline ID with prose such as “Example:”; a line starting with a backtick ID
+can be an OFT declaration even when followed by a sentence. IntentBond diagnoses
+those imported lines before tests without rewriting OFT's grammar. Historical
+recovery inventory still records them for explicit identity reconciliation.

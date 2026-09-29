@@ -828,10 +828,20 @@ def check_recovery(directory, scope_path, out, jar, java="java", *, preflight=Fa
                     original_paths = [
                         name
                         for name, entry in inventory.items()
-                        if entry["mode"] != "120000" and specification_document(name, scope)
+                        if entry["mode"] != "120000"
+                        and specification_document(name, scope)
+                        and not within(name, scope.get("trace_exclude", []))
                     ]
                     original_items = (
-                        export_items(seed, original_paths, jar.resolve(), java, out, "original")[0]
+                        export_items(
+                            seed,
+                            original_paths,
+                            jar.resolve(),
+                            java,
+                            out,
+                            "original",
+                            check_authoring=False,
+                        )[0]
                         if original_paths
                         else []
                     )
