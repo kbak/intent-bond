@@ -97,13 +97,6 @@ avoid redundant layers. Reuse existing IDs for surviving obligations; start new
 ones at revision 1. Preserve useful existing structure. Restructure where it
 clarifies scattered evidence, not merely to shorten already clear requirements.
 
-Give newly recovered or substantively rewritten specification items explicit
-`Status: draft` immediately after the OFT ID, before the description. OFT otherwise
-imports omitted status as approved. This applies to documented and inferred claims;
-keep origin and disputes in their existing provenance records. Preserve the status
-of unchanged existing items. Passing checks never promote draft items, and status
-must not be changed just to remove trace defects.
-
 Keep a small feature table in the proposed Markdown: documented (IDs), deferred
 (reason/next step), or outside scope. Group by meaningful behavior, not every file
 or function; no new schema or exhaustive catalog is needed. In the omissions pass,
@@ -125,7 +118,7 @@ Use the [property-testing workflow](../property-testing/SKILL.md), or its inline
 copy, for this discovery and handoff. During recovery, preserve executable tests,
 generators, dependencies and runner configuration. Do not install a new testing
 library or generate tests as part of the recovery proposal. The shared workflow's
-authoring steps apply after adoption, when adding tests as described below.
+authoring steps apply during authorized implementation, as described below.
 
 Within that same short pass, try to disprove a few broad or uncertain requirements:
 what option, input, platform or interaction could make the sentence false? Use
@@ -241,32 +234,23 @@ proposal can finish this recovery task while still failing the development gate;
 review acceptance does not waive missing evidence. Retain the complete bundle
 and result directories with the review handoff; Git metadata is local, not pushed.
 
-## Commit reviewed requirements and add tests
+## Review and continue authorized work
 
-Leave adoption to the caller's existing review workflow. In-place edits already
-exist in the checkout; do not apply proposal.patch over them. For an isolated
-draft, transfer only the reviewed changes to the matching original source.
-Retain provenance and the review decision in Git history or durable artifact
-storage, and record where they can be retrieved. The checkout's source/claims
-files are needed through recovery checks and review, but need not be committed
-or remain in the current tree after acceptance and archival. Follow the
-[retention procedure](references/recovery.md#bundle-and-proposed-edits); keep
-unresolved questions in maintained documentation or the issue tracker. Validate
-the actual committed baseline after any cleanup before normal development begins.
-Committing a draft alone does not
-establish acceptance or activate a development policy.
-As part of authorized adoption, explicitly set `Status: approved` only for the
-items accepted through that review. Preserve their documented/inferred origin.
+Use the caller's existing commit/merge/review workflow. In-place edits already
+exist; do not reapply proposal.patch. For an isolated proposal, transfer selected
+changes to the matching original source within the task's authorization.
+Follow the [retention procedure](references/recovery.md#bundle-and-proposed-edits)
+for provenance, source and check results. Keep unresolved questions in maintained
+documentation or the issue tracker, and validate source again after any cleanup.
 
-Hand off the prioritized properties, linked IDs and revisions, domains and
-assumptions, existing test locations, missing checks, and unresolved intent in the
-same maintained Markdown. After the caller adopts the baseline, use the
-property-testing workflow to add the authorized tests: reuse the project's
-library, add the selected checks, retain counterexamples, and run ordinary
-`ib check` against that adopted baseline. Honor an existing authorization to
-continue; ask only about unresolved intent or scope. A task limited to documenting the project ends
-with these findings and recommendations. Do not mix new test evidence into the historical
-recovery evidence or treat exit 4 as adoption.
+If implementation is already authorized, preserve recovery evidence and a
+pre-implementation snapshot for comparison, then continue on the working branch.
+Use ordinary `ib check` against that snapshot with the caller-authorized scope,
+and review the combined change through the existing workflow. A checkpoint commit
+alone does not establish acceptance. Ask only about unresolved intent or scope.
+Use the property-testing workflow for selected test improvements; never cite new
+tests as historical recovery evidence. A recovery-only task ends with its proposal
+and findings. Passing checks do not establish adoption.
 
 This workflow is informed by OpenFastTrace's reverse-specification procedure at
 4.9.0; the source and intentional differences are documented in the reference.

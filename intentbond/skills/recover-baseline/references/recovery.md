@@ -111,16 +111,16 @@ or claim notes rather than requiring a second inventory or a new schema. For
 example, an entry for `req~session-expiration~1` could say: "Documented timeout;
 existing equality test in tests/test_session.py; propose a monotonic-expiration
 property for nonnegative inactivity seconds; confirm the clock domain; add a
-property test after adoption." Distinguish existing executable checks from
-proposed checks, and documented intent from inferred behavior. Keep supporting
+property test during authorized implementation." Distinguish existing executable
+checks from proposed checks, and documented intent from inferred behavior. Keep supporting
 citations and unresolved assumptions in the usual claims/open_issues records.
 Discovery neither runs a proposed check nor satisfies a missing coverage link.
 
-The handoff identifies requirement/property IDs, revisions and adoption status,
+The handoff identifies requirement/property IDs, revisions and unresolved decisions,
 relevant test and generator locations, domain/assumptions, missing checks and
 priority rationale. Reuse a precise requirement directly; create a separate
 draft property item only for a useful refinement. No testing dependency or
-executable test is added during recovery. After requirements review, authorized test improvements
+executable test is added during recovery. Authorized test improvements
 use the shared property-testing workflow and the project's normal development
 checker. Existing caller authorization can cover both phases; adoption still
 comes from the caller's review process. Unresolved intent remains a decision,
@@ -203,21 +203,14 @@ Use native OFT Markdown, for example:
 ```markdown
 ### Session expiration
 `req~session-expiration~1`
-Status: draft
 
 Sessions expire after 30 minutes of inactivity.
 
 Needs: impl, utest
 ```
 
-Use explicit draft status for new or substantively rewritten recovered items;
-omitting it imports as approved. Preserve unchanged existing item statuses.
-Place Status immediately after the ID, before the description. Keep draft items
-in trace validation with their full Needs obligations; approval follows the
-caller's review, never a successful check or a change of origin classification.
-
-OFT 4.9.0's detailed report can label draft items UNCOVERED with no uncovered
-types. Keep draft status and inspect trace diagnostics and missing types
+OFT 4.9.0's detailed report can label explicitly draft items UNCOVERED with no
+uncovered types. Keep draft status and inspect trace diagnostics and missing types
 separately; never promote an item to approved to change a coverage label.
 
 Add `# [impl->req~session-expiration~1]` and
@@ -400,12 +393,13 @@ Any policy for carrying accepted debt into development belongs to the caller and
 must be explicitly designed/reviewed; this tool grants no implicit waivers.
 
 The validation Git commit is disposable, so its check/evidence.json cannot be
-used to claim an adopted commit was approved. After authorized review, apply the
-patch to the captured original version only for isolated mode. In-place edits
+used to claim an adopted commit was approved. Within the task's authorization,
+apply the patch to the captured original version only for isolated mode. In-place edits
 are already in the checkout; do not reapply the patch. Retain provenance and the
 acceptance decision, commit the result, and run `ib check --base HEAD --candidate HEAD` in
 the real project. Supply an explicit reviewed scope if kept outside the project.
-Then use normal `ib check` / `ib verify` for subsequent development. If unresolved
+Already authorized implementation can continue after retaining recovery evidence,
+using normal `ib check` / `ib verify` and the existing review workflow. If unresolved
 behavior affects the adopted scope, obtain the decision or narrow the scope
 explicitly; historical evidence never establishes current correctness by itself.
 

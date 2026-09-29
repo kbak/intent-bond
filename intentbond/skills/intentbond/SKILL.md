@@ -28,9 +28,12 @@ Resolve and retain the starting baseline before editing or committing. Reuse it
 for checking the intended change and verifying its committed result; resolving
 the default again after a commit on the default branch would select the new HEAD
 and omit the change from the comparison.
-Ask only about unresolved task or scope decisions. If the project lacks reviewed starting requirements and links,
-use [the existing-project skill](../recover-baseline/SKILL.md) to document and
-review them first. Ordinary development does not repeat that initial work. Candidate scope edits cannot authorize their own policy.
+Ask only about unresolved task or scope decisions. If the project lacks starting
+requirements and links, use [the existing-project skill](../recover-baseline/SKILL.md)
+to document them. Continue implementation when already authorized, retaining the
+recovery evidence and reviewing the combined change through the existing workflow.
+Ordinary development does not repeat that initial work. Candidate scope edits
+cannot authorize their own policy.
 
 Locate affected promises through existing headings, capability tables or targeted
 searches; read their full text and follow links through design, code and assertions.

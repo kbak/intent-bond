@@ -4,9 +4,9 @@
 
 This is the maintained product contract. Its initial 35 requirements were
 recovered from commit `4fe67034f02cbf977e0aa0b5708ba9b921d6cd60`.
-Each requirement retains its origin and uses `Status: approved` to record the
-maintainer's acceptance of the expected behavior. The root [scope](../scope.json) selects the checking policy,
-including `examples/` as additional review paths outside the product trace graph.
+Each requirement retains its origin. The root [scope](../scope.json) selects the
+checking policy, including `examples/` as additional review paths outside the
+product trace graph.
 
 Recovery provenance is retained in Git history at adoption commit
 `48fe9f4aa9d5718c35407443dd772b7f7b78f26f`: the
@@ -97,7 +97,6 @@ linked above.
 
 ### Use the selected baseline policy
 `req~ib-policy-source~1`
-Status: approved
 
 Ordinary checks and verification use scope.json from the resolved baseline commit. Candidate policy edits do not change those rules. An explicit --scope selects the supplied file as-is; a missing or invalid baseline scope must not fall back to the working copy.
 
@@ -113,7 +112,6 @@ Evidence limit: Trust in the caller-selected external policy remains an assumpti
 
 ### Resolve the default comparison baseline
 `req~ib-baseline-selection~1`
-Status: approved
 
 Without --base, use existing refs to select the unique merge base of HEAD and the default branch, preferring its local tip when available. On that branch or detached HEAD use HEAD. Require an explicit baseline when the default branch or a unique merge base cannot be determined; do not fetch refs.
 
@@ -129,7 +127,6 @@ Evidence limit: The documented main/master fallback and ambiguous-merge-base cas
 
 ### Validate both graphs and the required coverage
 `req~ib-coverage~1`
-Status: approved
 
 Both selected versions must pass OFT tracing and the configured coverage floors. Missing implementation/test links and stale requirement revisions remain defects; a candidate cannot waive required Needs by editing its scope.
 
@@ -145,7 +142,6 @@ Evidence limit: The Python comment-token importer isolates fixture text; structu
 
 ### Enforce the optional revision policy
 `req~ib-revision-policy~1`
-Status: approved
 
 When require_revision_increase is true, changed imported requirement content needs a higher revision and revisions must not decrease. When false, revision changes are left to review; OFT reference revisions are still checked.
 
@@ -159,7 +155,6 @@ Existing assertions: [test_changed_promise_remains_reviewable_and_needs_higher_r
 
 ### Keep selected semantic changes pending review
 `req~ib-change-review~1`
-Status: approved
 
 If automated checks pass, changes within selected specification paths, test paths or additional review_paths require external review, including prose and file changes beyond requirement metadata. Passing tests and --allow-pending-review do not clear that review requirement.
 
@@ -173,7 +168,6 @@ Existing assertions: [test_passing_test_edit_stays_reviewable_without_an_approva
 
 ### Never report empty scope as successful coverage
 `req~ib-empty-scope~1`
-Status: approved
 
 An empty selected candidate normally fails. With allow_empty enabled it may report empty (exit 3) only when no other check fails; it does not establish successful coverage or test execution.
 
@@ -187,7 +181,6 @@ Existing assertions: [test_empty_scope_requires_explicit_non_success](../tests/t
 
 ### Bind checks to captured paths, modes and bytes
 `req~ib-source-identity~1`
-Status: approved
 
 Capture commit source from Git blobs and working-tree source from tracked files plus nonignored untracked files, including files outside trace inputs. Identify the sorted path/mode/content manifest with the documented canonical SHA-256 digest. Tracing and tests consume the captured candidate; ignored untracked files, Git metadata and external environment inputs are excluded.
 
@@ -203,7 +196,6 @@ Evidence limit: Existing generated cases use 1–4 selected paths and byte strin
 
 ### Preserve internal symlinks and reject unsafe targets
 `req~ib-safe-symlinks~1`
-Status: approved
 
 Preserve relative internal symlink target bytes and mode 120000, including dangling internal links. Reject absolute, escaping, cyclic and Git-metadata targets. OFT must import actual files without following aliases; explicitly selected aliases require selection of their actual source paths.
 
@@ -217,7 +209,6 @@ Existing assertions: [test_snapshots_preserve_link_bytes_and_modes_including_dan
 
 ### Reject detected source changes during checking
 `req~ib-source-stability~1`
-Status: approved
 
 Check captured source and the original candidate around execution. Detected mutations reject the check, and changed or unchecked source suppresses the test attestation. A mutation restored before the final observation is outside this guarantee.
 
@@ -231,7 +222,6 @@ Existing assertions: [test_test_command_repair_cannot_attest_original_broken_can
 
 ### Require complete passing JUnit execution
 `req~ib-junit-completion~1`
-Status: approved
 
 JUnit success requires command exit 0, at least one passing case, and no failures or errors, including suite-level failures. Empty and entirely skipped suites fail. Mixed skips are allowed by default and rejected when allow_skipped_tests is false. Inconsistent reports cannot supply missing execution evidence. Reject XML DTDs and entity declarations regardless of encoding.
 
@@ -247,7 +237,6 @@ Evidence limit: The generated merge domain is 1–4 reports with 1–12 final ou
 
 ### Require fresh reports inside the captured candidate
 `req~ib-fresh-reports~1`
-Status: approved
 
 Every configured JUnit report must be a fresh regular file within the captured candidate. A pre-existing report or a missing output cannot establish a successful run, even if the command exits zero.
 
@@ -261,7 +250,6 @@ Existing assertions: [test_stale_report_is_rejected](../tests/test_workflow.py);
 
 ### Retain and combine all configured reports
 `req~ib-report-merge~1`
-Status: approved
 
 For multiple configured JUnit outputs, retain each original and a combined report, preserving failures and completion information. Verification must reject a missing retained report or a combined report inconsistent with its retained originals.
 
@@ -275,7 +263,6 @@ Existing assertions: [test_reports_are_retained_combined_and_verified](../tests/
 
 ### Distinguish command success from counted test execution
 `req~ib-command-results~1`
-Status: approved
 
 Command-format checks record the configured command outcome and logs. Exit zero may satisfy command-format completion, but must not invent case counts or individual skip results.
 
@@ -289,7 +276,6 @@ Existing assertions: [test_command_adapter_uses_real_execution_without_claiming_
 
 ### Keep linked execution distinct from suite success
 `req~ib-execution-associations~1`
-Status: approved
 
 With the optional JUnit execution-link profile, associate observations with exact OFT test-artifact revisions and reject invalid supplied identities. Missing observations stay visible; a passing suite alone does not establish that a linked test ran.
 
@@ -305,7 +291,6 @@ Evidence limit: The self-recovery scope does not add execution metadata to exist
 
 ### Enforce required linked test observations
 `req~ib-required-execution~1`
-Status: approved
 
 Each configured required execution key must resolve to exactly one selected candidate test-artifact revision and have a passing observation. Missing, skipped, ambiguous or nonpassing observations reject the check; verification enforces the retained rule as well.
 
@@ -319,7 +304,6 @@ Existing assertions: [test_required_execution_rejects_nonpassing_observations](.
 
 ### Match retained evidence to policy and source
 `req~ib-evidence-verification~1`
-Status: approved
 
 Verification checks retained artifacts and outcomes against the selected trusted scope, baseline and candidate contents without rerunning tests. Changed artifacts, policy or source invalidate the match. Matching hashes do not authenticate the unsigned producer.
 
@@ -335,7 +319,6 @@ Evidence limit: This exercise uses the same project lineage for checker and subj
 
 ### Explain retained graph context without rerunning the project
 `req~ib-explain-context~1`
-Status: approved
 
 Explain validates retained source/scope bindings and asks pinned OFT for graph relationships. It reports exact requested IDs, immediate links and recorded result context without requiring the source checkout or rerunning project tests. Coverage and suite success must remain distinct from individual execution.
 
@@ -349,7 +332,6 @@ Existing assertions: [test_cli_uses_relocated_bundle_without_repo_or_test_execut
 
 ### Report structural change without claiming adequacy or saved effort
 `req~ib-impact-report~1`
-Status: approved
 
 Impact compares retained declarations and exact edges, distinguishing normative text changes from link/revision-only changes. Recorded source classifications distinguish recognized annotation-only edits from implementation or test-body edits. These counts do not establish assertion adequacy or reduced human review effort.
 
@@ -363,7 +345,6 @@ Existing assertions: [test_policy_change_affects_only_cap_promise_and_consumers]
 
 ### Expose source paths outside selected review boundaries
 `req~ib-boundary-report~1`
-Status: approved
 
 Report changed captured paths and their membership in tracing and selected review roots. A captured file outside those roots still contributes to source identity; editing it invalidates matching evidence without implying its meaning was reviewed.
 
@@ -377,7 +358,6 @@ Existing assertions: [test_outside_docs_are_counted_hashed_and_reject_stale_evid
 
 ### Preserve the original and leave recovery uncommitted
 `req~ib-recovery-preservation~1`
-Status: approved
 
 Recovery retains original source and inventory for citations. In-place preparation leaves HEAD and branch unchanged, saves review records and leaves changes uncommitted. Isolated mode prepares a separate draft. Preparation does not execute project tests.
 
@@ -396,7 +376,6 @@ Existing assertions: [test_default_preparation_preserves_snapshot_and_leaves_git
 
 ### Require a clean HEAD checkout for in-place recovery
 `req~ib-recovery-clean-start~1`
-Status: approved
 
 In-place recovery requires a clean index and working tree, including untracked files, with source matching HEAD. Existing local changes are preserved on rejection; another source version requires isolated recovery.
 
@@ -410,7 +389,6 @@ Existing assertions: [test_dirty_checkouts_fail_before_writing_recovery_files](.
 
 ### Validate claims against original source quotations
 `req~ib-recovery-citations~1`
-Status: approved
 
 Every selected recovered item requires provenance. A documented claim requires an intent citation; each citation identifies inventoried original text with matching complete line quotations. Generated wording cannot be its own historical source. Citation validation does not establish semantic support or approval.
 
@@ -424,7 +402,6 @@ Existing assertions: [test_citations_cannot_be_invented_or_self_supporting](../t
 
 ### Preserve executable source and existing tests during recovery
 `req~ib-recovery-edits~1`
-Status: approved
 
 Outside selected editable specification documents, recovery permits only standalone coverage-comment changes and preserves existing files and modes. It rejects added executable tests as historical evidence. Specification rewrites require cited document-change records.
 
@@ -440,7 +417,6 @@ Evidence limit: Python annotation-looking string contents remain protected. Revi
 
 ### Account for changed original requirement identities
 `req~ib-recovery-lineage~1`
-Status: approved
 
 Account for original authored OFT IDs within inventoried specification documents. Unchanged identity/content may map automatically; rewrites, revisions, splits, merges and removals require valid explicit mappings and reasons. A mapping does not grant semantic acceptance.
 
@@ -452,11 +428,10 @@ Implementation: [intentbond/recovery.py](../intentbond/recovery.py).
 
 Existing assertions: [test_reworded_requirement_needs_explicit_accounting_even_with_same_id](../tests/test_recovery_documents.py); [test_split_requires_complete_valid_targets](../tests/test_recovery_documents.py); [test_removed_original_design_id_cannot_disappear_through_coverage_policy](../tests/test_recovery_documents.py).
 
-### Preserve draft status and review after recovery checks
+### Keep optional item status separate from recovery review
 `req~ib-recovery-draft-status~1`
-Status: approved
 
-Recovered draft items retain their status and full coverage obligations during validation. Successful recovery remains review_required; neither a documented origin nor passing checks approves the recovered promise or adopts the baseline.
+Requirement status is optional; explicit statuses and full coverage obligations are preserved during validation. Successful recovery remains review_required; neither a documented origin nor passing checks approves the recovered promise or adopts the baseline.
 
 Needs: impl, utest
 
@@ -468,7 +443,6 @@ Existing assertions: [test_documented_and_inferred_drafts_remain_pending_review_
 
 ### Keep preflight distinct from passing validation
 `req~ib-recovery-preflight~1`
-Status: approved
 
 Recovery preflight checks edits, citations and tracing without running tests. An otherwise clean preflight is incomplete (exit 5), produces no passing test attestation and cannot be verified as successful evidence even with pending review allowed.
 
@@ -482,7 +456,6 @@ Existing assertions: [test_preflight_validates_provenance_without_tests_or_passi
 
 ### Interpret Alloy assertion results under native bounds
 `req~ib-alloy-assertions~1`
-Status: approved
 
 For an Alloy assertion check, a satisfiable result is a counterexample and fails even when the analyzer process exits zero. An unsatisfiable result means no counterexample within the recorded native bounds, not an unbounded proof about application code.
 
@@ -496,7 +469,6 @@ Existing assertions: [test_counterexample_is_a_failure_even_when_alloy_exits_zer
 
 ### Reject unsatisfiable required Alloy witnesses
 `req~ib-alloy-witness~1`
-Status: approved
 
 A selected Alloy witness run must be satisfiable. An impossible witness fails even when assertion checks find no counterexample; witnesses alone do not establish model adequacy.
 
@@ -510,7 +482,6 @@ Existing assertions: [test_impossible_witness_is_not_vacuous_success](../tests/t
 
 ### Require satisfiable SMT assumptions
 `req~ib-smt-assumptions~1`
-Status: approved
 
 Before treating an SMT obligation as established, require satisfiable assumptions. Unsatisfiable preconditions must fail instead of yielding a vacuous proof.
 
@@ -524,7 +495,6 @@ Existing assertions: [test_unsatisfiable_preconditions_cannot_prove_anything](..
 
 ### Distinguish SMT proof, counterexample, witness and unknown
 `req~ib-smt-outcomes~1`
-Status: approved
 
 Under satisfiable assumptions, UNSAT for a negated check goal establishes the goal under its encoding; SAT is a failing counterexample. Required witness queries need SAT. An unknown result is inconclusive and an error, with native query/result evidence retained.
 
@@ -538,7 +508,6 @@ Existing assertions: [test_real_proof_witness_and_retained_queries](../tests/tes
 
 ### Validate Spacer certificates and reconstructed traces
 `req~ib-chc-certificates~1`
-Status: approved
 
 A safe CHC result requires an SMT-validated invariant for initialization, every transition and target exclusion. A reachable result requires a validated concrete trace. Vacuous initial states, unknown outcomes and invalid or incomplete certificates cannot pass. Model-level safety does not establish application equivalence or liveness.
 
@@ -552,7 +521,6 @@ Existing assertions: [test_safety_certificate_trace_and_portable_polarity](../te
 
 ### Import Python annotations only from actual comments
 `req~ib-python-annotations~1`
-Status: approved
 
 For selected Python files, import trace tags only from actual comment tokens; strings, docstrings and embedded fixture examples must not contribute tags. Preserve original relative paths and physical line numbers in the import view without changing captured or executed source. Tokenization errors stop import with a file-specific diagnostic.
 
@@ -568,7 +536,6 @@ Evidence limit: The interpreter running the checker must understand the source l
 
 ### Retain complete subtest cases with the pinned opt-in producer
 `req~ib-pytest-subtests~1`
-Status: approved
 
 When explicitly enabled with pytest 9.1.1 and JUnit output, the subtest producer adapter emits a distinct complete case for each reported subtest while retaining parent cases, native outcomes, properties and output. Execution and exit status remain pytest results, and the consumer completeness check is unchanged. With JUnit enabled, an unsupported pytest version is rejected.
 
@@ -584,7 +551,6 @@ Evidence limit: The adapter uses pinned producer internals. The existing tests c
 
 ### Select extra review paths independently of tracing
 `req~ib-review-selection~1`
-Status: approved
 
 Optional review_paths selects additional literal repository-relative paths for semantic review and is bound to the trusted scope and evidence identity. It does not add or subtract OFT inputs, create requirements, or satisfy trace links. Specification and test selections retain their existing containment rules.
 
@@ -600,7 +566,6 @@ Evidence limit: The accepted scope selects examples/ for review only. This selec
 
 ### Present draft status, coverage and review separately
 `req~ib-draft-reporting~1`
-Status: approved
 
 Both single-item and compact explanations expose the native OFT item status, shallow/deep coverage and uncovered types separately, alongside trace and recorded review results. Retain a draft UNCOVERED label even when the uncovered-types list is empty and explain that draft status is not approval; do not convert that label into either a missing-link claim or acceptance.
 
@@ -617,7 +582,6 @@ Evidence limit: This presents native/report metadata. Requirement approval recor
 
 ### Stdlib unittest execution evidence
 `req~ib-unittest-evidence~1`
-Status: approved
 
 The optional unittest producer emits one JUnit result per collected test method
 with explicitly configured named OFT identities, including skipped and unexecuted
@@ -630,7 +594,6 @@ Needs: impl, utest
 
 ### Exclude fixture annotations without losing source or review
 `req~ib-trace-exclusions~1`
-Status: approved
 
 Trusted scope may select literal paths or directory prefixes in `trace_exclude`
 inside its inputs. These paths are excluded only from OFT import, including import
@@ -642,7 +605,6 @@ Needs: impl, utest
 
 ### Diagnose prose accidentally imported as a declaration
 `req~ib-markdown-declarations~1`
-Status: approved
 
 When OFT imports a Markdown declaration whose leading backtick-delimited ID is
 followed by prose on the same line, checking fails with its path, line and an

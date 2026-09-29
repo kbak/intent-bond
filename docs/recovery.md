@@ -239,10 +239,6 @@ unstructured prose and non-OFT identifiers still needs an explicit human/agent
 assessment. Scope exclusions must be reviewed too.
 
 All changes remain proposals, including deliberate changes of meaning or removal.
-New or substantively rewritten recovered items explicitly use `Status: draft`
-after their OFT ID; omitted status imports as approved. Unchanged existing items
-retain their status. Promote accepted items to `Status: approved` only through
-the caller's review and adoption process, preserving their historical origin.
 The checker never interprets OFT item status or author notes as baseline acceptance.
 
 ## Work in a separate draft
@@ -279,7 +275,9 @@ original snapshot and provenance when moving an isolated proposal.
 
 In-place changes are already in the checkout; do not reapply proposal.patch.
 Review and resolve relevant scope/intent questions using the project's usual
-process. Commit the accepted requirements, coverage links, and scope. Recovery
+process. If implementation is already authorized, preserve recovery evidence
+and a comparison snapshot, then continue and review the combined change. Commit
+the accepted requirements, coverage links, and scope. Recovery
 records do not need to be committed or kept in the current tree for ordinary
 `ib check` / `ib verify` use. Retain provenance and the review decision in one
 of these ways:

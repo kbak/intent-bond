@@ -87,7 +87,7 @@ These are independent questions, not stages in a single confidence scale:
 | Question | Existing records and their limits |
 | --- | --- |
 | Where did the claim come from? | Recovery records `origin: documented` or `inferred`, with source citations whose roles are `intent`, `implementation`, `test`, or `context`. `documented` requires an intent citation. The checker verifies source membership and exact quotations; the author/reviewer assesses whether those quotations support the claim and role. |
-| Who accepted the promise or change? | The caller's task and review process establish authorization. Neither `origin: documented`, OFT's `Status: approved`, nor a passing check grants it. Preserve the applicable decision through that process. |
+| Who accepted the promise or change? | The caller's task and review process establish authorization. Neither `origin: documented`, OFT's explicit or default `approved` status, nor a passing check grants it. Preserve the applicable decision through that process. |
 | What was checked? | Check evidence records trace, policy, test, source-stability, and review results for the selected versions. Report each at its recorded scope. |
 
 An inferred claim may later be accepted without changing its historical origin.
