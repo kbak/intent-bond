@@ -22,9 +22,7 @@ def obligations():
     remainder = amount - requested
     values = {"amount": amount, "requested": requested, "remainder": remainder}
     return {
-        "Conservation": Obligation(
-            pre, Implies(accepted, requested + remainder == amount), values
-        ),
+        "Conservation": Obligation(pre, Implies(accepted, requested + remainder == amount), values),
         "CanSplit": Obligation(
             pre, And(accepted, requested > 0, remainder > 0), values, kind="run"
         ),

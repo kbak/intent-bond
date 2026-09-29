@@ -23,6 +23,23 @@ See [validation](docs/validation.md) for dependencies, packaged tests, examples,
 and optional mutation checks. CI builds a source distribution and wheel, then
 tests the installed package outside the source checkout.
 
+The [secret scan](.github/workflows/secrets.yml) runs checksum-pinned Gitleaks over
+all fetched history on pushes and pull requests. A synthetic token first checks
+that detection works. CI uses upstream rules without candidate config, ignore
+files or inline suppressions. To check locally with Gitleaks 8.30.1:
+
+```sh
+gitleaks git --redact --ignore-gitleaks-allow --log-opts="--all" .
+```
+
+Git mode does not inspect uncommitted files. Also run
+`gitleaks dir --redact /path/to/release` on the exact release directory.
+Use obvious dummy fixture values instead of realistic tokens; revoke or rotate
+any real exposed secret before arranging history cleanup.
+Follow [clean packaging](docs/validation.md#build-a-release-from-clean-source)
+and [evidence sharing](docs/contract.md#sharing-evidence) before publishing
+packages, logs or check bundles.
+
 ## Make a change
 
 - Start from the affected requirements in the [specification](docs/spec.md) and

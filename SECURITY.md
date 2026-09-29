@@ -24,6 +24,11 @@ Verification must reject mismatched or altered inputs. Bundles are unsigned:
 matching hashes do not authenticate their producer. Consumers must establish
 producer trust separately.
 
+Evidence is not automatically safe to publish. Logs and source artifacts can
+contain credentials or private project data. Keep original bundles private;
+follow [sharing evidence](docs/contract.md#sharing-evidence) when preparing a
+separate sanitized copy.
+
 Structural links, passing tests, and formal results support different conclusions.
 Specification review and approval remain external decisions. Formal checks concern
 the supplied model under its recorded assumptions and bounds.

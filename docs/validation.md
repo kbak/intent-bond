@@ -56,6 +56,29 @@ upstream producer fix is preferable once available and verified.
 The [property mutation checks](../.github/workflows/property-evaluation.yml) run
 on manual dispatch, separately from the normal pull-request checks.
 
+## Build a release from clean source
+
+Build from the committed revision you intend to publish, using a fresh directory
+so ignored `build/`, `dist/` and `*.egg-info/` from earlier work cannot enter
+the distribution. Install the locked build dependencies above first.
+
+```sh
+IB_RELEASE_REV=$(git rev-parse HEAD)
+IB_RELEASE_DIR=$(mktemp -d)
+mkdir "$IB_RELEASE_DIR/source"
+git archive "$IB_RELEASE_REV" | tar -x -C "$IB_RELEASE_DIR/source"
+python3 -m build --no-isolation --outdir "$IB_RELEASE_DIR/dist" "$IB_RELEASE_DIR/source"
+python3 -m zipfile -l "$IB_RELEASE_DIR"/dist/*.whl
+tar -tzf "$IB_RELEASE_DIR"/dist/*.tar.gz
+gitleaks dir --redact --max-archive-depth=2 "$IB_RELEASE_DIR/dist"
+```
+
+This builds the wheel through the source distribution, as CI does. Inspect the
+file lists before uploading; the archive excludes uncommitted changes. Test the
+installed wheel from outside the checkout using the CI procedure. Keep local
+evidence and operational logs out of the release directory. Do not reuse or
+publish an older in-tree build just because its version number matches.
+
 ## Dependency updates
 
 CI installs exact Python versions and artifact hashes from

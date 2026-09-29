@@ -20,6 +20,12 @@ The command runs the existing Python suite with the committed opt-in pytest 9.1.
 adapter and a fresh JUnit report. The scope governs ordinary `ib check` runs;
 CI automation is configured separately in [.github/workflows/ci.yml](../.github/workflows/ci.yml).
 
+The separate [secret scan](../.github/workflows/secrets.yml) scans fetched Git
+history with upstream rules and a synthetic detection self-check. Package builds
+start from clean source; local build caches are not release inputs. These release
+checks do not sanitize the test logs, patches or source included in evidence.
+See [sharing evidence](contract.md#sharing-evidence) for that separate review.
+
 IntentBond checks its own requirements and tests. Results identify the exact
 source checked and the tests run; they do not provide independent certification.
 Coverage comments connect requirements to implementation and assertions. Review

@@ -410,6 +410,22 @@ outcome remains in the check record for diagnosis. Verification requires
 Artifact hashes detect changes relative to the record. Statements are unsigned;
 the caller's storage and access controls must establish who produced them.
 
+## Sharing evidence
+
+Treat evidence bundles as private. Test commands inherit the invoking
+environment, and their stdout/stderr is retained verbatim in `tests.log`.
+JUnit output, patches, source snapshots and local paths can also contain secrets
+or private project data. Evidence verification checks integrity, not privacy.
+
+Keep the original bundle intact in private storage. To share publicly, make a
+separate copy, remove unnecessary files and redact sensitive content. Run
+`gitleaks dir --redact /path/to/share-copy` and manually inspect the remaining
+content; pattern matching cannot identify every secret or private detail.
+Label the copy as sanitized, not as the original verified bundle: changing files
+invalidates their original hashes and may make `ib verify` reject it. Use a
+private channel for the intact original when reproducible verification is needed.
+Never attach raw logs or a complete bundle to a public issue by default.
+
 ## Exit codes and verification
 
 | Check exit | Status | Meaning |
