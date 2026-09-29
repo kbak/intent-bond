@@ -1,14 +1,20 @@
 # IntentBond
 
-IntentBond connects intent, requirements, specifications, code, and tests with
-explicit links. Follow them to find what a change affects and update the related
-artifacts together.
+IntentBond connects intent and specifications to code, tests, and verification
+evidence. Follow explicit links to find what a change affects and keep the related
+artifacts consistent as software changes.
 
 It checks links across Git versions, runs your tests, and saves results tied to
 the source checked. Optional Alloy and Z3 checks add formal verification for
 selected properties.
 
 ## How it works
+
+Capture user outcomes and rationale in `intent.md`, and concrete requirements and
+design in `spec.md`. These are suggested document roles; existing filenames such
+as `requirements.md` work too. Give intent and requirements stable IDs, and link
+requirements to the intent they refine. IntentBond's own [intent](docs/intent.md)
+and [specification](docs/spec.md) demonstrate the full chain.
 
 Keep requirements in Markdown and reference them from code and tests using
 [OpenFastTrace (OFT)](https://github.com/itsallcode/openfasttrace) IDs:
@@ -32,9 +38,11 @@ reference that revision. IntentBond runs the tests and reports changes against
 a Git baseline. Review determines whether the linked code and checks satisfy
 the requirement.
 
-Include rationale and intermediate design or specification items where useful;
-a separate document for each is optional. See the [session example](examples/session)
-and [artifact meanings](intentbond/skills/intentbond/references/semantics.md).
+Separate files and intermediate design items are optional. See the
+[authoring guidance](intentbond/skills/intentbond/references/requirements.md)
+for intent links and conversation decisions, the [session example](examples/session)
+for a minimal requirement, and [artifact meanings](intentbond/skills/intentbond/references/semantics.md)
+for interpreting the chain.
 
 ## Install
 
@@ -204,7 +212,7 @@ independently changing promises their own IDs.
 
 See the [documentation index](docs/README.md) for guides, examples, and the
 [command reference](docs/contract.md). IntentBond's own
-[requirements](docs/requirements.md) are maintained with its code and tests.
+[intent](docs/intent.md) and [specification](docs/spec.md) are maintained with its code and tests.
 Contributions are welcome; start with
 [CONTRIBUTING.md](CONTRIBUTING.md). Report vulnerabilities through
 [SECURITY.md](SECURITY.md).

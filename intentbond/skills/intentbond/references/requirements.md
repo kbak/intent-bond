@@ -1,7 +1,9 @@
-# Requirements and design
+# Intent and specifications
 
-Write concrete behavior and constraints in the project's existing Markdown
-documents. Give them OpenFastTrace (OFT) IDs and link related design, code, and
+Capture user outcomes and rationale as intent, and concrete behavior, constraints,
+and design as a specification. Use the project's existing Markdown documents;
+`intent.md` and `spec.md` are useful defaults. Give the selected outcomes and
+requirements OpenFastTrace (OFT) IDs and link them to related design, code, and
 tests so later changes can be checked and reviewed.
 
 Use the shared [concepts and result meanings](semantics.md), included alongside this guidance
@@ -10,6 +12,63 @@ in agent contexts. Keep coverage, origin, approval and execution evidence distin
 Normal checks read root scope.json from the adopted baseline; omit --scope to
 use it. Use external scope only when supplied by the caller. Candidate scope
 edits cannot authorize themselves; proposed starting requirements and scope need review before use.
+
+## Capture intent from a conversation
+
+Retain the user's problem, desired outcome, affected people, high-level constraints,
+and reasons for decisions in their terms. Preserve useful alternatives and open
+questions without turning every suggestion into a promise. Label an agent's
+interpretation as inferred until the user resolves it. An implementation's current
+behavior alone does not establish the user's intent.
+
+Summarize decisions with their source and date when available; link a durable
+conversation, ticket, or decision record rather than inventing quotations or
+provenance. A full transcript is optional. Keep one maintained account of current
+intent and distinguish it from historical discussion or a change proposal. Update
+that account when an authorized decision changes the desired outcome.
+
+## Link intent to the specification
+
+Use stable IDs for independently meaningful outcomes. For example, an intent item
+can be written as:
+
+```markdown
+### End access to abandoned sessions
+`intent~abandoned-sessions~1`
+
+People should not leave an unattended account accessible indefinitely.
+
+Needs: req
+```
+
+The specification selects concrete behavior and links it to that outcome:
+
+```markdown
+### Inactivity timeout
+`req~session-expiration~1`
+
+A session expires when its inactivity reaches 30 minutes. A session with less
+than 30 minutes of inactivity remains active.
+
+Covers:
+- intent~abandoned-sessions~1
+
+Needs: impl, utest
+```
+
+Code and test annotations keep referencing the requirement. The 30-minute choice
+belongs to the specification; its rationale can be retained with the decision.
+An optional implementation plan references the affected items and intended checks.
+Do not use `Covers` for a conversation citation or a plan's task list: those are
+source/context references, not declarations of requirement coverage.
+
+Include the intent and specification documents in the trusted scope's `inputs`
+and `specification_paths` so tracing and review see both. An adopted
+`required_coverage` floor of `"intent": ["req"]` preserves the declared obligation;
+keep the existing requirement coverage floors too. Such a floor requires links
+for declared items, not completeness of captured intent. Plain Markdown links
+provide navigation but do not satisfy OFT coverage. No new CLI or artifact schema
+is needed, and existing document names and OFT type conventions remain valid.
 
 ## Author requirements and design
 

@@ -11,7 +11,8 @@ Start with the [README](../README.md) for installation and a first check.
 
 ## Reference
 
-- [IntentBond requirements](requirements.md) — accepted product promises and their code/test links.
+- [IntentBond intent](intent.md) — user outcomes, rationale, and design direction.
+- [IntentBond specification](spec.md) — technical promises linked to intent, code, and tests.
 - [Command and evidence contract](contract.md) — CLI, scope, snapshots, results, and verification.
 - [Artifact meanings](../intentbond/skills/intentbond/references/semantics.md) — what the evidence establishes.
 - [Execution links](../intentbond/skills/intentbond/references/execution-links.md) — associate observed tests with coverage.

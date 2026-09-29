@@ -25,8 +25,9 @@ tests the installed package outside the source checkout.
 
 ## Make a change
 
-- Start from the affected [requirements](docs/requirements.md) and follow their
-  implementation and test links. For each commit, keep the promises, reference
+- Start from the affected requirements in the [specification](docs/spec.md) and
+  follow their links to [intent](docs/intent.md), implementation, and tests.
+  For each commit, keep the outcomes, promises, reference
   docs, code, and assertions consistent; unchanged behavior can keep unchanged
   requirement wording and IDs.
 - Read the [command and evidence contract](docs/contract.md) before changing CLI

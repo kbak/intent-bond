@@ -8,9 +8,11 @@ workflows.
 
 | Term | Meaning |
 | --- | --- |
-| Intent | The desired outcome and rationale behind the work, recorded in existing source documents or decisions. An inferred interpretation remains distinct from an accepted promise. |
+| Intent | The user's problem, desired outcome, rationale, and high-level constraints, often recorded in intent.md. It can retain decisions and open questions from human/agent conversations. An inferred interpretation or proposal remains distinct from an accepted outcome. |
 | Requirement | A statement of expected behavior or a constraint the software must satisfy. |
-| Specification / design | A description of required behavior, interfaces, or structure. It can contain requirements or refine them through linked items; a separate layer is optional. |
+| Specification | The technical description of required behavior, interfaces, constraints, and design, often recorded in spec.md. It contains individually identified requirements that refine intent; it can also contain linked design items. |
+| Design item | A linked decision about structure or implementation that refines requirements. A separate design layer is optional. |
+| Implementation plan | An optional change-specific account of affected artifacts, work order, risks, and checks. It references intent and specification items; it does not replace the maintained specification. |
 | Traceability link | An explicit reference connecting a requirement to related requirements, design, code, or tests. |
 | Baseline | The Git commit used as the starting point for comparison. A reviewed baseline contains requirements and checking rules accepted through the project's review process. |
 | Candidate | The source version being checked: a commit or the current worktree. |
@@ -20,8 +22,13 @@ workflows.
 | Property | A rule intended to hold across a stated domain of inputs or states. Property tests search for counterexamples using generated inputs. |
 | Logical statement | An optional precise expression of a property beside its prose and ID, with a defined domain and assumptions. It becomes machine-checkable only when interpreted by a tool with defined semantics. |
 
-Use the project's existing documents and artifact types. Separate design layers
-and formal models are optional; review assesses whether their links are meaningful.
+Document roles do not mandate filenames or one file per role. Use the project's
+existing authoritative documents and artifact types. IntentBond's own convention
+is intent -> requirements in the specification -> optional design -> code/tests.
+An `intent` item can declare `Needs: req`; a requirement declares `Covers` for
+the intent it refines and retains its implementation/test obligations. The graph
+is navigable in both directions. These are declared relationships, not proof that
+the user's outcome is achieved. Separate design layers and formal models are optional.
 
 `ib check` validates links in both baseline and candidate and runs the candidate's
 tests. It records specification and test changes for review. `ib verify` matches
@@ -33,7 +40,7 @@ approval or proves that all intended behavior is correct.
 OFT supplies the artifact syntax and tracing rules. Its
 [concepts and terms](https://github.com/itsallcode/openfasttrace/blob/4.9.0/doc/user_guide.md#concepts-and-terms)
 define specification items, IDs, artifact types, revisions, and coverage.
-Use the project's existing types and chains; `req`, `dsn`, `impl`, and `utest`
+Use the project's existing types and chains; `intent`, `req`, `dsn`, `impl`, and `utest`
 are useful conventions, not a mandatory universal hierarchy.
 
 | Term | Meaning in this workflow |

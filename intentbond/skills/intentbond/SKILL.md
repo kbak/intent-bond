@@ -1,16 +1,17 @@
 ---
 name: intentbond
-description: Draft requirements or implement and review a task with OpenFastTrace, using the supplied scope and baseline to follow linked documentation, code, tests, and evidence.
+description: Capture intent, draft specifications, or implement and review a task with OpenFastTrace, using the supplied scope and baseline to follow linked documentation, code, tests, and evidence.
 ---
 
-Maintain requirements, supporting documentation, code, tests, and their links
+Maintain intent, specification requirements, code, tests, and their links
 in each commit prepared for the task.
 Compare changes with the agreed starting commit and retain check results for review.
 
 Use the [concepts and result meanings](references/semantics.md) from the matching tool
 package or the copy included in context. Apply its distinctions in the existing
-task summary; no separate report is required. For design discussions or changes
-to requirements, use [requirements guidance](references/requirements.md).
+task summary; no separate report is required. For user conversations, design
+discussions, or changes to intent and specifications, use
+[authoring guidance](references/requirements.md).
 Discussion does not authorize implementation.
 
 ## Task context
@@ -36,7 +37,9 @@ Ordinary development does not repeat that initial work. Candidate scope edits
 cannot authorize their own policy.
 
 Locate affected promises through existing headings, capability tables or targeted
-searches; read their full text and follow links through design, code and assertions.
+searches; read their full text and follow links back to intent and through design,
+code and assertions. Preserve relevant conversation decisions and unresolved
+questions when maintaining intent; a proposal is not an accepted promise.
 When saved evidence is available, assemble missing context for known IDs together:
 
 ```sh

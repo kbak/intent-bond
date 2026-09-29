@@ -1,8 +1,14 @@
-# IntentBond requirements
+# IntentBond specification
 
 **The maintainer has accepted these requirements and the root checking scope.**
 
-This is the maintained product contract. Its initial 35 requirements were
+This is the maintained technical product contract. The user outcomes and design
+direction are recorded in [intent.md](intent.md). Each requirement below links
+to the intent it supports through OFT `Covers`; its existing implementation and
+test links retain their IDs. These links express refinement, and review assesses
+whether the technical promise serves the intended outcome.
+
+Its initial 35 requirements were
 recovered from commit `4fe67034f02cbf977e0aa0b5708ba9b921d6cd60`.
 Each requirement retains its origin. The root [scope](../scope.json) selects the
 checking policy, including `examples/` as additional review paths outside the
@@ -37,11 +43,13 @@ These links make the accepted promises navigable without changing executable
 behavior. Assertion adequacy, completeness, and future maintenance cost remain
 subjects for ongoing review.
 
-## Maintaining requirements
+## Maintaining the specification
 
 For each commit, keep affected promises, reference documentation, implementation,
 and test assertions consistent through the [development workflow](../CONTRIBUTING.md#make-a-change).
-Update this contract as behavior evolves. The archived recovery claims preserve
+Update this contract as behavior evolves, following its links back to intent when
+the desired outcome or rationale changes. A document move or added intent link
+does not change an existing behavioral promise or its identity. The archived recovery claims preserve
 the original source evidence; ongoing caveats and follow-ups belong in this
 maintained contract.
 
@@ -100,6 +108,9 @@ linked above.
 
 Ordinary checks and verification use scope.json from the resolved baseline commit. Candidate policy edits do not change those rules. An explicit --scope selects the supplied file as-is; a missing or invalid baseline scope must not fall back to the working copy.
 
+Covers:
+- intent~ib-review-decisions~1
+
 Needs: impl, utest
 
 Original documentation: [docs/contract.md](contract.md).
@@ -114,6 +125,9 @@ Evidence limit: Trust in the caller-selected external policy remains an assumpti
 `req~ib-baseline-selection~1`
 
 Without --base, use existing refs to select the unique merge base of HEAD and the default branch, preferring its local tip when available. On that branch or detached HEAD use HEAD. Require an explicit baseline when the default branch or a unique merge base cannot be determined; do not fetch refs.
+
+Covers:
+- intent~ib-understand-change~1
 
 Needs: impl, utest
 
@@ -130,6 +144,9 @@ Evidence limit: The documented main/master fallback and ambiguous-merge-base cas
 
 Both selected versions must pass OFT tracing and the configured coverage floors. Missing implementation/test links and stale requirement revisions remain defects; a candidate cannot waive required Needs by editing its scope.
 
+Covers:
+- intent~ib-preserve-purpose~1
+
 Needs: impl, utest
 
 Original documentation: [docs/contract.md](contract.md).
@@ -145,6 +162,9 @@ Evidence limit: The Python comment-token importer isolates fixture text; structu
 
 When require_revision_increase is true, changed imported requirement content needs a higher revision and revisions must not decrease. When false, revision changes are left to review; OFT reference revisions are still checked.
 
+Covers:
+- intent~ib-preserve-purpose~1
+
 Needs: impl, utest
 
 Original documentation: [docs/contract.md](contract.md).
@@ -157,6 +177,9 @@ Existing assertions: [test_changed_promise_remains_reviewable_and_needs_higher_r
 `req~ib-change-review~1`
 
 If automated checks pass, changes within selected specification paths, test paths or additional review_paths require external review, including prose and file changes beyond requirement metadata. Passing tests and --allow-pending-review do not clear that review requirement.
+
+Covers:
+- intent~ib-review-decisions~1
 
 Needs: impl, utest
 
@@ -171,6 +194,9 @@ Existing assertions: [test_passing_test_edit_stays_reviewable_without_an_approva
 
 An empty selected candidate normally fails. With allow_empty enabled it may report empty (exit 3) only when no other check fails; it does not establish successful coverage or test execution.
 
+Covers:
+- intent~ib-understand-change~1
+
 Needs: impl, utest
 
 Original documentation: [docs/contract.md](contract.md).
@@ -183,6 +209,9 @@ Existing assertions: [test_empty_scope_requires_explicit_non_success](../tests/t
 `req~ib-source-identity~1`
 
 Capture commit source from Git blobs and working-tree source from tracked files plus nonignored untracked files, including files outside trace inputs. Identify the sorted path/mode/content manifest with the documented canonical SHA-256 digest. Tracing and tests consume the captured candidate; ignored untracked files, Git metadata and external environment inputs are excluded.
+
+Covers:
+- intent~ib-trust-evidence~1
 
 Needs: impl, utest
 
@@ -199,6 +228,9 @@ Evidence limit: Existing generated cases use 1–4 selected paths and byte strin
 
 Preserve relative internal symlink target bytes and mode 120000, including dangling internal links. Reject absolute, escaping, cyclic and Git-metadata targets. OFT must import actual files without following aliases; explicitly selected aliases require selection of their actual source paths.
 
+Covers:
+- intent~ib-trust-evidence~1
+
 Needs: impl, utest
 
 Original documentation: [docs/contract.md](contract.md).
@@ -212,6 +244,9 @@ Existing assertions: [test_snapshots_preserve_link_bytes_and_modes_including_dan
 
 Check captured source and the original candidate around execution. Detected mutations reject the check, and changed or unchecked source suppresses the test attestation. A mutation restored before the final observation is outside this guarantee.
 
+Covers:
+- intent~ib-trust-evidence~1
+
 Needs: impl, utest
 
 Original documentation: [docs/contract.md](contract.md).
@@ -224,6 +259,9 @@ Existing assertions: [test_test_command_repair_cannot_attest_original_broken_can
 `req~ib-junit-completion~1`
 
 JUnit success requires command exit 0, at least one passing case, and no failures or errors, including suite-level failures. Empty and entirely skipped suites fail. Mixed skips are allowed by default and rejected when allow_skipped_tests is false. Inconsistent reports cannot supply missing execution evidence. Reject XML DTDs and entity declarations regardless of encoding.
+
+Covers:
+- intent~ib-trust-evidence~1
 
 Needs: impl, utest
 
@@ -240,6 +278,9 @@ Evidence limit: The generated merge domain is 1–4 reports with 1–12 final ou
 
 Every configured JUnit report must be a fresh regular file within the captured candidate. A pre-existing report or a missing output cannot establish a successful run, even if the command exits zero.
 
+Covers:
+- intent~ib-trust-evidence~1
+
 Needs: impl, utest
 
 Original documentation: [docs/contract.md](contract.md).
@@ -252,6 +293,9 @@ Existing assertions: [test_stale_report_is_rejected](../tests/test_workflow.py);
 `req~ib-report-merge~1`
 
 For multiple configured JUnit outputs, retain each original and a combined report, preserving failures and completion information. Verification must reject a missing retained report or a combined report inconsistent with its retained originals.
+
+Covers:
+- intent~ib-trust-evidence~1
 
 Needs: impl, utest
 
@@ -266,6 +310,9 @@ Existing assertions: [test_reports_are_retained_combined_and_verified](../tests/
 
 Command-format checks record the configured command outcome and logs. Exit zero may satisfy command-format completion, but must not invent case counts or individual skip results.
 
+Covers:
+- intent~ib-trust-evidence~1
+
 Needs: impl, utest
 
 Original documentation: [docs/contract.md](contract.md).
@@ -278,6 +325,9 @@ Existing assertions: [test_command_adapter_uses_real_execution_without_claiming_
 `req~ib-execution-associations~1`
 
 With the optional JUnit execution-link profile, associate observations with exact OFT test-artifact revisions and reject invalid supplied identities. Missing observations stay visible; a passing suite alone does not establish that a linked test ran.
+
+Covers:
+- intent~ib-trust-evidence~1
 
 Needs: impl, utest
 
@@ -294,6 +344,9 @@ Evidence limit: The self-recovery scope does not add execution metadata to exist
 
 Each configured required execution key must resolve to exactly one selected candidate test-artifact revision and have a passing observation. Missing, skipped, ambiguous or nonpassing observations reject the check; verification enforces the retained rule as well.
 
+Covers:
+- intent~ib-trust-evidence~1
+
 Needs: impl, utest
 
 Original documentation: [docs/contract.md](contract.md).
@@ -306,6 +359,9 @@ Existing assertions: [test_required_execution_rejects_nonpassing_observations](.
 `req~ib-evidence-verification~1`
 
 Verification checks retained artifacts and outcomes against the selected trusted scope, baseline and candidate contents without rerunning tests. Changed artifacts, policy or source invalidate the match. Matching hashes do not authenticate the unsigned producer.
+
+Covers:
+- intent~ib-trust-evidence~1
 
 Needs: impl, utest
 
@@ -322,6 +378,9 @@ Evidence limit: This exercise uses the same project lineage for checker and subj
 
 Explain validates retained source/scope bindings and asks pinned OFT for graph relationships. It reports exact requested IDs, immediate links and recorded result context without requiring the source checkout or rerunning project tests. Coverage and suite success must remain distinct from individual execution.
 
+Covers:
+- intent~ib-understand-change~1
+
 Needs: impl, utest
 
 Original documentation: [docs/contract.md](contract.md).
@@ -335,6 +394,9 @@ Existing assertions: [test_cli_uses_relocated_bundle_without_repo_or_test_execut
 
 Impact compares retained declarations and exact edges, distinguishing normative text changes from link/revision-only changes. Recorded source classifications distinguish recognized annotation-only edits from implementation or test-body edits. These counts do not establish assertion adequacy or reduced human review effort.
 
+Covers:
+- intent~ib-understand-change~1
+
 Needs: impl, utest
 
 Original documentation: [docs/requirement-granularity.md](requirement-granularity.md).
@@ -347,6 +409,9 @@ Existing assertions: [test_policy_change_affects_only_cap_promise_and_consumers]
 `req~ib-boundary-report~1`
 
 Report changed captured paths and their membership in tracing and selected review roots. A captured file outside those roots still contributes to source identity; editing it invalidates matching evidence without implying its meaning was reviewed.
+
+Covers:
+- intent~ib-review-decisions~1
 
 Needs: impl, utest
 
@@ -366,6 +431,9 @@ graph. Records are required during recovery checks and review, but ordinary
 checks and verification after adoption do not require them in the current tree.
 Retain provenance in Git history or durable artifact storage before cleanup.
 
+Covers:
+- intent~ib-adopt-existing-project~1
+
 Needs: impl, utest
 
 Original documentation: [intentbond/skills/recover-baseline/references/recovery.md](../intentbond/skills/recover-baseline/references/recovery.md).
@@ -378,6 +446,9 @@ Existing assertions: [test_default_preparation_preserves_snapshot_and_leaves_git
 `req~ib-recovery-clean-start~1`
 
 In-place recovery requires a clean index and working tree, including untracked files, with source matching HEAD. Existing local changes are preserved on rejection; another source version requires isolated recovery.
+
+Covers:
+- intent~ib-adopt-existing-project~1
 
 Needs: impl, utest
 
@@ -392,6 +463,9 @@ Existing assertions: [test_dirty_checkouts_fail_before_writing_recovery_files](.
 
 Every selected recovered item requires provenance. A documented claim requires an intent citation; each citation identifies inventoried original text with matching complete line quotations. Generated wording cannot be its own historical source. Citation validation does not establish semantic support or approval.
 
+Covers:
+- intent~ib-adopt-existing-project~1
+
 Needs: impl, utest
 
 Original documentation: [intentbond/skills/recover-baseline/references/recovery.md](../intentbond/skills/recover-baseline/references/recovery.md).
@@ -404,6 +478,9 @@ Existing assertions: [test_citations_cannot_be_invented_or_self_supporting](../t
 `req~ib-recovery-edits~1`
 
 Outside selected editable specification documents, recovery permits only standalone coverage-comment changes and preserves existing files and modes. It rejects added executable tests as historical evidence. Specification rewrites require cited document-change records.
+
+Covers:
+- intent~ib-adopt-existing-project~1
 
 Needs: impl, utest
 
@@ -420,6 +497,9 @@ Evidence limit: Python annotation-looking string contents remain protected. Revi
 
 Account for original authored OFT IDs within inventoried specification documents. Unchanged identity/content may map automatically; rewrites, revisions, splits, merges and removals require valid explicit mappings and reasons. A mapping does not grant semantic acceptance.
 
+Covers:
+- intent~ib-adopt-existing-project~1
+
 Needs: impl, utest
 
 Original documentation: [intentbond/skills/recover-baseline/references/recovery.md](../intentbond/skills/recover-baseline/references/recovery.md).
@@ -432,6 +512,9 @@ Existing assertions: [test_reworded_requirement_needs_explicit_accounting_even_w
 `req~ib-recovery-draft-status~1`
 
 Requirement status is optional; explicit statuses and full coverage obligations are preserved during validation. Successful recovery remains review_required; neither a documented origin nor passing checks approves the recovered promise or adopts the baseline.
+
+Covers:
+- intent~ib-adopt-existing-project~1
 
 Needs: impl, utest
 
@@ -446,6 +529,9 @@ Existing assertions: [test_documented_and_inferred_drafts_remain_pending_review_
 
 Recovery preflight checks edits, citations and tracing without running tests. An otherwise clean preflight is incomplete (exit 5), produces no passing test attestation and cannot be verified as successful evidence even with pending review allowed.
 
+Covers:
+- intent~ib-adopt-existing-project~1
+
 Needs: impl, utest
 
 Original documentation: [docs/contract.md](contract.md).
@@ -458,6 +544,9 @@ Existing assertions: [test_preflight_validates_provenance_without_tests_or_passi
 `req~ib-alloy-assertions~1`
 
 For an Alloy assertion check, a satisfiable result is a counterexample and fails even when the analyzer process exits zero. An unsatisfiable result means no counterexample within the recorded native bounds, not an unbounded proof about application code.
+
+Covers:
+- intent~ib-check-critical-rules~1
 
 Needs: impl, utest
 
@@ -472,6 +561,9 @@ Existing assertions: [test_counterexample_is_a_failure_even_when_alloy_exits_zer
 
 A selected Alloy witness run must be satisfiable. An impossible witness fails even when assertion checks find no counterexample; witnesses alone do not establish model adequacy.
 
+Covers:
+- intent~ib-check-critical-rules~1
+
 Needs: impl, utest
 
 Original documentation: [docs/model-checking.md](model-checking.md).
@@ -484,6 +576,9 @@ Existing assertions: [test_impossible_witness_is_not_vacuous_success](../tests/t
 `req~ib-smt-assumptions~1`
 
 Before treating an SMT obligation as established, require satisfiable assumptions. Unsatisfiable preconditions must fail instead of yielding a vacuous proof.
+
+Covers:
+- intent~ib-check-critical-rules~1
 
 Needs: impl, utest
 
@@ -498,6 +593,9 @@ Existing assertions: [test_unsatisfiable_preconditions_cannot_prove_anything](..
 
 Under satisfiable assumptions, UNSAT for a negated check goal establishes the goal under its encoding; SAT is a failing counterexample. Required witness queries need SAT. An unknown result is inconclusive and an error, with native query/result evidence retained.
 
+Covers:
+- intent~ib-check-critical-rules~1
+
 Needs: impl, utest
 
 Original documentation: [docs/model-checking.md](model-checking.md).
@@ -511,6 +609,9 @@ Existing assertions: [test_real_proof_witness_and_retained_queries](../tests/tes
 
 A safe CHC result requires an SMT-validated invariant for initialization, every transition and target exclusion. A reachable result requires a validated concrete trace. Vacuous initial states, unknown outcomes and invalid or incomplete certificates cannot pass. Model-level safety does not establish application equivalence or liveness.
 
+Covers:
+- intent~ib-check-critical-rules~1
+
 Needs: impl, utest
 
 Original documentation: [docs/model-checking.md](model-checking.md).
@@ -523,6 +624,9 @@ Existing assertions: [test_safety_certificate_trace_and_portable_polarity](../te
 `req~ib-python-annotations~1`
 
 For selected Python files, import trace tags only from actual comment tokens; strings, docstrings and embedded fixture examples must not contribute tags. Preserve original relative paths and physical line numbers in the import view without changing captured or executed source. Tokenization errors stop import with a file-specific diagnostic.
+
+Covers:
+- intent~ib-preserve-purpose~1
 
 Needs: impl, utest
 
@@ -539,6 +643,9 @@ Evidence limit: The interpreter running the checker must understand the source l
 
 When explicitly enabled with pytest 9.1.1 and JUnit output, the subtest producer adapter emits a distinct complete case for each reported subtest while retaining parent cases, native outcomes, properties and output. Execution and exit status remain pytest results, and the consumer completeness check is unchanged. With JUnit enabled, an unsupported pytest version is rejected.
 
+Covers:
+- intent~ib-trust-evidence~1
+
 Needs: impl, utest
 
 Original documentation: [docs/contract.md](contract.md).
@@ -554,6 +661,9 @@ Evidence limit: The adapter uses pinned producer internals. The existing tests c
 
 Optional review_paths selects additional literal repository-relative paths for semantic review and is bound to the trusted scope and evidence identity. It does not add or subtract OFT inputs, create requirements, or satisfy trace links. Specification and test selections retain their existing containment rules.
 
+Covers:
+- intent~ib-review-decisions~1
+
 Needs: impl, utest
 
 Original documentation: [docs/contract.md](contract.md).
@@ -568,6 +678,9 @@ Evidence limit: The accepted scope selects examples/ for review only. This selec
 `req~ib-draft-reporting~1`
 
 Both single-item and compact explanations expose the native OFT item status, shallow/deep coverage and uncovered types separately, alongside trace and recorded review results. Retain a draft UNCOVERED label even when the uncovered-types list is empty and explain that draft status is not approval; do not convert that label into either a missing-link claim or acceptance.
+
+Covers:
+- intent~ib-review-decisions~1
 
 Needs: impl, utest
 
@@ -590,6 +703,9 @@ expected failures, unexpected successes and interrupted executions cannot become
 passing suite evidence. Zero discovery and invalid mappings fail. Existing
 reports are never overwritten.
 
+Covers:
+- intent~ib-trust-evidence~1
+
 Needs: impl, utest
 
 ### Exclude fixture annotations without losing source or review
@@ -601,6 +717,9 @@ diagnostics and JSX aliases. Source capture, source identity, test access and
 specification/test/review path selection retain them. Candidate policy cannot
 suppress baseline obligations by adding an exclusion.
 
+Covers:
+- intent~ib-understand-change~1
+
 Needs: impl, utest
 
 ### Diagnose prose accidentally imported as a declaration
@@ -611,5 +730,8 @@ followed by prose on the same line, checking fails with its path, line and an
 explicit authoring remedy. Native OFT parsing is unchanged. Historical recovery
 inventory remains readable so accidental original declarations can be mapped or
 removed with review.
+
+Covers:
+- intent~ib-preserve-purpose~1
 
 Needs: impl, utest
