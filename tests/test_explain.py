@@ -7,12 +7,35 @@ from unittest.mock import patch
 from test_workflow import WorkflowFixture
 
 from intentbond.common import CheckError, run
-from intentbond.explain import explain, explain_many, render_context
+from intentbond.explain import explain, explain_many, render_context, render_explanation
 
 REQ = "req~session-expiration~1"
 
 
 class ExplainTests(WorkflowFixture):
+    def test_draft_status_and_native_coverage_are_distinct_in_both_views(self):
+        self.replace("requirements.md", f"`{REQ}`", f"`{REQ}`\nStatus: draft")
+        self.run_check()
+        result = self.explained()
+        artifact = result["artifact"]
+        self.assertEqual(artifact["oft_status"], "draft")
+        self.assertEqual(artifact["coverage"]["deep"], "UNCOVERED")
+        self.assertEqual(artifact["coverage"]["uncovered_types"], [])
+        batch = explain_many([REQ], self.out / "evidence.json", self.jar)
+        for rendered in (render_explanation(result), render_context(batch)):
+            self.assertIn("OFT item status: draft", rendered)
+            self.assertIn("deep=UNCOVERED", rendered)
+            self.assertIn("Uncovered types: (none)", rendered)
+            self.assertIn("OFT trace: passed", rendered)
+            self.assertIn("draft status is not approval", rendered)
+            self.assertIn("Recorded review gate: required", rendered)
+        self.replace("tests/test_session.py", "# [utest->" + REQ + "]", "# Missing link")
+        self.run_check()
+        missing = self.explained()
+        self.assertEqual(missing["recorded_check_status"], "rejected")
+        self.assertIn("Uncovered types: utest", render_explanation(missing))
+        self.assertIn("OFT trace: failed", render_explanation(missing))
+
     def explained(self, identifier=REQ, snapshot="candidate"):
         return explain(identifier, self.out / "evidence.json", self.jar, snapshot)
 

@@ -61,6 +61,12 @@ OFT shallow/deep coverage, `covers`, `covered_by`), immediate `related` location
 Follow a related ID with another invocation to traverse a design chain. Coverage
 refers to the native OFT graph; the recorded diagnostics also show policy failures.
 
+Both text views show the OFT item status, native shallow/deep coverage and
+uncovered types separately. OFT 4.9.0 can label a draft `UNCOVERED` even when
+its uncovered-types list is empty. That label is retained as reported; inspect
+the trace result and diagnostics for structural defects. Draft status, link
+coverage, test outcomes and the external review gate do not imply one another.
+
 Several positional IDs select compact output automatically; `--compact` selects
 it for one ID. The command validates the retained bundle and loads OFT's graph
 once, then returns each distinct requested ID in first-occurrence order. Any
@@ -127,7 +133,7 @@ diagnostics (600 characters each) and three reported failing cases (650 detail
 characters each). When no failing case is available, it shows a bounded test-log
 tail. Excerpts and omitted diagnostics/cases are labeled. Full evidence, reports,
 exit codes and validation policy are unchanged; consumers needing structured
-results should read evidence.json. `review.patch` covers specification/test changes,
+results should read evidence.json. `review.patch` covers changes selected for semantic review,
 so the caller still reviews the full candidate Git diff, including new files.
 
 For `verify`, use the same baseline and scope as the original check. If the
@@ -167,10 +173,17 @@ are imported once.
 
 JSX/TSX files use OFT 4.9.0's existing JS/TS tag importer through temporary,
 byte-identical aliases; retained exports restore original paths and line numbers.
+Python files use Python's tokenizer to select actual comment tokens before OFT
+import. Strings, docstrings and embedded fixture examples contribute no tags.
+The temporary import view preserves original relative paths and physical line
+numbers; snapshots and executed source remain unchanged. Tokenization errors
+stop the import with a file-specific diagnostic. The interpreter running ib
+must understand the selected Python source's lexical syntax.
 Graph validation consumes the exported OFT graph. Standalone short coverage
 comments that were not imported produce a location-specific error before tests,
 including on unsupported file extensions. This is an import diagnostic, not a
-language parser or an assertion-adequacy check.
+check of executable behavior or assertion adequacy. Other languages retain
+OFT's native annotation recognition.
 
 The `.traceability/recovery/` namespace is reserved for retained recovery records
 and excluded from OFT import, even under `inputs: ["."]`. Source citations can
@@ -180,6 +193,15 @@ Records still participate in source identities and test snapshots.
 `specification_paths` and `test_paths` must lie within inputs and must not
 overlap each other. Include test helpers, fixtures, and runner configuration in
 test paths to expose their changes for review.
+
+Optional `review_paths` is a nonempty, unique list of literal relative paths
+using the same path rules. It selects additional files for semantic review
+without adding OFT inputs. For example, `"review_paths": ["examples", "fixtures"]`
+can expose edits to illustrative requirements without importing them into the
+project's graph. Select narrower `inputs` to exclude those examples: review
+selection never subtracts a file already included in `inputs`. This field is
+bound to the trusted scope and evidence digest. It does not grant specification
+rewrite permission during recovery, create requirements, or satisfy test links.
 
 `required_coverage` selects artifact types and their minimum `Needs`. Selected
 artifacts must originate within specification paths. An empty needs list is
@@ -281,6 +303,20 @@ The JUnit adapter accepts unnamespaced XML and rejects DTDs/entities, malformed
 or inconsistent reports, and reports already present in the candidate. Entirely
 skipped or empty suites fail. `policy.allow_skipped_tests` defaults to true;
 false also rejects mixed passing/skipped suites. Suite-level errors fail.
+
+For pytest **9.1.1**, `-p intentbond.pytest_junit --junitxml=results.xml` enables
+the packaged subtest producer adapter. Native pytest counts subtests without
+emitting a separate testcase for each; the strict completeness check rejects
+that report. The adapter feeds each subtest to pytest's JUnit writer with a
+distinct ID and closes it as a complete case, preserving outcomes, properties
+and output. Parent cases remain present, and pytest's execution and exit status
+are unchanged. Runtime exceptions during a subtest remain pytest call failures;
+setup/teardown errors remain errors. Counts therefore include parent cases and
+reported subtests, not just collected test functions. No report counts are
+rewritten and the consumer's completeness checks remain unchanged. Loading the
+adapter with a different pytest version and JUnit enabled is an error; revalidate
+it when upgrading the pinned producer. It is opt-in and requires pytest in the
+test environment; pytest is not an ib runtime dependency.
 
 With the optional [execution-link profile](../intentbond/skills/intentbond/references/execution-links.md),
 `tests.execution_links.required_artifacts` can require passing observations for
@@ -396,7 +432,7 @@ Rerun checks after repairs or shared-branch updates that change the candidate.
 
 ## Source, tracing and review boundaries
 
-New check evidence and `review.json` include `source_boundaries`: a sorted inventory of changed paths from the complete captured base/candidate manifests. Each path records addition/deletion/modification, membership in `inputs`, and selection by `specification_paths` or `test_paths`. Counts are named for those exact meanings. Requirement-change entries and file-change entries in `review.changes` can describe the same path, so their count is not a distinct changed-file count.
+New check evidence and `review.json` include `source_boundaries`: a sorted inventory of changed paths from the complete captured base/candidate manifests. Each path records addition/deletion/modification, membership in `inputs`, and selection by `specification_paths`, `test_paths`, or optional `review_paths` (reported as `specification`, `test`, or `review`, in that precedence order). Counts are named for those exact meanings. Requirement-change entries and file-change entries in `review.changes` can describe the same path, so their count is not a distinct changed-file count.
 
 A file outside the selected semantic-review roots is still included in full source identity when it belongs to the captured manifest. Editing it after a check invalidates source verification. This inventory does not expand the frozen scope, infer missing requirements, or certify the meaning of excluded files. The ordinary full candidate diff may still require review by the consuming workflow.
 

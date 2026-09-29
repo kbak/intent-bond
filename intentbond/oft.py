@@ -1,11 +1,14 @@
 import os
 import re
+import shutil
 import tempfile
 import urllib.request
 import xml.etree.ElementTree as ET
+from contextlib import contextmanager
 from pathlib import Path
 
 from .common import RECOVERY_RECORDS, CheckError, digest, run, within, xml_tree
+from .python_comments import comment_lines
 
 OFT_VERSION = "4.9.0"
 OFT_SHA256 = "d4ed42503ae066f51d55c3aad7c6e4b16acb80365921951ef5a065a4dc3d94f3"
@@ -33,10 +36,15 @@ def annotation_diagnostics(snap, inputs, items):
         ):
             continue
         markdown = Path(name).suffix.lower() in {".md", ".markdown"}
+        python_comments = None
+        if Path(name).suffix.lower() == ".py":
+            _, python_comments = comment_lines((snap.root / name).read_bytes(), name)
         fence = None
         for line, text in enumerate(
-            (snap.root / name).read_text(encoding="utf-8", errors="replace").splitlines(), 1
+            (snap.root / name).read_text(encoding="utf-8", errors="replace").split("\n"), 1
         ):
+            if python_comments is not None and line not in python_comments:
+                continue
             if markdown:
                 marker = re.fullmatch(r" {0,3}(`{3,}|~{3,})(.*)", text)
                 if fence:
@@ -159,6 +167,32 @@ def artifact_inputs(root, path, links=()):
     return [path]
 
 
+@contextmanager
+def import_view(snap, inputs):
+    """Keep OFT paths/lines stable while restricting Python tags to comment tokens."""
+    selected = [
+        e["path"]
+        for e in snap.manifest
+        if e["mode"] != "120000"
+        and within(e["path"], inputs)
+        and not within(e["path"], [RECOVERY_RECORDS])
+    ]
+    if not any(Path(name).suffix.lower() == ".py" for name in selected):
+        yield snap.root
+        return
+    with tempfile.TemporaryDirectory(prefix="ib-oft-python-") as temporary:
+        root = Path(temporary)
+        for name in selected:
+            target = root / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            if Path(name).suffix.lower() == ".py":
+                content, _ = comment_lines((snap.root / name).read_bytes(), name)
+                target.write_bytes(content)
+            else:
+                shutil.copyfile(snap.root / name, target)
+        yield root
+
+
 def export_items(snap, inputs, jar, java, out, label):
     """Import artifacts through OFT without requiring an already complete graph."""
     for path in inputs:
@@ -180,9 +214,16 @@ def export_items(snap, inputs, jar, java, out, label):
         raise CheckError(f"{label}: select project artifacts outside {RECOVERY_RECORDS}")
     command = [java, "-jar", str(jar)]
     exported = out / f"{label}-items.xml"
-    convert = run(
-        command + ["convert", "-f", str(exported), *inputs], snap.root, out / f"{label}-import.log"
-    )
+    with import_view(snap, selected_inputs) as root:
+        convert = run(
+            command + ["convert", "-f", str(exported), *inputs], root, out / f"{label}-import.log"
+        )
+        if convert["status"] == "passed" and root != snap.root:
+            tree = xml_tree(exported)
+            for source in tree.iter("sourcefile"):
+                if Path(source.text).is_absolute():
+                    source.text = Path(source.text).relative_to(root).as_posix()
+            ET.ElementTree(tree).write(exported, encoding="utf-8", xml_declaration=True)
     if convert["status"] != "passed":
         raise CheckError(f"{label}: OFT import failed; see {convert['log']}")
     # OFT may warn and skip malformed items while returning 0. Treat import diagnostics as errors.

@@ -192,8 +192,7 @@ def render_explanation(result):
         f"{item['id']}: {item['title']}",
         f"Location ({result['snapshot']}): {item['path']}:{item['line']}",
         item["description"],
-        f"Needs: {', '.join(item['needs']) or '(none)'}",
-        f"OFT coverage: shallow={item['coverage']['shallow']}, deep={item['coverage']['deep']}",
+        *_coverage_lines(item),
         f"Covers: {', '.join(item['covers']) or '(none)'}",
         f"Covered by: {', '.join(item['covered_by']) or '(none)'}",
     ]
@@ -206,10 +205,26 @@ def render_explanation(result):
     return "\n".join(lines)
 
 
+def _coverage_lines(item):
+    lines = [
+        f"OFT item status: {item['oft_status'] or '(unspecified)'}",
+        f"Needs: {', '.join(item['needs']) or '(none)'}",
+        f"OFT coverage: shallow={item['coverage']['shallow']}, deep={item['coverage']['deep']}",
+        f"Uncovered types: {', '.join(item['coverage']['uncovered_types']) or '(none)'}",
+    ]
+    if (item["oft_status"] or "").lower() == "draft":
+        lines.append(
+            "Draft item: OFT can label drafts UNCOVERED even with no uncovered types. "
+            "Inspect the trace result and diagnostics separately; draft status is not approval."
+        )
+    return lines
+
+
 def _status_lines(result):
     tests = result["tests"]
     lines = [
         f"Recorded check: {result['recorded_check_status']}",
+        f"OFT trace: {result['oft_trace_status']}",
         f"Tests: {tests['status']} ({tests.get('level', 'no baseline execution recorded')}); source={tests.get('source_status', 'not recorded')}",
         f"Recorded review gate: {result['review']['status']}",
         f"Source: {result['source']['sha256']}",
@@ -259,7 +274,7 @@ def render_context(result):
                 f"{item['id']}: {item['title']}",
                 f"Location ({result['snapshot']}): {item['path']}:{item['line']}",
                 item["description"],
-                f"Needs: {', '.join(item['needs']) or '(none)'}; OFT coverage: shallow={item['coverage']['shallow']}, deep={item['coverage']['deep']}",
+                *_coverage_lines(item),
             ]
         )
         for field, label in (("covers", "Covers"), ("covered_by", "Covered by")):

@@ -35,7 +35,7 @@ def validate_scope(scope):
     }
     if (
         not isinstance(scope, dict)
-        or set(scope) - required - {"allow_empty", "policy"}
+        or set(scope) - required - {"allow_empty", "policy", "review_paths"}
         or required - set(scope)
     ):
         raise CheckError("Scope has unknown or missing fields; see docs/contract.md")
@@ -45,7 +45,9 @@ def validate_scope(scope):
         raise CheckError("Scope name must be nonempty")
     if type(scope.get("allow_empty", False)) is not bool:
         raise CheckError("allow_empty must be boolean")
-    for key in ("inputs", "specification_paths", "test_paths"):
+    for key in ("inputs", "specification_paths", "test_paths", "review_paths"):
+        if key not in scope:
+            continue
         values = scope[key]
         if not isinstance(values, list) or not values:
             raise CheckError(f"{key} must be a nonempty path list")

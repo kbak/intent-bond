@@ -115,11 +115,12 @@ test results, and pending review.
 
 | Exit from `ib check` | Meaning |
 | --- | --- |
-| 0 | Automated checks passed; no specification or test files changed. |
-| 4 | Automated checks passed; specification or test changes need review. |
+| 0 | Automated checks passed; no selected changes triggered the semantic review gate. |
+| 4 | Automated checks passed; selected changes need semantic review. |
 | 1, 2, 3 | Validation failed, could not run, or had an empty scope. |
 
-Review the full diff. `review.patch` contains only specification/test changes;
+Review the full diff. `review.patch` contains changes selected by specification
+paths, test paths and optional `review_paths`;
 passing checks do not approve them.
 
 Inspect a requirement and its links in saved evidence:

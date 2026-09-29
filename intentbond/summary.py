@@ -76,13 +76,13 @@ def render_summary(evidence, changed, artifacts):
 
     lines += ["", "## Changed specifications", ""]
     if changed is None:
-        lines.append("The specification/test comparison did not complete.")
+        lines.append("The selected semantic review comparison did not complete.")
     else:
         specifications = [item for item in changed if item["kind"] == "requirement"]
         files = [item for item in changed if item["kind"] == "file"]
         lines.append(
             f"Changed specification items: {len(specifications)}. "
-            f"Changed specification/test files: {len(files)}. These counts can overlap."
+            f"Changed files selected for semantic review: {len(files)}. These counts can overlap."
         )
         if specifications:
             lines += [
@@ -111,7 +111,7 @@ def render_summary(evidence, changed, artifacts):
                 "Use the full records below for review; these excerpts do not infer intent or approval.",
             ]
         if files:
-            lines += ["", "Changed specification/test paths:", ""]
+            lines += ["", "Changed paths selected for semantic review:", ""]
             lines += ["- " + code(item["path"]) for item in files[:20]]
         if len(specifications) > 20 or len(files) > 20:
             lines += [
@@ -121,7 +121,7 @@ def render_summary(evidence, changed, artifacts):
         lines += [
             "",
             "See [review.json](review.json) for exact changes and [review.patch](review.patch) "
-            "for specification/test diffs. Source locations refer to their named snapshot. "
+            "for selected semantic review diffs. Source locations refer to their named snapshot. "
             "The implementation diff still needs review.",
         ]
 

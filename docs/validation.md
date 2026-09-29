@@ -38,6 +38,21 @@ evidence are retained as artifacts.
 JavaScript dependencies and OFT downloads require network access. QuickCheck is
 provisioned only in its dedicated disposable runner.
 
+CI loads `-p intentbond.pytest_junit` with the pinned pytest 9.1.1 and validates
+the resulting XML with `intentbond.testing.junit_counts`. The optional adapter
+produces separate cases for subtests without weakening report completeness.
+To reproduce that producer locally after installing the locked dependencies:
+
+```sh
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -p hypothesispytest -p intentbond.pytest_junit tests --junitxml=/tmp/intentbond-tests.xml -q
+python -c 'from pathlib import Path; from intentbond.testing import junit_counts; print(junit_counts(Path("/tmp/intentbond-tests.xml")))'
+```
+
+Producer regression tests cover repeated subtest contexts, failures, runtime
+exceptions, skips, setup/teardown errors, collection errors and omitted cases.
+Revalidate or remove the version-specific adapter when upgrading pytest; an
+upstream producer fix is preferable once available and verified.
+
 The [property mutation checks](../.github/workflows/property-evaluation.yml) run
 on manual dispatch, separately from the normal pull-request checks.
 

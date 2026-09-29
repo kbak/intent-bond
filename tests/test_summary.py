@@ -134,7 +134,7 @@ class SummaryWorkflowTests(WorkflowFixture):
         tests.assert_called_once()
         text = (self.out / "summary.md").read_text()
         self.assertIn("Changed specification items: 1", text)
-        self.assertIn("Changed specification/test files: 1", text)
+        self.assertIn("Changed files selected for semantic review: 1", text)
         self.assertEqual(text.count("req~session-expiration~1"), 2)
         self.assertIn("| Modified |", text)
         self.assertIn("inactivity reaches 30 minutes", text)

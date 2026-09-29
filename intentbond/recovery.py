@@ -1,6 +1,7 @@
 """Prepare and validate OFT proposals in a clean checkout or an isolated draft."""
 
 import difflib
+import io
 import os
 import re
 import shutil
@@ -23,6 +24,7 @@ from .common import (
 )
 from .config import load_scope
 from .oft import export_items, import_items
+from .python_comments import comment_lines
 from .recovery_report import render_review
 from .runner import check
 from .snapshot import (
@@ -449,16 +451,27 @@ def annotation_changes_only(path, before, after, *, specification=False):
         return False
     pattern = r"\s*(?:" + pattern + r")\s*"
     try:
-        left = before.decode("utf-8").splitlines(keepends=True)
-        right = after.decode("utf-8").splitlines(keepends=True)
+        left = io.StringIO(before.decode("utf-8"), newline="").readlines()
+        right = io.StringIO(after.decode("utf-8"), newline="").readlines()
     except UnicodeDecodeError:
         return False
+    if suffix == ".py":
+        try:
+            _, left_comments = comment_lines(before, path)
+            _, right_comments = comment_lines(after, path)
+        except CheckError:
+            return False
     deletion_pattern = r"\s*<!--\s*" + TAG + r"\s*-->\s*" if specification else pattern
     for kind, a, b, j, k in difflib.SequenceMatcher(
         None, left, right, autojunk=False
     ).get_opcodes():
         if kind == "equal":
             continue
+        if suffix == ".py" and (
+            not all(row + 1 in left_comments for row in range(a, b))
+            or not all(row + 1 in right_comments for row in range(j, k))
+        ):
+            return False
         if not all(re.fullmatch(deletion_pattern, line) for line in left[a:b]) or not all(
             re.fullmatch(pattern, line) for line in right[j:k]
         ):

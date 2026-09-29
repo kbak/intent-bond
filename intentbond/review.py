@@ -41,7 +41,7 @@ def changes(base, candidate, before, after, scope):
             result.append({"kind": "requirement", "key": key, "before": left, "after": right})
     left = {f["path"]: f for f in base.manifest}
     right = {f["path"]: f for f in candidate.manifest}
-    roots = scope["specification_paths"] + scope["test_paths"]
+    roots = scope["specification_paths"] + scope["test_paths"] + scope.get("review_paths", [])
     for path in sorted(left.keys() | right.keys()):
         if within(path, roots) and left.get(path) != right.get(path):
             result.append(

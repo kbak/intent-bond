@@ -4,12 +4,68 @@ from test_workflow import WorkflowFixture
 
 from intentbond.check_output import render_check
 from intentbond.common import CheckError, digest, read_json, write_json
+from intentbond.config import validate_scope
 from intentbond.evidence import statement
 from intentbond.explain import explain, render_explanation
 from intentbond.runner import verify
 
 
 class BoundaryTests(WorkflowFixture):
+    def test_review_only_fixtures_trigger_bound_review_without_importing_examples(self):
+        path = self.repo / "fixtures/example.md"
+        path.parent.mkdir()
+        path.write_text("# Example\n\n`req~illustrative~1`\n\nNeeds: impl\n")
+        self.configure(lambda scope: scope.update(review_paths=["fixtures"]))
+        result = self.run_check()
+        self.assertEqual(result["status"], "review_required", result)
+        self.assertEqual(result["review"]["change_count"], 1)
+        self.assertNotIn("illustrative", (self.out / "candidate-items.xml").read_text())
+        self.assertEqual(
+            result["source_boundaries"]["paths"],
+            [
+                {
+                    "path": "fixtures/example.md",
+                    "change": "added",
+                    "tracing_input": False,
+                    "semantic_review_selection": "review",
+                }
+            ],
+        )
+        verify(
+            self.repo,
+            self.scope,
+            self.base,
+            "worktree",
+            self.out / "evidence.json",
+            allow_pending_review=True,
+        )
+        self.configure(lambda scope: scope.pop("review_paths"))
+        with self.assertRaises(CheckError):
+            verify(
+                self.repo,
+                self.scope,
+                self.base,
+                "worktree",
+                self.out / "evidence.json",
+                allow_pending_review=True,
+            )
+
+    def test_review_paths_use_existing_literal_path_validation(self):
+        original = read_json(self.scope)
+        for paths in (
+            [],
+            "fixtures",
+            ["../fixtures"],
+            [".git"],
+            ["/tmp"],
+            ["fixtures", "fixtures"],
+        ):
+            with self.subTest(paths=paths), self.assertRaises(CheckError):
+                validate_scope({**original, "review_paths": paths})
+        self.assertEqual(
+            validate_scope({**original, "review_paths": ["fixtures"]})["review_paths"], ["fixtures"]
+        )
+
     def test_outside_docs_are_counted_hashed_and_reject_stale_evidence(self):
         (self.repo / "notes").mkdir()
         path = self.repo / "notes/assessment.md"

@@ -105,7 +105,7 @@ it is not a record of every subsequent link author or approval.
 | Tests pass at `level: suite` | The fresh JUnit report and command satisfy the configured completion policy. | Whether each OFT-linked test ran and which requirement each executed case checks. |
 | Optional execution links report a case outcome | A JUnit case explicitly identifies an OFT test artifact in the checked snapshot. | Whether the association and assertions are adequate, every required scenario ran, or the requirement is satisfied. |
 | `tests.source_status: matched` | The recorded source-stability checks matched around execution. | Reproduction of external dependencies, environment, or network state; detecting a source change restored before the final check. |
-| Check status `passed` / exit 0 | Automated checks passed without specification/test changes triggering this review gate. | Caller-required review, approval, and overall requirement satisfaction. |
+| Check status `passed` / exit 0 | Automated checks passed without changes in specification_paths, test_paths or optional review_paths triggering this review gate. | Caller-required review, approval, and overall requirement satisfaction. |
 | Check status `review_required` / exit 4 | Automated checks passed with review pending. In recovery, the entire proposal remains pending. | Acceptance of the changed or recovered promises. |
 | Recovery preflight status `incomplete` / exit 5 | Proposal and trace checks completed without running tests. | Passing validation, test execution or baseline acceptance. |
 

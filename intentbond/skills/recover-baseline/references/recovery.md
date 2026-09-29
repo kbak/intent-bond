@@ -201,19 +201,29 @@ Place Status immediately after the ID, before the description. Keep draft items
 in trace validation with their full Needs obligations; approval follows the
 caller's review, never a successful check or a change of origin classification.
 
+OFT 4.9.0's detailed report can label draft items UNCOVERED with no uncovered
+types. Keep draft status and inspect trace diagnostics and missing types
+separately; never promote an item to approved to change a coverage label.
+
 Add `# [impl->req~session-expiration~1]` and
 `# [utest->req~session-expiration~1]` as separate lines beside Python behavior
 and assertions. Use `//` for JS/TS (including `.mjs`, `.cjs`, `.jsx`, and `.tsx`),
 Java/C/C++/Go and `--` for SQL. Outside editable specification documents, only
 simple short coverage-tag comments may change; ordinary OFT checking supports
 the wider OFT language. Review that comments are interpreted correctly in
-context, including multiline strings. Do not change other existing source/test
+context. Python import and recovery edit checks recognize actual comment tokens;
+tag-shaped text inside multiline strings or docstrings is not an annotation.
+Other languages retain native OFT recognition. Do not change other existing source/test
 lines, even whitespace. Executable Markdown, doctests and test fixtures need the
 same behavioral protection; do not classify them as editable specifications.
 
 The scope is the normal scope schema 1: name, inputs, specification_paths,
 test_paths, required_coverage, and tests. The inventory may include broad
 context while the scope includes only a bounded set of related artifacts.
+Optional review_paths selects additional fixtures, examples or maintained
+documents for review without importing their illustrative requirements. Keep
+those paths outside inputs when they must not enter the graph. Review selection
+does not grant permission to rewrite them during recovery.
 Use a real existing test command and its required environment. Keep baseline
 expectations separate from runnable tests: neither creates proof of the other.
 
@@ -240,6 +250,14 @@ For JUnit evidence use format junit, configure the existing runner to produce a
 fresh report, and set tests.report to its relative path. Include runner/config
 files in the reviewed scope where they affect verification. Choose coverage
 types based on actual evidence, not this illustrative unit-test default.
+
+For pytest 9.1.1 subtests, the packaged opt-in producer adapter is loaded with
+`-p intentbond.pytest_junit --junitxml=results.xml`. It preserves separate
+subtest cases; native pytest's count-only subtest reporting fails the strict
+JUnit completeness check. This adapter is version-specific and must already
+be installed in the test environment. Do not relax report validation or repair
+test behavior during recovery. See the repository's command contract and
+validation guide for its tested outcomes and upgrade boundary.
 
 For several existing runners, keep one aggregate command and use `tests.reports`
 instead of `tests.report`, for example `["backend-results.xml", "frontend/results.xml"]`.

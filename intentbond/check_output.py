@@ -60,7 +60,7 @@ def render_check(result, out):
         lines.append("test error: " + _excerpt(tests["error"], 600))
     review = result.get("review", {})
     lines.append(
-        f"specification/test review: {review.get('status', 'not_recorded')}"
+        f"semantic review: {review.get('status', 'not_recorded')}"
         f"; changes={review.get('change_count', 'unknown')}"
     )
     lines.extend(boundaries.lines(result.get("source_boundaries")))
@@ -83,7 +83,7 @@ def render_check(result, out):
     if tests["status"] in {"failed", "error"}:
         lines.extend(_failure_lines(out))
     if result["status"] == "review_required":
-        lines.append("Automated checks passed; external specification/test review is required.")
+        lines.append("Automated checks passed; external semantic review is required.")
     lines.append(
         "Review the full candidate diff and linked behavior; checks do not prove conformance."
     )

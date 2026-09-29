@@ -53,7 +53,8 @@ jobs:
           PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
         run: |
           python -c 'from importlib.resources import files; p = files("intentbond") / "skills/property-testing"; assert (p / "SKILL.md").is_file(); assert all((p / "references" / (n + ".md")).is_file() for n in ("python", "typescript", "haskell", "hegel"))'
-          python -m pytest -p hypothesispytest "$RUNNER_TEMP/source/tests" --junitxml="$RUNNER_TEMP/tests.xml" -q
+          python -m pytest -p hypothesispytest -p intentbond.pytest_junit "$RUNNER_TEMP/source/tests" --junitxml="$RUNNER_TEMP/tests.xml" -q
+          python -c 'import sys; from pathlib import Path; from intentbond.testing import junit_counts; junit_counts(Path(sys.argv[1]))' "$RUNNER_TEMP/tests.xml"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: always()
         with:

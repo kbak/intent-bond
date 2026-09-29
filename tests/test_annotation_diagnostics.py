@@ -63,6 +63,20 @@ class DocumentationWorkflowTests(WorkflowFixture):
 
 
 class DocumentationRecoveryTests(RecoveryFixture):
+    def test_review_only_markdown_does_not_grant_recovery_rewrite_permission(self):
+        (self.repo / "fixture.md").write_text("An executable documentation fixture.\n")
+        self.commit()
+        self.draft()
+        scope_path = self.bundle / "draft/scope.json"
+        scope = read_json(scope_path)
+        scope["review_paths"] = ["fixture.md"]
+        write_json(scope_path, scope)
+        (self.bundle / "draft/fixture.md").write_text("A changed fixture.\n")
+        result = self.run_check()
+        self.assertEqual(result["status"], "rejected")
+        self.assertNotEqual(result["proposal_checks"], "passed")
+        self.assertIn("fixture.md", str(result["diagnostics"]))
+
     def test_recovery_accepts_fenced_annotation_examples(self):
         (self.repo / "guide.md").write_text(GUIDE)
         self.commit()

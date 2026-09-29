@@ -15,6 +15,8 @@ def inventory(base_manifest, candidate_manifest, scope):
             if within(path, scope["specification_paths"])
             else "test"
             if within(path, scope["test_paths"])
+            else "review"
+            if within(path, scope.get("review_paths", []))
             else None
         )
         paths.append(
@@ -39,7 +41,12 @@ def inventory(base_manifest, candidate_manifest, scope):
             "changed_paths_outside_selected_semantic_review": len(paths) - selected,
         },
         "paths": paths,
-        "meaning": "All paths remain covered by full source identity. Tracing input membership and specification/test review selection are narrower policy boundaries. Selection does not establish semantic approval or missing requirements.",
+        "meaning": "All paths remain covered by full source identity. Tracing input membership and specification/test review selection are narrower policy boundaries. Selection does not establish semantic approval or missing requirements."
+        + (
+            " Additional review_paths select semantic review without adding tracing inputs."
+            if scope.get("review_paths")
+            else ""
+        ),
     }
 
 
@@ -63,7 +70,7 @@ def lines(value):
     return [
         "Changed captured source paths: " + str(counts["all_changed_captured_source_paths"]),
         "Changed tracing-input paths: " + str(counts["changed_tracing_input_paths"]),
-        "Changed selected specification/test review paths: "
+        "Changed selected semantic review paths: "
         + str(counts["changed_selected_semantic_review_paths"]),
         "Changed paths outside selected semantic review: "
         + str(counts["changed_paths_outside_selected_semantic_review"]),
