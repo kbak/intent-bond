@@ -1,32 +1,20 @@
 """Restructure documentation against original evidence in both recovery modes."""
 
-import copy
 import shutil
+import unittest
 from pathlib import Path
 
 from test_recovery import FIXTURE, RecoveryFixture
 
-from intentbond.common import read_json, write_json
+from intentbond.common import CheckError, read_json, write_json
 from intentbond.oft import import_items
+from intentbond.recovery import requirement_review
 from intentbond.runner import check
 
 REQ = "req~session-expiration~1"
 
 
-class DocumentRecoveryTests(RecoveryFixture):
-    def test_accidental_original_prose_declaration_can_be_reconciled(self):
-        self.structured_draft("\n## Example\n`req~illustration~1` is only an example.\n")
-        with (self.workspace / "requirements.md").open("a") as target:
-            target.write("\n## Example\nExample: `req~illustration~1` is only an example.\n")
-        self.document_change("requirements.md")
-        self.mapping("req~illustration~1", [])
-        result = self.run_check()
-        # [utest->req~ib-markdown-declarations~1]
-        self.assertEqual(result["status"], "review_required", result)
-        mappings = read_json(self.out / "documentation-review.json")["requirement_mappings"]
-        removed = next(item for item in mappings if item["from"] == "req~illustration~1")
-        self.assertEqual(removed["proposed"], [])
-
+class DocumentRecoveryFixture(RecoveryFixture):
     def structured_draft(self, extra=""):
         for name in ("requirements.md", "session.py", "tests/test_session.py"):
             shutil.copyfile(FIXTURE / name, self.repo / name)
@@ -69,6 +57,21 @@ class DocumentRecoveryTests(RecoveryFixture):
             }
         ]
         self.save_claims()
+
+
+class DocumentRecoveryTests(DocumentRecoveryFixture):
+    def test_accidental_original_prose_declaration_can_be_reconciled(self):
+        self.structured_draft("\n## Example\n`req~illustration~1` is only an example.\n")
+        with (self.workspace / "requirements.md").open("a") as target:
+            target.write("\n## Example\nExample: `req~illustration~1` is only an example.\n")
+        self.document_change("requirements.md")
+        self.mapping("req~illustration~1", [])
+        result = self.run_check()
+        # [utest->req~ib-markdown-declarations~1]
+        self.assertEqual(result["status"], "review_required", result)
+        mappings = read_json(self.out / "documentation-review.json")["requirement_mappings"]
+        removed = next(item for item in mappings if item["from"] == "req~illustration~1")
+        self.assertEqual(removed["proposed"], [])
 
     def test_unstructured_readme_can_be_rewritten_with_original_citations(self):
         self.draft()
@@ -159,36 +162,6 @@ class DocumentRecoveryTests(RecoveryFixture):
         self.assertEqual(result["status"], "rejected", result)
         self.assertIn("tests/test_session.py", " ".join(result["diagnostics"]))
 
-    def test_split_requires_complete_valid_targets(self):
-        self.structured_draft()
-        target = "req~session-active~1"
-        with (self.workspace / "requirements.md").open("a") as path:
-            path.write(
-                f"\n### Active session\n`{target}`\n\nAn active session remains valid.\n\nNeeds: impl, utest\n"
-            )
-        for name, kind in (("session.py", "impl"), ("tests/test_session.py", "utest")):
-            path = self.workspace / name
-            path.write_text(f"# [{kind}->{target}]\n" + path.read_text())
-        claim = copy.deepcopy(self.claims["items"][0])
-        claim["id"] = target
-        self.claims["items"].append(claim)
-        self.document_change("requirements.md")
-        self.mapping(targets=[target])
-        result = self.run_check()
-        # [utest->req~ib-recovery-lineage~1]
-        self.assertIn("surviving original ID", " ".join(result["diagnostics"]))
-        self.mapping(targets=[REQ, target])
-        result = self.run_check()
-        self.assertEqual(result["status"], "review_required", result)
-        self.assertEqual(
-            len(
-                read_json(self.out / "documentation-review.json")["requirement_mappings"][0][
-                    "proposed"
-                ]
-            ),
-            2,
-        )
-
     def test_removed_original_design_id_cannot_disappear_through_coverage_policy(self):
         original = "dsn~legacy-choice~1"
         self.structured_draft(f"\n### Legacy choice\n`{original}`\n\nAn older design choice.\n")
@@ -206,10 +179,6 @@ class DocumentRecoveryTests(RecoveryFixture):
         removed = next(m for m in review["requirement_mappings"] if m["from"] == original)
         self.assertEqual(removed["proposed"], [])
         self.assertEqual(result["original_requirement_count"], 2)
-        # Several originals may map to a single consolidated requirement.
-        self.mapping(source=original, targets=[REQ])
-        result = self.run_check()
-        self.assertEqual(result["status"], "review_required", result)
 
     def test_restructuring_does_not_bypass_coverage_floors(self):
         self.structured_draft()
@@ -310,5 +279,43 @@ class DocumentRecoveryTests(RecoveryFixture):
         )
 
 
-class InPlaceDocumentRecoveryTests(DocumentRecoveryTests):
+class InPlaceDocumentRecoveryTests(DocumentRecoveryFixture):
+    # Shared document/lineage rules are covered above. Repeat the filesystem
+    # transitions that differ when the proposal is the original checkout.
     isolated = False
+    test_unstructured_readme_can_be_rewritten_with_original_citations = (
+        DocumentRecoveryTests.test_unstructured_readme_can_be_rewritten_with_original_citations
+    )
+    test_document_move_preserves_identity_and_patch_can_adopt_deletion = (
+        DocumentRecoveryTests.test_document_move_preserves_identity_and_patch_can_adopt_deletion
+    )
+
+
+class RequirementLineageTests(unittest.TestCase):
+    """Mapping rules operate on imported items; they need no second Git/OFT run."""
+
+    def test_split_requires_complete_valid_targets(self):
+        original = {"id": REQ, "content": {"description": "Session expiration"}}
+        split = {"id": "req~session-active~1", "content": {"description": "Active session"}}
+        mapping = {"from": REQ, "to": [split["id"]], "reason": "Split the original promise."}
+        claims = {"requirement_mappings": [mapping]}
+        # [utest->req~ib-recovery-lineage~1]
+        with self.assertRaisesRegex(CheckError, "surviving original ID"):
+            requirement_review(claims, [original], [original, split])
+        mapping["to"] = [REQ, split["id"]]
+        reviewed = requirement_review(claims, [original], [original, split])
+        self.assertEqual(reviewed[0]["proposed"], [original, split])
+        self.assertFalse(reviewed[0]["automatic"])
+
+    def test_multiple_originals_can_map_to_one_requirement(self):
+        original = {"id": "dsn~legacy-choice~1", "content": {"description": "Legacy choice"}}
+        kept = {"id": REQ, "content": {"description": "Session expiration"}}
+        claims = {
+            "requirement_mappings": [
+                {"from": original["id"], "to": [REQ], "reason": "Consolidate the old choice."}
+            ]
+        }
+        # [utest->req~ib-recovery-lineage~1]
+        reviewed = requirement_review(claims, [original, kept], [kept])
+        self.assertEqual([item["proposed"] for item in reviewed], [[kept], [kept]])
+        self.assertEqual([item["automatic"] for item in reviewed], [False, True])

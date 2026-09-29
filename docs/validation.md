@@ -125,8 +125,9 @@ invented/missing citations, unresolved intent, behavior/document changes, missin
 links/tools, failing existing tests and concurrent edits. Compatibility tests
 cover JavaScript module annotations and adding OFT IDs/Needs to existing specification
 prose while retaining original citations. Documentation tests cover cited rewrites,
-moves/deletions and adoption, original ID accounting, revisions, splits, merges and
-removals in both recovery modes. They reject undocumented changes, fabricated citations,
+moves/deletions and adoption in both recovery modes. Shared original-ID accounting,
+revision, status and citation rules run once; split and merge rules use imported-item
+fixtures directly. They reject undocumented changes, fabricated citations,
 test assertion edits and weakened coverage floors. Actual semantic extraction quality
 is not established by these deterministic fixtures.
 Coverage-comment movement tests verify that generated IDs do not require mappings,

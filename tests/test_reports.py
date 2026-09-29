@@ -24,10 +24,6 @@ class ReportTests(unittest.TestCase):
         self.assertEqual(result["total"], 2)
         self.assertEqual(result["passed"], 2)
 
-    def test_report_with_omitted_case_is_invalid(self):
-        with self.assertRaisesRegex(CheckError, "declared test count"):
-            self.parse('<testsuite tests="3"><testcase name="one"/></testsuite>')
-
     def test_unsupported_wrappers_cannot_hide_failing_cases(self):
         for wrapper in ("testsuites", "unexpected"):
             with (
@@ -59,10 +55,9 @@ class ReportTests(unittest.TestCase):
                 '<testsuite tests="1" skipped="1"><testcase name="not executed"/></testsuite>'
             )
 
-    def test_invalid_xml_and_entity_are_rejected(self):
-        for xml in ("<testsuite>", '<!DOCTYPE foo [<!ENTITY x "foo">]><testsuite/>'):
-            with self.subTest(xml=xml), self.assertRaises(CheckError):
-                self.parse(xml)
+    def test_invalid_xml_is_rejected(self):
+        with self.assertRaises(CheckError):
+            self.parse("<testsuite>")
 
     def test_doctype_is_rejected_in_supported_xml_encodings(self):
         declarations = (

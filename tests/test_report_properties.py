@@ -103,6 +103,7 @@ class ReportPropertyTests(unittest.TestCase):
             self.assertFalse(counts_pass(counts, {"policy": {"allow_skipped_tests": True}}))
 
     @SEARCH
+    @example(outcomes=["passed"], omitted=2, wrapped=False)
     @given(
         outcomes=st.lists(OUTCOMES, min_size=1, max_size=20),
         omitted=st.integers(1, 20),
@@ -116,7 +117,7 @@ class ReportPropertyTests(unittest.TestCase):
             tree.set("tests", str(len(outcomes) + omitted))
             ET.ElementTree(tree).write(path, encoding="utf-8")
             # [utest->req~ib-junit-completion~1]
-            with self.assertRaises(CheckError):
+            with self.assertRaisesRegex(CheckError, "declared test count"):
                 junit_counts(path)
-            with self.assertRaises(CheckError):
+            with self.assertRaisesRegex(CheckError, "declared test count"):
                 merge_reports([(path.name, path)])

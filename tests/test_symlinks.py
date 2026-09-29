@@ -155,7 +155,7 @@ class SymlinkWorkflowTests(WorkflowFixture):
         self.assertNotIn("Needs:", patch)
 
 
-class RecoverySymlinkTests(RecoveryFixture):
+class RecoverySymlinkFixture(RecoveryFixture):
     def linked_draft(self):
         links = add_links(self.repo)
         self.commit()
@@ -167,6 +167,8 @@ class RecoverySymlinkTests(RecoveryFixture):
         write_json(workspace / "scope.json", scope)
         return workspace, links
 
+
+class RecoverySymlinkTests(RecoverySymlinkFixture):
     def test_recovery_preserves_links_and_uses_canonical_citation_and_trace_paths(self):
         workspace, links = self.linked_draft()
         inventory = {e["path"]: e for e in read_json(self.bundle / "inventory.json")}
@@ -213,5 +215,11 @@ class RecoverySymlinkTests(RecoveryFixture):
         self.assertIn("outside inventoried text sources: guide.md", " ".join(result["diagnostics"]))
 
 
-class InPlaceRecoverySymlinkTests(RecoverySymlinkTests):
+class InPlaceRecoverySymlinkTests(RecoverySymlinkFixture):
+    # Exercise checkout link handling in both modes; immutable-source and
+    # citation validation use the same captured bundle in either mode.
     isolated = False
+    test_recovery_preserves_links_and_uses_canonical_citation_and_trace_paths = RecoverySymlinkTests.test_recovery_preserves_links_and_uses_canonical_citation_and_trace_paths
+    test_recovery_rejects_link_retargeting_even_for_specification_alias = (
+        RecoverySymlinkTests.test_recovery_rejects_link_retargeting_even_for_specification_alias
+    )

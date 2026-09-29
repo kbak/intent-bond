@@ -100,7 +100,3 @@ class PropertyOnboardingTests(RecoveryFixture):
         self.assertEqual(
             read_json(recovery_output / "check/evidence.json")["predicate"], original_evidence
         )
-
-
-class InPlacePropertyOnboardingTests(PropertyOnboardingTests):
-    isolated = False

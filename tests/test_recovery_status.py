@@ -62,7 +62,3 @@ class RecoveryStatusTests(RecoveryFixture):
         review = read_json(self.out / "documentation-review.json")
         self.assertTrue(review["requirement_mappings"][0]["automatic"])
         self.assertEqual(review["document_changes"], [])
-
-
-class InPlaceRecoveryStatusTests(RecoveryStatusTests):
-    isolated = False
