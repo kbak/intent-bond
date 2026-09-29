@@ -11,7 +11,7 @@ symbols. Execution evidence is for the whole command.
 The `expired` function in [Main.hs](Main.hs) implements the expiration decision.
 
 Covers:
- - req~expiration~1
+ - `req~expiration~1`
 
 ## Expiration postcondition
 `utest~expiration-postcondition~1`
@@ -21,7 +21,7 @@ specified rule over generated signed timestamps and positive timeouts. Explicit
 examples check equality and expiration after the boundary.
 
 Covers:
- - req~expiration~1
+ - `req~expiration~1`
 
 ## Exact expiration boundary
 `utest~expiration-boundary~1`
@@ -30,7 +30,7 @@ The `boundary` property in [Main.hs](Main.hs) checks one tick before expiration
 and equality, over generated timestamps and positive timeouts.
 
 Covers:
- - req~expiration~1
+ - `req~expiration~1`
 
 ## Timestamp translation
 `utest~expiration-shift~1`
@@ -39,4 +39,4 @@ The `translation` property in [Main.hs](Main.hs) shifts both timestamps by the
 same generated amount and checks that the decision is preserved.
 
 Covers:
- - req~expiration~1
+ - `req~expiration~1`

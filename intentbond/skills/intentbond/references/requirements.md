@@ -21,11 +21,12 @@ questions without turning every suggestion into a promise. Label an agent's
 interpretation as inferred until the user resolves it. An implementation's current
 behavior alone does not establish the user's intent.
 
-Summarize decisions with their source and date when available; link a durable
-conversation, ticket, or decision record rather than inventing quotations or
-provenance. A full transcript is optional. Keep one maintained account of current
-intent and distinguish it from historical discussion or a change proposal. Update
-that account when an authorized decision changes the desired outcome.
+Write intent and specifications as current product documents: state the desired
+outcomes, decisions and reasons directly. Avoid dated attributions, conversation
+recaps and migration histories in the maintained narrative. Link a discussion,
+ticket or decision record when it helps explain a current choice; do not invent
+quotations or provenance. Keep proposals and open questions explicit, and update
+the current account when an authorized decision changes the desired outcome.
 
 ## Link intent to the specification
 
@@ -51,10 +52,13 @@ A session expires when its inactivity reaches 30 minutes. A session with less
 than 30 minutes of inactivity remains active.
 
 Covers:
-- intent~abandoned-sessions~1
+- `intent~abandoned-sessions~1`
 
 Needs: impl, utest
 ```
+
+Use backticks around IDs in `Covers` lists as well as declarations. OFT accepts
+them, and they keep GitHub Markdown from interpreting the tildes as strikethrough.
 
 Code and test annotations keep referencing the requirement. The 30-minute choice
 belongs to the specification; its rationale can be retained with the decision.

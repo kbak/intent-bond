@@ -5,21 +5,17 @@ built and checked. As humans and agents change a project, the reasons behind a
 decision can disappear into conversations, while documents, code, and tests drift
 apart. IntentBond should make those connections explicit and usable during work.
 
-The outcomes below summarize the existing product purpose described in the
-[README](../README.md), [artifact meanings](../intentbond/skills/intentbond/references/semantics.md),
-and linked guides. The [specification](spec.md) holds the maintained technical
-promises. The intent summaries explain their purpose; they do not reconstruct
-undocumented historical conversations or introduce new runtime guarantees.
+This document describes the desired outcomes and their rationale. The
+[specification](spec.md) defines the concrete behavior and constraints that
+support them.
 
 ## Design direction and conversations
 
-The maintainer's direction on 2026-09-29 is to separate high-level user thinking
-and design from the technical specification, while preserving traceability
-between them. Intent can be developed in conversation with an AI agent. Retain
-the problem, decisions, reasons, useful alternatives, and unresolved questions;
-link the source discussion when a durable reference is available. A full
-transcript is optional. Proposals and open questions remain distinguishable from
-decisions carried into the specification.
+Keep high-level goals and rationale separate from technical requirements, with
+trace links connecting them. Intent can develop in conversation with an AI agent;
+the maintained document captures the current problem, decisions, reasons, useful
+alternatives, and open questions. Keep proposals distinguishable from decisions
+carried into the specification.
 
 IntentBond supports people working manually, with coding agents, or in CI.
 Existing project documents and tools remain usable. Factory orchestration,
