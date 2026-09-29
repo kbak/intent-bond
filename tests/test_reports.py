@@ -64,6 +64,35 @@ class ReportTests(unittest.TestCase):
             with self.subTest(xml=xml), self.assertRaises(CheckError):
                 self.parse(xml)
 
+    def test_doctype_is_rejected_in_supported_xml_encodings(self):
+        declarations = (
+            "<!DOCTYPE testsuite>",
+            '<!DOCTYPE testsuite [<!ENTITY x "foo">]>',
+            '<!DOCTYPE testsuite SYSTEM "urn:intentbond:external-dtd">',
+        )
+        for encoding in ("utf-8", "utf-16", "utf-16le", "utf-16be"):
+            for declaration in declarations:
+                with self.subTest(encoding=encoding, declaration=declaration):
+                    xml = (
+                        f'<?xml version="1.0" encoding="{encoding}"?>'
+                        f'{declaration}<testsuite><testcase name="one"/></testsuite>'
+                    )
+                    self.path.write_bytes(xml.encode(encoding))
+                    # [utest->req~ib-junit-completion~1]
+                    with self.assertRaisesRegex(CheckError, "DTDs/entities are unsupported"):
+                        junit_counts(self.path)
+
+    def test_supported_xml_encodings_and_predefined_entities_remain_valid(self):
+        for encoding in ("utf-8", "utf-16", "utf-16le", "utf-16be"):
+            with self.subTest(encoding=encoding):
+                xml = (
+                    f'<?xml version="1.0" encoding="{encoding}"?>'
+                    '<testsuite tests="1"><testcase name="one &amp; two"/></testsuite>'
+                )
+                self.path.write_bytes(xml.encode(encoding))
+                # [utest->req~ib-junit-completion~1]
+                self.assertEqual(junit_counts(self.path)["passed"], 1)
+
     def test_timeout_is_an_execution_error(self):
         import sys
 

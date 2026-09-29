@@ -12,6 +12,7 @@ import z3
 from intentbond import chc, cli, smt
 from intentbond.chc_worker import certify, reconstruct
 from intentbond.common import read_json, write_json
+from intentbond.testing import junit_counts
 
 FIXTURE = Path(__file__).resolve().parents[1] / "examples/chc-checking"
 
@@ -31,6 +32,36 @@ class ChcTests(unittest.TestCase):
     def change(self, before, after):
         p = self.project / "allocation.py"
         p.write_text(p.read_text().replace(before, after))
+
+    def test_model_supports_dataclasses_with_postponed_annotations(self):
+        path = self.project / "allocation.py"
+        path.write_text(
+            "from __future__ import annotations\n"
+            "from dataclasses import dataclass\n"
+            "@dataclass\n"
+            "class ModelConfig:\n"
+            "    minimum: int = 0\n\n" + path.read_text()
+        )
+        self.change("initial >= 0", "initial >= ModelConfig().minimum")
+        # [utest->req~ib-chc-certificates~1]
+        self.assertEqual(self.check()["status"], "passed")
+
+    def test_command_names_do_not_collide_with_evidence_directories(self):
+        self.change('"Conservation"', '"inputs"')
+        self.change('"SeveralRows"', '"native"')
+        config = read_json(self.project / "checks.json")
+        for command, name in zip(config["commands"], ("inputs", "native"), strict=True):
+            command["name"] = name
+        write_json(self.project / "checks.json", config)
+        result = self.check()
+        # [utest->req~ib-chc-certificates~1]
+        self.assertEqual(result["status"], "passed")
+        self.assertEqual(read_json(self.out / "inputs" / "checks.json"), config)
+        for case in result["commands"]:
+            receipt = f"native/{case['name']}/receipt.json"
+            self.assertIn(receipt, result["artifacts"])
+            self.assertEqual(read_json(self.out / receipt), case["receipt"])
+        self.assertEqual(junit_counts(self.out / "junit.xml")["passed"], 2)
 
     def test_safety_certificate_trace_and_portable_polarity(self):
         result = self.check()

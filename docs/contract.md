@@ -301,10 +301,11 @@ case names across runners. Existing testcase properties, including optional OFT
 execution links, are retained. This adds no task runner dependency. A suite run
 separately outside this command is not included in the check evidence.
 
-The JUnit adapter accepts unnamespaced XML and rejects DTDs/entities, malformed
-or inconsistent reports, and reports already present in the candidate. Entirely
-skipped or empty suites fail. `policy.allow_skipped_tests` defaults to true;
-false also rejects mixed passing/skipped suites. Suite-level errors fail.
+The JUnit adapter accepts unnamespaced XML and rejects DTDs and entity declarations
+regardless of encoding, malformed or inconsistent reports, and reports already
+present in the candidate. Entirely skipped or empty suites fail.
+`policy.allow_skipped_tests` defaults to true; false also rejects mixed
+passing/skipped suites. Suite-level errors fail.
 
 For pytest **9.1.1**, `-p intentbond.pytest_junit --junitxml=results.xml` enables
 the packaged subtest producer adapter. Native pytest counts subtests without

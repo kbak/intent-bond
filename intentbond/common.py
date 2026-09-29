@@ -46,11 +46,13 @@ def read_json(path: Path):
 
 
 def xml_tree(path):
-    try:
-        content = path.read_bytes()
-        if b"<!DOCTYPE" in content.upper() or b"<!ENTITY" in content.upper():
+    class NoDoctype(ET.TreeBuilder):
+        def doctype(self, name, pubid, system):
+            # [impl->req~ib-junit-completion~1]
             raise CheckError(f"XML DTDs/entities are unsupported: {path}")
-        return ET.fromstring(content)
+
+    try:
+        return ET.fromstring(path.read_bytes(), parser=ET.XMLParser(target=NoDoctype()))
     except (OSError, ET.ParseError) as exc:
         raise CheckError(f"Cannot read XML {path.name}: {exc}") from exc
 

@@ -233,7 +233,7 @@ Existing assertions: [test_test_command_repair_cannot_attest_original_broken_can
 `req~ib-junit-completion~1`
 Status: approved
 
-JUnit success requires command exit 0, at least one passing case, and no failures or errors, including suite-level failures. Empty and entirely skipped suites fail. Mixed skips are allowed by default and rejected when allow_skipped_tests is false. Inconsistent reports cannot supply missing execution evidence.
+JUnit success requires command exit 0, at least one passing case, and no failures or errors, including suite-level failures. Empty and entirely skipped suites fail. Mixed skips are allowed by default and rejected when allow_skipped_tests is false. Inconsistent reports cannot supply missing execution evidence. Reject XML DTDs and entity declarations regardless of encoding.
 
 Needs: impl, utest
 
@@ -241,7 +241,7 @@ Original documentation: [docs/contract.md](contract.md).
 
 Implementation: [intentbond/testing.py](../intentbond/testing.py).
 
-Existing assertions: [test_merge_preserves_outcomes_and_completion_policy](../tests/test_report_properties.py); [test_suite_failure_survives_passing_cases_and_merge](../tests/test_report_properties.py); [test_missing_reported_cases_are_rejected](../tests/test_report_properties.py); [test_zero_discovered_tests](../tests/test_workflow.py); [test_skipped_test](../tests/test_workflow.py).
+Existing assertions: [test_merge_preserves_outcomes_and_completion_policy](../tests/test_report_properties.py); [test_suite_failure_survives_passing_cases_and_merge](../tests/test_report_properties.py); [test_missing_reported_cases_are_rejected](../tests/test_report_properties.py); [test_zero_discovered_tests](../tests/test_workflow.py); [test_skipped_test](../tests/test_workflow.py); [test_doctype_is_rejected_in_supported_xml_encodings](../tests/test_reports.py); [test_supported_xml_encodings_and_predefined_entities_remain_valid](../tests/test_reports.py).
 
 Evidence limit: The generated merge domain is 1–4 reports with 1–12 final outcomes each; it does not cover arbitrary XML or every producer dialect.
 
@@ -534,7 +534,7 @@ Original documentation: [docs/model-checking.md](model-checking.md).
 
 Implementation: [intentbond/smt.py](../intentbond/smt.py).
 
-Existing assertions: [test_real_proof_witness_and_retained_queries](../tests/test_smt.py); [test_counterexample_is_failure_even_when_worker_succeeds](../tests/test_smt.py); [test_unsatisfiable_witness_fails_without_rejecting_valid_proof](../tests/test_smt.py); [test_unknown_is_inconclusive_with_reason_retained](../tests/test_smt.py).
+Existing assertions: [test_real_proof_witness_and_retained_queries](../tests/test_smt.py); [test_counterexample_is_failure_even_when_worker_succeeds](../tests/test_smt.py); [test_unsatisfiable_witness_fails_without_rejecting_valid_proof](../tests/test_smt.py); [test_unknown_is_inconclusive_with_reason_retained](../tests/test_smt.py); [test_model_supports_dataclasses_with_postponed_annotations](../tests/test_smt.py); [test_command_names_do_not_collide_with_evidence_directories](../tests/test_smt.py).
 
 ### Validate Spacer certificates and reconstructed traces
 `req~ib-chc-certificates~1`
@@ -548,7 +548,7 @@ Original documentation: [docs/model-checking.md](model-checking.md).
 
 Implementation: [intentbond/chc.py](../intentbond/chc.py).
 
-Existing assertions: [test_safety_certificate_trace_and_portable_polarity](../tests/test_chc.py); [test_bad_certificate_and_infeasible_trace_are_rejected](../tests/test_chc.py); [test_no_initial_states_is_not_a_proof](../tests/test_chc.py); [test_incomplete_evidence_cannot_pass](../tests/test_chc.py); [test_unknown_from_unsupported_theory_is_not_a_pass](../tests/test_chc.py).
+Existing assertions: [test_safety_certificate_trace_and_portable_polarity](../tests/test_chc.py); [test_bad_certificate_and_infeasible_trace_are_rejected](../tests/test_chc.py); [test_no_initial_states_is_not_a_proof](../tests/test_chc.py); [test_incomplete_evidence_cannot_pass](../tests/test_chc.py); [test_unknown_from_unsupported_theory_is_not_a_pass](../tests/test_chc.py); [test_model_supports_dataclasses_with_postponed_annotations](../tests/test_chc.py); [test_command_names_do_not_collide_with_evidence_directories](../tests/test_chc.py).
 
 ### Import Python annotations only from actual comments
 `req~ib-python-annotations~1`

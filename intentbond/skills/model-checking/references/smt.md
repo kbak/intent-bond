@@ -95,9 +95,10 @@ errors, never success. CLI exit codes are 0 for all passes, 1 for a failed
 obligation and 2 for an execution/configuration error. Solver success establishes
 the encoding, not its correspondence to the implementation.
 
-Each command retains `preconditions.smt2`, `query.smt2` when applicable,
-`receipt.json` and `process.log`. The receipt records solver version, native
-models, unknown reasons and selected observations. Integers and bit-vectors have
+Captured source files are retained under `inputs/`. Each command retains
+`preconditions.smt2`, `query.smt2` when applicable, `receipt.json` and `process.log`
+under `native/<name>/`. The receipt records solver version, native models,
+unknown reasons and selected observations. Integers and bit-vectors have
 exact decimal-string `value` fields, Booleans have Boolean `value` fields, and all
 observations retain their sort and native SMT-LIB representation. Other theories
 need a suitable exact decoder; never convert rational or large integer values

@@ -123,6 +123,8 @@ standard Horn satisfiability: **SAT means safe; UNSAT means unsafe**. Keep this
 polarity separate when adding another solver. The file enables comparison with
 other solvers; exporting it does not claim it has been cross-checked externally.
 
+Captured source files are retained under `inputs/`, and each command's native
+queries, receipts and process log are retained under `native/<name>/`.
 Evidence includes:
 
 - Captured inputs/hashes, tool version, scope and JUnit in the existing format.

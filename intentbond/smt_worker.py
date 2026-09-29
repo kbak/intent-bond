@@ -55,6 +55,7 @@ def main():
     sys.path[:0] = [str(module_path.parent), str(root)]
     spec = importlib.util.spec_from_file_location("ib_application_smt_model", module_path)
     module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
     spec.loader.exec_module(module)
     obligations = module.obligations()
     if not isinstance(obligations, dict) or name not in obligations:

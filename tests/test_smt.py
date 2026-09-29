@@ -37,6 +37,36 @@ class SmtTests(unittest.TestCase):
         change(config)
         write_json(self.project / "checks.json", config)
 
+    def test_model_supports_dataclasses_with_postponed_annotations(self):
+        path = self.project / "amounts.py"
+        path.write_text(
+            "from __future__ import annotations\n"
+            "from dataclasses import dataclass\n"
+            "@dataclass\n"
+            "class ModelConfig:\n"
+            "    minimum: int = 0\n\n" + path.read_text()
+        )
+        self.change("amount >= 0", "amount >= ModelConfig().minimum")
+        # [utest->req~ib-smt-outcomes~1]
+        self.assertEqual(self.check()["status"], "passed")
+
+    def test_command_names_do_not_collide_with_evidence_directories(self):
+        self.change('"Conservation"', '"inputs"')
+        self.change('"CanSplit"', '"native"')
+        config = read_json(self.project / "checks.json")
+        for command, name in zip(config["commands"], ("inputs", "native"), strict=True):
+            command["name"] = name
+        write_json(self.project / "checks.json", config)
+        result = self.check()
+        # [utest->req~ib-smt-outcomes~1]
+        self.assertEqual(result["status"], "passed")
+        self.assertEqual(read_json(self.out / "inputs" / "checks.json"), config)
+        for case in result["commands"]:
+            receipt = f"native/{case['name']}/receipt.json"
+            self.assertIn(receipt, result["artifacts"])
+            self.assertEqual(read_json(self.out / receipt), case["receipt"])
+        self.assertEqual(junit_counts(self.out / "junit.xml")["passed"], 2)
+
     def test_real_proof_witness_and_retained_queries(self):
         self.out.mkdir()  # ib precreates report parents.
         result = self.check()

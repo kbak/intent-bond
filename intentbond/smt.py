@@ -208,8 +208,8 @@ def check_models(root, manifest, out, *, backend="smt"):
         Path(__file__).with_name("chc_worker.py" if backend == "chc" else "smt_worker.py").resolve()
     )
     for spec in config["commands"]:
-        directory = out / spec["name"]
-        directory.mkdir()
+        directory = out / "native" / spec["name"]
+        directory.mkdir(parents=True)
         case = {**spec, "status": "error", "outcome": "error"}
         execution = run(
             [
