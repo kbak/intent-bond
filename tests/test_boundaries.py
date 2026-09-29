@@ -17,6 +17,8 @@ class BoundaryTests(WorkflowFixture):
         path.write_text("# Example\n\n`req~illustrative~1`\n\nNeeds: impl\n")
         self.configure(lambda scope: scope.update(review_paths=["fixtures"]))
         result = self.run_check()
+        # [utest->req~ib-change-review~1]
+        # [utest->req~ib-review-selection~1]
         self.assertEqual(result["status"], "review_required", result)
         self.assertEqual(result["review"]["change_count"], 1)
         self.assertNotIn("illustrative", (self.out / "candidate-items.xml").read_text())
@@ -60,6 +62,7 @@ class BoundaryTests(WorkflowFixture):
             ["/tmp"],
             ["fixtures", "fixtures"],
         ):
+            # [utest->req~ib-review-selection~1]
             with self.subTest(paths=paths), self.assertRaises(CheckError):
                 validate_scope({**original, "review_paths": paths})
         self.assertEqual(
@@ -74,6 +77,7 @@ class BoundaryTests(WorkflowFixture):
         self.assertEqual(result["status"], "passed")
         self.assertEqual(result["review"]["change_count"], 0)
         boundaries = result["source_boundaries"]
+        # [utest->req~ib-boundary-report~1]
         self.assertEqual(
             boundaries["counts"],
             {

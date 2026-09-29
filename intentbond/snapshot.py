@@ -75,6 +75,7 @@ def read_entry(root, name):
     return "100755" if info.st_mode & stat.S_IXUSR else "100644", path.read_bytes()
 
 
+# [impl->req~ib-safe-symlinks~1]
 def validate_symlinks(root, manifest):
     """Keep links portable and confined to captured source, including dangling links."""
     for entry in manifest:
@@ -113,6 +114,7 @@ def put_file(root, name, mode, data):
     return {"path": name, "mode": mode, "sha256": digest(data)}
 
 
+# [impl->req~ib-source-identity~1]
 def worktree_entries(repo):
     index = git(repo, "ls-files", "--stage", "-z").split(b"\0")
     for entry in filter(None, index):
@@ -134,6 +136,7 @@ def worktree_entries(repo):
     return entries
 
 
+# [impl->req~ib-source-identity~1]
 def snapshot(repo, selection, destination):
     destination.mkdir()
     commit = resolve_commit(repo, "HEAD" if selection == "worktree" else selection)

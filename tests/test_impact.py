@@ -49,6 +49,7 @@ class ImpactTests(WorkflowFixture):
         self.assertEqual(counts["base_declarations"], 6)
         self.assertEqual(counts["candidate_declarations"], 6)
         self.assertEqual(counts["changed_declarations_excluding_location"], 3)
+        # [utest->req~ib-impact-report~1]
         self.assertEqual(counts["normative_text_changed"], 1)
         self.assertEqual(counts["base_edges"], 4)
         self.assertEqual(counts["candidate_edges"], 4)
@@ -66,6 +67,7 @@ class ImpactTests(WorkflowFixture):
         self.revised(behavior=False)
         self.run_check()
         report = self.report()
+        # [utest->req~ib-impact-report~1]
         self.assertEqual(report["counts"]["normative_text_changed"], 0)
         self.assertEqual(report["counts"]["link_or_revision_only_declarations"], 3)
         kinds = {c["path"]: c["classification"] for c in report["source_changes"]}
@@ -128,6 +130,7 @@ class ImpactTests(WorkflowFixture):
         )
         self.run_check()
         source = read_json(self.out / "review.json")["source_changes"]
+        # [utest->req~ib-impact-report~1]
         self.assertEqual(
             next(c["classification"] for c in source if c["path"] == "tests/test_retry.py"),
             "assertion_or_test_source_changed",

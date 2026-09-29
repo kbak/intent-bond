@@ -27,6 +27,7 @@ class MixedReportTests(WorkflowFixture):
     def test_reports_are_retained_combined_and_verified(self):
         self.configure_reports()
         result = self.run_check()
+        # [utest->req~ib-report-merge~1]
         self.assertEqual(result["status"], "passed", result)
         self.assertEqual(result["tests"]["counts"]["total"], 2)
         self.assertEqual(len(result["tests"]["reports"]), 2)
@@ -63,6 +64,7 @@ class MixedReportTests(WorkflowFixture):
                 write_json(self.scope, scope)
                 self.configure_reports(report)
                 result = self.run_check()
+                # [utest->req~ib-report-merge~1]
                 self.assertEqual(result["status"], "rejected", result)
                 self.assertNotEqual(result["tests"]["status"], "passed")
 
@@ -70,6 +72,7 @@ class MixedReportTests(WorkflowFixture):
         self.configure_reports()
         self.configure(lambda s: s["tests"].update(command=[sys.executable, "run_tests.py"]))
         result = self.run_check()
+        # [utest->req~ib-fresh-reports~1]
         self.assertEqual(result["tests"]["status"], "error")
         (self.repo / "backend.xml").write_text('<testsuite><testcase name="stale"/></testsuite>')
         result = self.run_check()

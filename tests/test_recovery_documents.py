@@ -67,6 +67,7 @@ class DocumentRecoveryTests(RecoveryFixture):
             "# Sessions\n\nSee [session requirements](requirements.md) for the inactivity policy.\n"
         )
         result = self.run_check()
+        # [utest->req~ib-recovery-edits~1]
         self.assertIn("Missing document change review: README.md", " ".join(result["diagnostics"]))
         self.document_change("README.md")
         result = self.run_check()
@@ -114,6 +115,7 @@ class DocumentRecoveryTests(RecoveryFixture):
         )
         self.document_change("requirements.md", meaning="uncertain")
         result = self.run_check()
+        # [utest->req~ib-recovery-lineage~1]
         self.assertIn("Missing requirement mapping", " ".join(result["diagnostics"]))
         self.mapping()
         result = self.run_check()
@@ -160,6 +162,7 @@ class DocumentRecoveryTests(RecoveryFixture):
         self.document_change("requirements.md")
         self.mapping(targets=[target])
         result = self.run_check()
+        # [utest->req~ib-recovery-lineage~1]
         self.assertIn("surviving original ID", " ".join(result["diagnostics"]))
         self.mapping(targets=[REQ, target])
         result = self.run_check()
@@ -178,6 +181,7 @@ class DocumentRecoveryTests(RecoveryFixture):
         self.structured_draft(f"\n### Legacy choice\n`{original}`\n\nAn older design choice.\n")
         self.document_change("requirements.md", meaning="changed")
         result = self.run_check()
+        # [utest->req~ib-recovery-lineage~1]
         self.assertIn(
             f"Missing requirement mapping for changed or removed item: {original}",
             " ".join(result["diagnostics"]),

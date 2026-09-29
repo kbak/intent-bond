@@ -3,6 +3,8 @@
 from .common import CheckError, read_json, within
 
 
+# [impl->req~ib-boundary-report~1]
+# [impl->req~ib-review-selection~1]
 def inventory(base_manifest, candidate_manifest, scope):
     before = {entry["path"]: entry for entry in base_manifest}
     after = {entry["path"]: entry for entry in candidate_manifest}
@@ -50,6 +52,7 @@ def inventory(base_manifest, candidate_manifest, scope):
     }
 
 
+# [impl->req~ib-boundary-report~1]
 def retained(evidence, directory, scope):
     expected = inventory(
         read_json(directory / "base-manifest.json"),

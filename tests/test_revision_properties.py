@@ -44,6 +44,7 @@ class RevisionPropertyTests(unittest.TestCase):
         original = requirement("promise", revision, description)
         changed = requirement("promise", revision, description + "!")
         review = changes(EMPTY, EMPTY, [original], [changed], SCOPE)
+        # [utest->req~ib-revision-policy~1]
         self.assertEqual(len(review), 1)
         self.assertTrue(revision_diagnostics(review, SCOPE))
         revised = requirement("promise", revision + increase, description + "!")

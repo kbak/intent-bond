@@ -89,6 +89,7 @@ class ExecutionReportTests(unittest.TestCase):
         ):
             with self.subTest(identifier=identifier):
                 links = self.parse(self.case(identifier=identifier))
+                # [utest->req~ib-execution-associations~1]
                 self.assertEqual(links["status"], "invalid")
                 self.assertEqual(links["artifacts"][0]["status"], "not_observed")
 
@@ -201,6 +202,7 @@ class ExecutionReportTests(unittest.TestCase):
         ):
             with self.subTest(status=status):
                 problems = required_execution_diagnostics(self.parse(*cases), self.scope)
+                # [utest->req~ib-required-execution~1]
                 self.assertEqual(len(problems), 1)
                 self.assertIn(TEST, problems[0])
                 self.assertIn(status, problems[0])
@@ -210,6 +212,7 @@ class ExecutionReportTests(unittest.TestCase):
         self.scope["tests"]["execution_links"]["required_artifacts"] = [TEST_KEY]
         revised = TEST_KEY + "~2"
         self.items[0]["id"] = revised
+        # [utest->req~ib-required-execution~1]
         self.assertEqual(
             required_execution_diagnostics(self.parse(self.case(identifier=revised)), self.scope),
             [],
@@ -301,6 +304,7 @@ class ExecutionWorkflowTests(WorkflowFixture):
         self.add_other_test()
         result = self.run_check()
         self.assertEqual(result["tests"]["status"], "passed")
+        # [utest->req~ib-execution-associations~1]
         self.assertEqual(self.explained()["linked_test_execution"], "not_observed")
         self.assertEqual(self.verified()["status"], "matched")
 
@@ -362,6 +366,7 @@ class ExecutionWorkflowTests(WorkflowFixture):
         self.commit()
         self.base = self.git("rev-parse", "HEAD").strip()
         result = self.run_check()
+        # [utest->req~ib-required-execution~1]
         self.assertEqual(result["status"], "rejected")
         result.update(status="passed", diagnostics=[])
         write_json(self.out / "evidence.json", statement(result))

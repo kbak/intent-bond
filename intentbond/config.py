@@ -9,6 +9,7 @@ def load_scope(path: Path):
     return validate_scope(read_json(path))
 
 
+# [impl->req~ib-policy-source~1]
 def load_baseline_scope(repo, commit):
     try:
         content = git(repo, "show", f"{commit}:scope.json")
@@ -45,6 +46,7 @@ def validate_scope(scope):
         raise CheckError("Scope name must be nonempty")
     if type(scope.get("allow_empty", False)) is not bool:
         raise CheckError("allow_empty must be boolean")
+    # [impl->req~ib-review-selection~1]
     for key in ("inputs", "specification_paths", "test_paths", "review_paths"):
         if key not in scope:
             continue

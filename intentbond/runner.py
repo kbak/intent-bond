@@ -64,6 +64,7 @@ def check(
     try:
         repo = repository(repo_path)
         base_ref = resolve_commit(repo, base_ref)
+        # [impl->req~ib-policy-source~1]
         scope = (
             load_scope(scope_path)
             if scope_path is not None
@@ -85,6 +86,7 @@ def check(
             evidence["source_boundaries"] = boundaries.inventory(
                 base.manifest, candidate.manifest, scope
             )
+            # [impl->req~ib-coverage~1]
             before, base_trace = trace(base, scope, jar, java, out, "base")
             after, candidate_trace = trace(candidate, scope, jar, java, out, "candidate")
             evidence["trace"] = {"base": base_trace, "candidate": candidate_trace}
@@ -126,10 +128,12 @@ def check(
                 problems.append(
                     "Baseline has no selected requirements; establish a clean baseline before validation"
                 )
+            # [impl->req~ib-empty-scope~1]
             if empty:
                 if not scope.get("allow_empty", False):
                     problems.append("Candidate has no selected requirements")
                 evidence["status"] = "rejected" if problems else "empty"
+            # [impl->req~ib-recovery-preflight~1]
             elif preflight:
                 evidence["status"] = "rejected" if problems else "incomplete"
             else:
@@ -145,6 +149,7 @@ def check(
                     evidence["tests"]["execution_links"] = links
                     problems.extend(links["diagnostics"])
                     problems.extend(required_execution_diagnostics(links, scope))
+                # [impl->req~ib-source-stability~1]
                 mutated = changed_source(candidate)
                 if mutated:
                     problems.append("Test command modified captured source: " + ", ".join(mutated))
@@ -163,6 +168,7 @@ def check(
         evidence["status"] = "error"
         evidence["diagnostics"].append(str(exc))
         evidence["tests"]["source_status"] = "unchecked"
+    # [impl->req~ib-source-stability~1]
     if evidence["tests"]["status"] != "not_run" and evidence["tests"]["source_status"] == "matched":
         write_json(
             out / "test-result.json",
@@ -178,6 +184,7 @@ def check(
     return evidence
 
 
+# [impl->req~ib-evidence-verification~1]
 def verify(
     repo_path, scope_path, base_ref, candidate_ref, evidence_path, allow_pending_review=False
 ):
@@ -234,6 +241,7 @@ def verify(
     }
     repo = repository(repo_path)
     base_commit = resolve_commit(repo, base_ref)
+    # [impl->req~ib-policy-source~1]
     scope = (
         load_scope(scope_path) if scope_path is not None else load_baseline_scope(repo, base_commit)
     )
@@ -255,6 +263,7 @@ def verify(
         if reports:
             if evidence["tests"].get("reports") != reports:
                 raise CheckError("Retained JUnit reports differ from configured paths")
+            # [impl->req~ib-report-merge~1]
             merged = merge_reports((r["source"], directory / r["artifact"]) for r in reports)
             if ET.tostring(merged) != ET.tostring(xml_tree(directory / "tests.xml")):
                 raise CheckError("Combined JUnit report differs from retained individual reports")
@@ -265,6 +274,7 @@ def verify(
     if links is not None and links["status"] != "recorded":
         raise CheckError("Retained evidence contains invalid execution links")
     if links is not None:
+        # [impl->req~ib-required-execution~1]
         required_problems = required_execution_diagnostics(links, scope)
         if required_problems:
             raise CheckError(
@@ -292,6 +302,7 @@ def verify(
             "review"
         ]["change_count"] != len(review["changes"]):
             raise CheckError("Review binding does not match evidence")
+        # [impl->req~ib-change-review~1]
         expected_status = "review_required" if review["changes"] else "passed"
         expected_review_status = "required" if review["changes"] else "not_needed"
         if (

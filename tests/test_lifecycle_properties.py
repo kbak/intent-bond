@@ -172,6 +172,7 @@ class EvidenceLifecycle(RuleBasedStateMachine):
             )
             for item in current.manifest
         }
+        # [utest->req~ib-evidence-verification~1]
         assert captured == self.model
         same_contents = self.model == self.checked_model
         assert (current.sha256 == self.checked_digest) == same_contents

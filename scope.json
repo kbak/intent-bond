@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "name": "intentbond-self-application",
+  "inputs": [
+    "README.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "docs",
+    "intentbond",
+    "tests",
+    "scripts",
+    "pyproject.toml",
+    "requirements",
+    "MANIFEST.in",
+    ".github"
+  ],
+  "specification_paths": [
+    "README.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "docs",
+    "intentbond/skills"
+  ],
+  "test_paths": [
+    "tests",
+    "scripts",
+    "pyproject.toml",
+    "requirements",
+    "MANIFEST.in",
+    ".github"
+  ],
+  "review_paths": [
+    "examples"
+  ],
+  "required_coverage": {
+    "req": [
+      "impl",
+      "utest"
+    ]
+  },
+  "policy": {
+    "require_revision_increase": false,
+    "allow_skipped_tests": false
+  },
+  "tests": {
+    "format": "junit",
+    "command": [
+      "env",
+      "PYTEST_DISABLE_PLUGIN_AUTOLOAD=1",
+      "python3",
+      "-m",
+      "pytest",
+      "-p",
+      "hypothesispytest",
+      "-p",
+      "intentbond.pytest_junit",
+      "-p",
+      "no:cacheprovider",
+      "tests",
+      "--junitxml=.local-validation/self-recovery-tests.xml",
+      "-q"
+    ],
+    "report": ".local-validation/self-recovery-tests.xml",
+    "timeout_seconds": 900
+  }
+}

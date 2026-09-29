@@ -21,6 +21,7 @@ class RecoveryFeedbackTests(RecoveryFixture):
         out = self.root / "preflight"
         with patch("intentbond.runner.execute_tests") as tests:
             result = check_recovery(self.bundle, None, out, self.jar, preflight=True)
+        # [utest->req~ib-recovery-preflight~1]
         tests.assert_not_called()
         self.assertEqual(result["status"], "incomplete", result)
         self.assertEqual(result["proposal_checks"], "passed")

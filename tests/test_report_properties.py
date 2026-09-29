@@ -57,6 +57,7 @@ class ReportPropertyTests(unittest.TestCase):
             merged = root / "merged.xml"
             ET.ElementTree(merge_reports(paths)).write(merged, encoding="utf-8")
             counts = junit_counts(merged)
+            # [utest->req~ib-junit-completion~1]
             self.assertEqual(counts["total"], sum(expected.values()))
             for outcome in ("passed", "failed", "errors", "skipped"):
                 self.assertEqual(counts[outcome], expected[outcome])
@@ -97,6 +98,7 @@ class ReportPropertyTests(unittest.TestCase):
                 merged
             )
             counts = junit_counts(merged)
+            # [utest->req~ib-junit-completion~1]
             self.assertEqual(counts["passed"], 2 * passed)
             self.assertFalse(counts_pass(counts, {"policy": {"allow_skipped_tests": True}}))
 
@@ -113,6 +115,7 @@ class ReportPropertyTests(unittest.TestCase):
             tree = report(path, outcomes, wrapped=wrapped)
             tree.set("tests", str(len(outcomes) + omitted))
             ET.ElementTree(tree).write(path, encoding="utf-8")
+            # [utest->req~ib-junit-completion~1]
             with self.assertRaises(CheckError):
                 junit_counts(path)
             with self.assertRaises(CheckError):

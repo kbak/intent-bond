@@ -40,6 +40,7 @@ class AlloyTests(unittest.TestCase):
 
     def test_completed_checks_and_self_contained_junit(self):
         result = self.check()
+        # [utest->req~ib-alloy-assertions~1]
         self.assertEqual(result["status"], "passed")
         self.assertEqual(
             [c["outcome"] for c in result["commands"]],
@@ -58,6 +59,7 @@ class AlloyTests(unittest.TestCase):
         model = self.project / "ownership.als"
         model.write_text(model.read_text().replace("{ u = r.owner }", "{ some u and some r }"))
         result = self.check()
+        # [utest->req~ib-alloy-assertions~1]
         self.assertEqual(result["status"], "failed")
         case = result["commands"][0]
         self.assertEqual(case["execution"]["exit_code"], 0)
@@ -76,6 +78,7 @@ class AlloyTests(unittest.TestCase):
         model.write_text(model.read_text() + "\nfact empty { no Resource }\n")
         result = self.check()
         self.assertEqual(result["commands"][0]["outcome"], "no_counterexample_within_bounds")
+        # [utest->req~ib-alloy-witness~1]
         self.assertEqual(result["commands"][1]["outcome"], "unsatisfiable_witness")
         self.assertEqual(result["status"], "failed")
 

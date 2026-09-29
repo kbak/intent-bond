@@ -21,6 +21,7 @@ class InPlaceRecoveryTests(RecoveryFixture):
     def test_default_preparation_preserves_snapshot_and_leaves_git_review_records(self):
         original = (self.repo / "session.py").read_bytes()
         record = self.prepare()
+        # [utest->req~ib-recovery-preservation~1]
         self.assertEqual(record["mode"], "in_place")
         self.assertEqual(Path(record["workspace"]), self.repo)
         self.assertEqual(active_recovery(self.repo), self.bundle)
@@ -66,6 +67,7 @@ class InPlaceRecoveryTests(RecoveryFixture):
                 path.write_text("Existing work\n")
                 if change == "staged":
                     self.git("add", "README.md")
+                # [utest->req~ib-recovery-clean-start~1]
                 with self.assertRaisesRegex(CheckError, "clean checkout"):
                     self.prepare()
                 self.assertFalse(self.bundle.exists())
@@ -79,6 +81,7 @@ class InPlaceRecoveryTests(RecoveryFixture):
 
     def test_other_source_version_requires_isolation(self):
         self.empty_commit()
+        # [utest->req~ib-recovery-clean-start~1]
         with self.assertRaisesRegex(CheckError, "must start at HEAD"):
             prepare(self.repo, self.source_commit, ["."], self.bundle)
         self.assertFalse(self.bundle.exists())

@@ -23,6 +23,7 @@ class SubtestXML:
         # Pytest's property fixtures keep using the native writer through its stash.
         return getattr(self.original, name)
 
+    # [impl->req~ib-pytest-subtests~1]
     def pytest_runtest_logreport(self, report):
         if not isinstance(report, self.subtest_type):
             self.original.pytest_runtest_logreport(report)
@@ -60,6 +61,7 @@ class SubtestXML:
 
 
 @pytest.hookimpl(trylast=True)
+# [impl->req~ib-pytest-subtests~1]
 def pytest_configure(config):
     if not config.option.xmlpath or hasattr(config, "workerinput"):
         return

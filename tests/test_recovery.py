@@ -142,6 +142,7 @@ class RecoveryTests(RecoveryFixture):
     def test_prepare_preserves_source_and_records_inventory_without_tests(self):
         before = self.git("status", "--porcelain")
         record = self.prepare(["README.md", "session.py", "tests"])
+        # [utest->req~ib-recovery-preservation~1]
         self.assertEqual(record["source"]["commit"], self.source_commit)
         self.assertEqual(self.git("status", "--porcelain"), before)
         self.assertEqual(read_json(self.bundle / "claims.json")["items"], [])
@@ -200,6 +201,7 @@ class RecoveryTests(RecoveryFixture):
         self.claims["items"][0]["sources"][0]["quote"] = "Sessions last forever."
         self.save_claims()
         result = self.run_check()
+        # [utest->req~ib-recovery-citations~1]
         self.assertEqual(result["status"], "error", result)
         self.assertIn("quote does not match", " ".join(result["diagnostics"]))
         self.claims["items"][0]["sources"][0]["path"] = "requirements.md"
@@ -314,6 +316,7 @@ class RecoveryTests(RecoveryFixture):
         item = self.claims["items"].pop()
         self.save_claims()
         result = self.run_check()
+        # [utest->req~ib-recovery-citations~1]
         self.assertIn("Missing claim provenance", " ".join(result["diagnostics"]))
         self.claims["items"] = [item, item]
         self.save_claims()
@@ -349,6 +352,7 @@ class RecoveryTests(RecoveryFixture):
                 original = path.read_bytes()
                 path.write_text(content)
                 result = self.run_check()
+                # [utest->req~ib-recovery-edits~1]
                 self.assertEqual(result["status"], "rejected", result)
                 self.assertIn("beyond OFT annotation changes", " ".join(result["diagnostics"]))
                 self.assertFalse((self.out / "check/tests.log").exists())
@@ -358,6 +362,7 @@ class RecoveryTests(RecoveryFixture):
         self.draft()
         (self.bundle / "draft/tests/test_new.py").write_text("assert True\n")
         result = self.run_check()
+        # [utest->req~ib-recovery-edits~1]
         self.assertEqual(result["status"], "rejected", result)
         self.assertIn("non-specification", " ".join(result["diagnostics"]))
 

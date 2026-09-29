@@ -41,6 +41,8 @@ def changes(base, candidate, before, after, scope):
             result.append({"kind": "requirement", "key": key, "before": left, "after": right})
     left = {f["path"]: f for f in base.manifest}
     right = {f["path"]: f for f in candidate.manifest}
+    # [impl->req~ib-change-review~1]
+    # [impl->req~ib-review-selection~1]
     roots = scope["specification_paths"] + scope["test_paths"] + scope.get("review_paths", [])
     for path in sorted(left.keys() | right.keys()):
         if within(path, roots) and left.get(path) != right.get(path):
@@ -50,6 +52,7 @@ def changes(base, candidate, before, after, scope):
     return result
 
 
+# [impl->req~ib-revision-policy~1]
 def revision_diagnostics(changed, scope):
     if not scope.get("policy", {}).get("require_revision_increase", False):
         return []

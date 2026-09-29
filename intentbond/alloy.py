@@ -125,9 +125,11 @@ def interpret_receipt(receipt, command):
     ):
         raise CheckError("Malformed Alloy solutions")
     sat = bool(solutions)
+    # [impl->req~ib-alloy-assertions~1]
     if command["kind"] == "check":
         outcome = "counterexample" if sat else "no_counterexample_within_bounds"
     else:
+        # [impl->req~ib-alloy-witness~1]
         outcome = "witness" if sat else "unsatisfiable_witness"
     return outcome
 

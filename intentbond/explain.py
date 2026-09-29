@@ -87,6 +87,7 @@ def graph_report(items_path, jar, java="java"):
     return items, traced
 
 
+# [impl->req~ib-explain-context~1]
 def explain_many(identifiers, evidence_path, jar, snapshot="candidate", java="java"):
     """Load one retained graph and share evidence metadata across exact IDs."""
     identifiers = list(dict.fromkeys(identifiers))
@@ -205,6 +206,7 @@ def render_explanation(result):
     return "\n".join(lines)
 
 
+# [impl->req~ib-draft-reporting~1]
 def _coverage_lines(item):
     lines = [
         f"OFT item status: {item['oft_status'] or '(unspecified)'}",
@@ -220,6 +222,7 @@ def _coverage_lines(item):
     return lines
 
 
+# [impl->req~ib-draft-reporting~1]
 def _status_lines(result):
     tests = result["tests"]
     lines = [

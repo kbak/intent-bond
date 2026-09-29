@@ -15,6 +15,7 @@ def combined_status(statuses):
     return next(iter(values)) if len(values) == 1 else "mixed"
 
 
+# [impl->req~ib-execution-associations~1]
 def collect_execution_links(path, items, scope):
     """Reuse JUnit parsing and OFT identities; never infer a link from a location."""
     junit_counts(path)  # Validate report completeness before interpreting cases.
@@ -132,6 +133,7 @@ def collect_execution_links(path, items, scope):
     }
 
 
+# [impl->req~ib-required-execution~1]
 def required_execution_diagnostics(links, scope):
     """Require passing observations for named identities in trusted scope policy."""
     diagnostics = []

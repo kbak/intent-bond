@@ -119,6 +119,7 @@ def prepare(repo_path, candidate_ref, inputs, out=None, *, isolated=False):
     repo = repository(repo_path)
     start = resolve_commit(repo, "HEAD")
     branch = head_ref(repo)
+    # [impl->req~ib-recovery-clean-start~1]
     if not isolated:
         if git(repo, "status", "--porcelain=v1", "-z", "--untracked-files=all"):
             raise CheckError(
@@ -141,6 +142,7 @@ def prepare(repo_path, candidate_ref, inputs, out=None, *, isolated=False):
     for path in inputs:
         relative_path(path)
     out.mkdir(parents=True, exist_ok=False)
+    # [impl->req~ib-recovery-preservation~1]
     source = snapshot(repo, candidate_ref if isolated else start, out / "source")
     if not isolated and (
         resolve_commit(repo, "HEAD") != start
@@ -173,6 +175,7 @@ def prepare(repo_path, candidate_ref, inputs, out=None, *, isolated=False):
             }
         )
     seed = None
+    # [impl->req~ib-recovery-preservation~1]
     if isolated:
         shutil.copytree(source.root, out / "draft", symlinks=True)
         seed = initialize(
@@ -330,6 +333,7 @@ def read_bundle(directory):
     return record, manifest
 
 
+# [impl->req~ib-recovery-citations~1]
 def validate_citation(citation, directory, inventory):
     if not isinstance(citation, dict) or set(citation) != {
         "path",
@@ -358,6 +362,7 @@ def validate_citation(citation, directory, inventory):
     return {**citation, "source_sha256": inventory[name]["sha256"]}
 
 
+# [impl->req~ib-recovery-citations~1]
 def validate_claims(claims, selected, directory, inventory):
     required = {"schema_version", "items", "open_issues"}
     optional = {"document_changes", "requirement_mappings"}
@@ -434,6 +439,7 @@ ITEM_ID = r"[A-Za-z]+~[A-Za-z0-9][A-Za-z0-9_.-]*~[0-9]+"
 TAG = r"\[[A-Za-z]+->" + ITEM_ID + r"\]"
 
 
+# [impl->req~ib-recovery-edits~1]
 def annotation_changes_only(path, before, after, *, specification=False):
     suffix = Path(path).suffix.lower()
     if suffix in {".md", ".markdown"}:
@@ -519,6 +525,7 @@ def authored_specification_items(items, root, scope):
     return authored
 
 
+# [impl->req~ib-recovery-edits~1]
 def editing_problems(source, candidate, scope, directory, inputs, record_paths=()):
     problems = []
     old = {entry["path"]: entry for entry in source}
@@ -555,6 +562,7 @@ def editing_problems(source, candidate, scope, directory, inputs, record_paths=(
     return problems
 
 
+# [impl->req~ib-recovery-edits~1]
 def document_review(claims, source, candidate, scope, directory, inventory):
     """Require cited explanations for substantive edits to original documents."""
     new = {entry["path"]: entry for entry in candidate.manifest}
@@ -603,6 +611,7 @@ def document_review(claims, source, candidate, scope, directory, inventory):
     return records
 
 
+# [impl->req~ib-recovery-lineage~1]
 def requirement_review(claims, before, after):
     """Account for original OFT identities, including those removed from policy."""
     old, new = {}, {}
@@ -852,6 +861,7 @@ def check_recovery(directory, scope_path, out, jar, java="java", *, preflight=Fa
                         "OFT could not import the proposed baseline; see check/evidence.json"
                     )
                 result["status"] = (
+                    # [impl->req~ib-recovery-draft-status~1]
                     "review_required" if checked["status"] == "passed" else checked["status"]
                 )
                 # In-place changes are already visible in Git. Isolated callers

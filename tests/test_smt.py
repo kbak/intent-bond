@@ -40,6 +40,7 @@ class SmtTests(unittest.TestCase):
     def test_real_proof_witness_and_retained_queries(self):
         self.out.mkdir()  # ib precreates report parents.
         result = self.check()
+        # [utest->req~ib-smt-outcomes~1]
         self.assertEqual(result["status"], "passed")
         self.assertFalse(list((self.out / "inputs").rglob("__pycache__")))
         self.assertEqual(
@@ -67,6 +68,7 @@ class SmtTests(unittest.TestCase):
         self.change("amount - requested", "amount")
         result = self.check()
         case = result["commands"][0]
+        # [utest->req~ib-smt-outcomes~1]
         self.assertEqual(result["status"], "failed")
         self.assertEqual(case["execution"]["exit_code"], 0)
         self.assertEqual(case["outcome"], "counterexample")
@@ -75,6 +77,7 @@ class SmtTests(unittest.TestCase):
     def test_unsatisfiable_preconditions_cannot_prove_anything(self):
         self.change("amount >= 0, requested >= 0", "amount >= 0, amount < 0")
         result = self.check()
+        # [utest->req~ib-smt-assumptions~1]
         self.assertEqual(
             [c["outcome"] for c in result["commands"]], ["unsatisfiable_preconditions"] * 2
         )
@@ -82,6 +85,7 @@ class SmtTests(unittest.TestCase):
 
     def test_unsatisfiable_witness_fails_without_rejecting_valid_proof(self):
         self.change("requested > 0, remainder > 0", "requested < 0, remainder > 0")
+        # [utest->req~ib-smt-outcomes~1]
         self.assertEqual(
             [c["outcome"] for c in self.check()["commands"]],
             ["proved_under_assumptions", "unsatisfiable_witness"],
@@ -119,6 +123,7 @@ class SmtTests(unittest.TestCase):
         )
         self.configure(lambda c: c.update(commands=c["commands"][:1]))
         case = self.check()["commands"][0]
+        # [utest->req~ib-smt-outcomes~1]
         self.assertEqual(case["outcome"], "unknown")
         self.assertEqual(case["status"], "error")
         self.assertTrue(case["receipt"]["query"]["reason_unknown"])

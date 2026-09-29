@@ -26,6 +26,7 @@ class RecoveryStatusTests(RecoveryFixture):
                 self.claims["items"][0]["origin"] = origin
                 self.save_claims()
                 result = self.run_check()
+                # [utest->req~ib-recovery-draft-status~1]
                 self.assertEqual(result["status"], "review_required", result)
                 self.assertEqual(result["check_status"], "passed")
                 self.assertEqual(self.imported_status(), "draft")
@@ -38,6 +39,7 @@ class RecoveryStatusTests(RecoveryFixture):
         path = Path(self.record["workspace"]) / "tests/test_session.py"
         path.write_bytes((self.bundle / "source/tests/test_session.py").read_bytes())
         result = self.run_check()
+        # [utest->req~ib-recovery-draft-status~1]
         self.assertEqual(result["status"], "rejected", result)
         self.assertEqual(result["proposal_checks"], "passed")
         self.assertEqual(self.imported_status(), "draft")

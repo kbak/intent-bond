@@ -53,6 +53,7 @@ class Cases(unittest.TestCase):
             junit_counts(broken)
         result, report = self.produce(source)
         self.assertEqual(result.returncode, 0, result.stdout)
+        # [utest->req~ib-pytest-subtests~1]
         self.assertEqual(
             junit_counts(report), {"total": 3, "passed": 3, "failed": 0, "errors": 0, "skipped": 0}
         )
@@ -92,6 +93,7 @@ def test_failure_and_teardown(teardown_error):
         result, report = self.produce(
             source, extra=("-o", "junit_family=xunit1", "-o", "junit_logging=system-out")
         )
+        # [utest->req~ib-pytest-subtests~1]
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         counts = junit_counts(report)
         self.assertGreaterEqual(counts["failed"], 2)
@@ -121,6 +123,7 @@ def test_failure_and_teardown(teardown_error):
             conftest="import pytest\npytest.__version__ = '9.1.2'\n",
             expect_report=False,
         )
+        # [utest->req~ib-pytest-subtests~1]
         self.assertEqual(result.returncode, 4, result.stdout + result.stderr)
         self.assertIn("requires pytest 9.1.1", result.stderr)
 
@@ -130,6 +133,7 @@ def test_skip(subtests):
     with subtests.test():
         pytest.skip('not executed')
 """)
+        # [utest->req~ib-pytest-subtests~1]
         self.assertEqual(result.returncode, 0, result.stdout)
         counts = junit_counts(report)
         self.assertEqual(counts["skipped"], 1)
@@ -143,6 +147,7 @@ def test_skip(subtests):
 
     def test_collection_errors_remain_errors(self):
         result, report = self.produce("raise RuntimeError('collection failed')\n")
+        # [utest->req~ib-pytest-subtests~1]
         self.assertEqual(result.returncode, 2)
         self.assertEqual(junit_counts(report)["errors"], 1)
 
@@ -159,6 +164,7 @@ class Cases(unittest.TestCase):
         with self.subTest(outcome='exception'):
             raise RuntimeError('unexpected exception')
 """)
+        # [utest->req~ib-pytest-subtests~1]
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         counts = junit_counts(report)
         self.assertEqual(counts["skipped"], 1)

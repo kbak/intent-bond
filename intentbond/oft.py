@@ -19,6 +19,7 @@ OFT_URL = f"https://github.com/itsallcode/openfasttrace/releases/download/{OFT_V
 TAG_ALIASES = {".tsx": ".ts", ".jsx": ".js"}
 
 
+# [impl->req~ib-python-annotations~1]
 def annotation_diagnostics(snap, inputs, items):
     """Detect ignored standalone short tags, not program-language semantics."""
     imported = {(i["path"], i["line"], i["type"]) for i in items}
@@ -150,6 +151,7 @@ def import_items(path, root):
     return items
 
 
+# [impl->req~ib-safe-symlinks~1]
 def artifact_inputs(root, path, links=()):
     """Exclude historical annotations and symlink aliases from OFT traversal."""
     if within(path, [RECOVERY_RECORDS]) or path in links:
@@ -168,6 +170,7 @@ def artifact_inputs(root, path, links=()):
 
 
 @contextmanager
+# [impl->req~ib-python-annotations~1]
 def import_view(snap, inputs):
     """Keep OFT paths/lines stable while restricting Python tags to comment tokens."""
     selected = [
@@ -297,6 +300,7 @@ def trace(snap, scope, jar, java, out, label):
     }
 
 
+# [impl->req~ib-coverage~1]
 def policy_diagnostics(items, scope, label):
     diagnostics = []
     selected = [item for item in items if item["type"] in scope["required_coverage"]]

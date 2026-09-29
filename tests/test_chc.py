@@ -34,6 +34,7 @@ class ChcTests(unittest.TestCase):
 
     def test_safety_certificate_trace_and_portable_polarity(self):
         result = self.check()
+        # [utest->req~ib-chc-certificates~1]
         self.assertEqual(result["status"], "passed")
         proof, witness = result["commands"]
         self.assertEqual(proof["outcome"], "unreachable")
@@ -84,6 +85,7 @@ class ChcTests(unittest.TestCase):
     def test_no_initial_states_is_not_a_proof(self):
         self.change("initial >= 0", "And(initial >= 0, initial < 0)")
         result = self.check()
+        # [utest->req~ib-chc-certificates~1]
         self.assertEqual(
             [c["outcome"] for c in result["commands"]], ["unsatisfiable_initial_states"] * 2
         )
@@ -106,6 +108,7 @@ class ChcTests(unittest.TestCase):
             {"x": current}, {"x": following}, current == 0, {"stay": following == current}
         )
         certificate = certify(system, current != 0, z3.BoolVal(True), self.root, 1000)
+        # [utest->req~ib-chc-certificates~1]
         self.assertEqual(certificate["status"], "invalid")
         self.assertEqual(certificate["checks"]["target"]["result"], "sat")
         trace = reconstruct(
@@ -139,6 +142,7 @@ class ChcTests(unittest.TestCase):
                     return result
 
                 with patch.object(smt, "run", side_effect=tamper):
+                    # [utest->req~ib-chc-certificates~1]
                     self.assertEqual(self.check()["status"], "error")
 
     def test_missing_obligation_wrong_kind_and_bad_frame_declarations(self):
@@ -160,6 +164,7 @@ class ChcTests(unittest.TestCase):
             "na == allocated + row", "na == Function('uninterpreted', IntSort(), IntSort())(row)"
         )
         result = self.check()
+        # [utest->req~ib-chc-certificates~1]
         self.assertEqual(result["status"], "error")
         self.assertEqual(result["commands"][0]["outcome"], "unknown")
         self.assertTrue(result["commands"][0]["receipt"]["query"]["reason_unknown"])

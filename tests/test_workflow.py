@@ -171,6 +171,7 @@ class WorkflowTests(WorkflowFixture):
         local["required_coverage"] = {"req": ["impl"]}
         write_json(self.repo / "scope.json", local)
         code, stdout, stderr = self.run_cli("check")
+        # [utest->req~ib-policy-source~1]
         self.assertEqual(code, 1, (stdout, stderr))
         self.assertIn("must retain Needs: utest", stdout)
         evidence = Path(stdout.splitlines()[0].split(": ", 1)[1])
@@ -190,6 +191,7 @@ class WorkflowTests(WorkflowFixture):
         self.git("checkout", "-q", "topic")
         self.replace("session.py", "30 * 60", "1800")
         code, stdout, stderr = self.run_cli("check")
+        # [utest->req~ib-baseline-selection~1]
         self.assertEqual(code, 4, (stdout, stderr))
         evidence = Path(stdout.splitlines()[0].split(": ", 1)[1])
         self.assertEqual(read_json(evidence)["predicate"]["base"]["commit"], self.base)
@@ -221,6 +223,7 @@ class WorkflowTests(WorkflowFixture):
         self.replace("requirements.md", "30 minutes", "60 minutes")
         self.commit()
         code, stdout, stderr = self.run_cli("check")
+        # [utest->req~ib-baseline-selection~1]
         self.assertEqual(code, 4, (stdout, stderr))
         evidence = Path(stdout.splitlines()[0].split(": ", 1)[1])
         self.assertEqual(read_json(evidence)["predicate"]["base"]["commit"], base)
@@ -237,6 +240,7 @@ class WorkflowTests(WorkflowFixture):
         self.replace("requirements.md", "30 minutes", "60 minutes")
         self.commit()
         code, stdout, stderr = self.run_cli("check")
+        # [utest->req~ib-baseline-selection~1]
         self.assertEqual(code, 2, stdout)
         self.assertIn("Cannot identify the default branch", stderr)
         code, stdout, stderr = self.run_cli("check", "--base", self.base)
@@ -246,6 +250,7 @@ class WorkflowTests(WorkflowFixture):
         self.git("checkout", "-q", "--detach", self.base)
         self.replace("session.py", "30 * 60", "1800")
         code, stdout, stderr = self.run_cli("check")
+        # [utest->req~ib-baseline-selection~1]
         self.assertEqual(code, 0, (stdout, stderr))
         evidence = Path(stdout.splitlines()[0].split(": ", 1)[1])
         self.assertEqual(read_json(evidence)["predicate"]["base"]["commit"], self.base)
@@ -255,6 +260,7 @@ class WorkflowTests(WorkflowFixture):
         self.commit()
         shutil.copyfile(self.scope, self.repo / "scope.json")
         code, stdout, stderr = self.run_cli("check")
+        # [utest->req~ib-policy-source~1]
         self.assertEqual(code, 2, (stdout, stderr))
         self.assertIn("Cannot read scope.json from the baseline", stdout)
         code, stdout, stderr = self.run_cli("check", "--scope", str(self.scope))
@@ -267,6 +273,7 @@ class WorkflowTests(WorkflowFixture):
                 self.commit()
                 shutil.copyfile(self.scope, self.repo / "scope.json")
                 code, stdout, stderr = self.run_cli("check")
+                # [utest->req~ib-policy-source~1]
                 self.assertEqual(code, 2, (stdout, stderr))
 
     def test_cli_default_output_cannot_be_created_inside_repository(self):
@@ -280,6 +287,7 @@ class WorkflowTests(WorkflowFixture):
         self.replace("session.py", "30 * 60", "1800")
         (self.repo / "new-helper.txt").write_text("Git-visible untracked source\n")
         result = self.run_check()
+        # [utest->req~ib-evidence-verification~1]
         self.assertEqual(result["status"], "passed", result)
         self.assertEqual(result["tests"]["counts"]["passed"], 1)
         evidence = self.out / "evidence.json"
@@ -310,26 +318,31 @@ class WorkflowTests(WorkflowFixture):
         result["status"] = "passed"
         result["review"]["status"] = "not_needed"
         write_json(self.out / "evidence.json", statement(result))
+        # [utest->req~ib-change-review~1]
         with self.assertRaisesRegex(CheckError, "pending change review"):
             verify(self.repo, self.scope, self.base, "worktree", self.out / "evidence.json")
 
     def test_missing_implementation_reference(self):
         self.replace("session.py", "# [impl->req~session-expiration~1]", "# Missing reference")
+        # [utest->req~ib-coverage~1]
         self.assert_problem(self.run_check(), "Candidate trace defects")
 
     def test_missing_test_reference(self):
         self.replace(
             "tests/test_session.py", "# [utest->req~session-expiration~1]", "# Missing reference"
         )
+        # [utest->req~ib-coverage~1]
         self.assert_problem(self.run_check(), "Candidate trace defects")
 
     def test_stale_revision_reference(self):
         self.replace("requirements.md", "~1`", "~2`")
+        # [utest->req~ib-coverage~1]
         self.assert_problem(self.run_check(), "Candidate trace defects")
 
     def test_prose_change_is_pending_review_without_mandatory_revision_bump(self):
         self.replace("requirements.md", "30 minutes", "60 minutes")
         result = self.run_check()
+        # [utest->req~ib-revision-policy~1]
         self.assertEqual(result["status"], "review_required", result)
         self.assertEqual(result["review"]["status"], "required")
         self.configure(lambda s: s.update(policy={"require_revision_increase": True}))
@@ -346,6 +359,7 @@ class WorkflowTests(WorkflowFixture):
         write_json(self.repo / "approval.json", {"decision": "I approve my own change"})
         result = self.run_check()
         self.assertEqual(result["trace"]["candidate"]["status"], "passed")
+        # [utest->req~ib-coverage~1]
         self.assert_problem(result, "must retain Needs: utest")
 
     def test_removed_requirement_is_visible(self):
@@ -361,6 +375,7 @@ class WorkflowTests(WorkflowFixture):
         )
         result = self.run_check()
         self.assertEqual(result["tests"]["status"], "passed")
+        # [utest->req~ib-change-review~1]
         self.assertEqual(result["status"], "review_required")
         self.assertIn("self.assertTrue(True)", (self.out / "review.patch").read_text())
         evidence = self.out / "evidence.json"
@@ -446,6 +461,7 @@ class WorkflowTests(WorkflowFixture):
             )
         )
         result = self.run_check()
+        # [utest->req~ib-command-results~1]
         self.assertEqual(result["status"], "passed", result)
         self.assertEqual(result["tests"]["level"], "command")
         self.assertNotIn("counts", result["tests"])
@@ -468,6 +484,7 @@ class WorkflowTests(WorkflowFixture):
             "    @unittest.skip('not executed')\n    def test_expiration_boundary",
         )
         result = self.run_check()
+        # [utest->req~ib-junit-completion~1]
         self.assert_problem(result, "Test execution did not pass")
         self.assertEqual(result["tests"]["counts"]["skipped"], 1)
 
@@ -478,6 +495,7 @@ class WorkflowTests(WorkflowFixture):
             "def unused_expiration_boundary",
         )
         result = self.run_check()
+        # [utest->req~ib-junit-completion~1]
         self.assert_problem(result, "Test execution did not pass")
         self.assertEqual(result["tests"]["counts"]["total"], 0)
 
@@ -485,11 +503,13 @@ class WorkflowTests(WorkflowFixture):
         self.configure(lambda s: s["tests"].update(command=[sys.executable, "-c", "pass"]))
         result = self.run_check()
         self.assertEqual(result["tests"]["exit_code"], 0)
+        # [utest->req~ib-fresh-reports~1]
         self.assert_problem(result, "Test execution did not pass")
 
     def test_stale_report_is_rejected(self):
         (self.repo / "stale.xml").write_text('<testsuite><testcase name="old"/></testsuite>')
         self.configure(lambda s: s["tests"].update(report="stale.xml"))
+        # [utest->req~ib-fresh-reports~1]
         self.assert_problem(self.run_check(), "already exists in candidate")
 
     def test_source_mutation_by_test_is_detected(self):
@@ -521,6 +541,7 @@ class WorkflowTests(WorkflowFixture):
                         lambda s: (s["tests"].update(format="command"), s["tests"].pop("report"))
                     )
                 result = self.run_check()
+                # [utest->req~ib-source-stability~1]
                 self.assertEqual(result["status"], "rejected")
                 self.assert_problem(result, "modified captured source: session.py")
                 self.assertEqual(result["tests"]["exit_code"], 0)
@@ -534,6 +555,7 @@ class WorkflowTests(WorkflowFixture):
     def test_unchecked_source_cannot_produce_a_test_attestation(self):
         with patch("intentbond.runner.changed_source", side_effect=OSError("unreadable source")):
             result = self.run_check()
+        # [utest->req~ib-source-stability~1]
         self.assertEqual(result["status"], "error")
         self.assertEqual(result["tests"]["status"], "passed")
         self.assertEqual(result["tests"]["source_status"], "unchecked")
@@ -549,6 +571,7 @@ class WorkflowTests(WorkflowFixture):
 
         with patch("intentbond.runner.execute_tests", side_effect=mutate):
             result = self.run_check()
+        # [utest->req~ib-source-stability~1]
         self.assert_problem(result, "Original candidate changed")
         self.assertFalse((self.out / "test-result.json").exists())
 
@@ -559,10 +582,12 @@ class WorkflowTests(WorkflowFixture):
         self.replace("session.py", "# Missing reference", "# [impl->req~session-expiration~1]")
         result = self.run_check()
         self.assertEqual(result["trace"]["candidate"]["status"], "passed")
+        # [utest->req~ib-coverage~1]
         self.assert_problem(result, "Inherited baseline trace defects")
 
     def test_empty_scope_requires_explicit_non_success(self):
         self.configure(lambda s: s.update(required_coverage={"feat": ["impl", "utest"]}))
+        # [utest->req~ib-empty-scope~1]
         self.assert_problem(self.run_check(), "no selected requirements")
         self.configure(lambda s: s.update(allow_empty=True))
         result = self.run_check()
@@ -595,6 +620,7 @@ class WorkflowTests(WorkflowFixture):
         self.assertEqual(self.run_check()["status"], "passed")
         evidence = self.out / "evidence.json"
         self.replace("session.py", "30 * 60", "1800")
+        # [utest->req~ib-evidence-verification~1]
         with self.assertRaisesRegex(CheckError, "Candidate contents differ"):
             verify(self.repo, self.scope, self.base, "worktree", evidence)
         self.git("checkout", "--", "session.py")
@@ -616,6 +642,7 @@ class WorkflowTests(WorkflowFixture):
         self.base = self.git("rev-parse", "HEAD").strip()
         result = self.run_check(candidate_ref="HEAD")
         self.assertEqual(result["status"], "passed", result)
+        # [utest->req~ib-source-identity~1]
         self.assertTrue(
             any(f["path"] == "session.py" for f in read_json(self.out / "candidate-manifest.json"))
         )

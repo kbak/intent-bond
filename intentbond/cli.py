@@ -17,6 +17,7 @@ from .runner import check, verify
 from .snapshot import git, resolve_commit
 
 
+# [impl->req~ib-baseline-selection~1]
 def default_base(repo):
     if git(repo, "rev-parse", "--abbrev-ref", "HEAD").strip() == b"HEAD":
         return resolve_commit(repo, "HEAD")

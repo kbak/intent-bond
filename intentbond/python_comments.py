@@ -6,6 +6,7 @@ import tokenize
 from .common import CheckError
 
 
+# [impl->req~ib-python-annotations~1]
 def comment_lines(content, path):
     """Return a line-preserving UTF-8 import view and genuine comment line numbers."""
     try:

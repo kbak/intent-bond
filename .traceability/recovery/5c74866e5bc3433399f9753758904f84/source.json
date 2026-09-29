@@ -1,0 +1,13 @@
+{
+  "inputs": [
+    "."
+  ],
+  "schema_version": 1,
+  "source": {
+    "commit": "4fe67034f02cbf977e0aa0b5708ba9b921d6cd60",
+    "file_count": 146,
+    "kind": "commit",
+    "sha256": "b278a8d2dab5f0a598cd428872622c8f22008184f34275f1f2dc548835b02484"
+  },
+  "status": "proposed"
+}

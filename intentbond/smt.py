@@ -98,12 +98,14 @@ def interpret(receipt, command):
         if part["result"] == "unknown" and not isinstance(part.get("reason_unknown"), str):
             raise CheckError(f"Missing SMT {name} unknown reason")
     pre = receipt["preconditions"]["result"]
+    # [impl->req~ib-smt-assumptions~1]
     if pre == "unsat":
         return "failed", "unsatisfiable_preconditions"
     if pre == "unknown":
         return "error", "unknown"
     if pre != "sat":
         raise CheckError("Invalid precondition result")
+    # [impl->req~ib-smt-outcomes~1]
     query = receipt["query"]["result"]
     if query == "unknown":
         return "error", "unknown"

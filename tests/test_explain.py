@@ -18,6 +18,7 @@ class ExplainTests(WorkflowFixture):
         self.run_check()
         result = self.explained()
         artifact = result["artifact"]
+        # [utest->req~ib-draft-reporting~1]
         self.assertEqual(artifact["oft_status"], "draft")
         self.assertEqual(artifact["coverage"]["deep"], "UNCOVERED")
         self.assertEqual(artifact["coverage"]["uncovered_types"], [])
@@ -42,6 +43,7 @@ class ExplainTests(WorkflowFixture):
     def test_oft_reports_both_directions_and_keeps_execution_separate(self):
         self.run_check()
         result = self.explained()
+        # [utest->req~ib-explain-context~1]
         self.assertEqual(result["artifact"]["coverage"]["deep"], "COVERED")
         self.assertEqual(result["artifact"]["needs"], ["impl", "utest"])
         self.assertEqual(
@@ -73,6 +75,7 @@ class ExplainTests(WorkflowFixture):
                 "json",
                 cwd=self.root,
             )
+        # [utest->req~ib-explain-context~1]
         self.assertEqual(code, 0, error)
         result = json.loads(output)
         self.assertEqual(result["artifact"]["id"], REQ)
@@ -92,6 +95,7 @@ class ExplainTests(WorkflowFixture):
         self.assertEqual(candidate["review"]["status"], "required")
         self.assertEqual(candidate["recorded_check_status"], "review_required")
         baseline = self.explained(snapshot="base")
+        # [utest->req~ib-explain-context~1]
         self.assertEqual(baseline["tests"]["status"], "not_recorded_for_baseline")
         with self.assertRaisesRegex(CheckError, "Unknown OFT item in candidate"):
             self.explained()
@@ -109,6 +113,7 @@ class ExplainTests(WorkflowFixture):
         self.replace("tests/test_session.py", "# [utest->" + REQ + "]", "# Missing trace")
         self.run_check()
         result = self.explained()
+        # [utest->req~ib-draft-reporting~1]
         self.assertEqual(result["artifact"]["coverage"]["deep"], "UNCOVERED")
         self.assertEqual(result["artifact"]["coverage"]["uncovered_types"], ["utest"])
         self.assertEqual(result["oft_trace_status"], "failed")
@@ -125,6 +130,7 @@ class ExplainTests(WorkflowFixture):
         )
         self.run_check()
         result = self.explained()
+        # [utest->req~ib-command-results~1]
         self.assertEqual(result["tests"]["level"], "command")
         self.assertNotIn("counts", result["tests"])
 

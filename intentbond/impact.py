@@ -15,6 +15,7 @@ TAG = re.compile(
 )
 
 
+# [impl->req~ib-impact-report~1]
 def source_changes(base, candidate, before, after, scope):
     """Only recognize complete OFT-imported standalone tag lines; never parse code semantics."""
     selected = boundaries.inventory(base.manifest, candidate.manifest, scope)
@@ -151,6 +152,7 @@ def compare_graphs(before, after, scope):
     }
 
 
+# [impl->req~ib-impact-report~1]
 def impact(evidence_path, jar, java="java"):
     evidence_path = evidence_path.resolve()
     directory = evidence_path.parent

@@ -57,6 +57,7 @@ class SnapshotPropertyTests(unittest.TestCase):
                 path.write_bytes(data)
                 path.chmod(0o755 if executable else 0o644)
             untracked = snapshot(repo, "worktree", root / "untracked")
+            # [utest->req~ib-source-identity~1]
             self.assertEqual({item["path"] for item in untracked.manifest}, set(files))
             git(repo, "add", ".")
             staged = snapshot(repo, "worktree", root / "staged")
@@ -89,6 +90,7 @@ class SnapshotPropertyTests(unittest.TestCase):
             commit(repo)
             baseline = snapshot(repo, "worktree", root / "baseline").sha256
             path.rename(repo / "renamed.bin")
+            # [utest->req~ib-source-identity~1]
             self.assertNotEqual(snapshot(repo, "worktree", root / "renamed").sha256, baseline)
             (repo / "renamed.bin").rename(path)
             path.write_bytes(data + b"\x00")
@@ -114,6 +116,7 @@ class SnapshotPropertyTests(unittest.TestCase):
             git(repo, "add", "-f", "cache/tracked.bin")
             commit(repo)
             baseline = snapshot(repo, "worktree", root / "baseline")
+            # [utest->req~ib-source-identity~1]
             self.assertIn("cache/tracked.bin", {item["path"] for item in baseline.manifest})
             (repo / "cache/runtime.bin").write_bytes(data + b"noise")
             self.assertEqual(snapshot(repo, "worktree", root / "noise").sha256, baseline.sha256)

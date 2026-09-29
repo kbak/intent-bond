@@ -73,6 +73,7 @@ class DocumentationRecoveryTests(RecoveryFixture):
         write_json(scope_path, scope)
         (self.bundle / "draft/fixture.md").write_text("A changed fixture.\n")
         result = self.run_check()
+        # [utest->req~ib-recovery-edits~1]
         self.assertEqual(result["status"], "rejected")
         self.assertNotEqual(result["proposal_checks"], "passed")
         self.assertIn("fixture.md", str(result["diagnostics"]))

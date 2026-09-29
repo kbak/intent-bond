@@ -35,6 +35,7 @@ class SymlinkWorkflowTests(WorkflowFixture):
         committed = snapshot(self.repo, "HEAD", self.root / "committed")
         working = snapshot(self.repo, "worktree", self.root / "working")
         archived = archive_snapshot(committed.root, committed.commit, self.root / "archive")
+        # [utest->req~ib-safe-symlinks~1]
         self.assertEqual(committed.manifest, working.manifest)
         self.assertEqual(committed.manifest, archived.manifest)
         for snap in (committed, working, archived):
@@ -65,6 +66,7 @@ class SymlinkWorkflowTests(WorkflowFixture):
                     (self.repo / "cycle").symlink_to("alias")
                 self.commit()
                 for selection in ("HEAD", "worktree"):
+                    # [utest->req~ib-safe-symlinks~1]
                     with self.assertRaisesRegex(CheckError, "[Ss]ymlink"):
                         snapshot(self.repo, selection, self.root / f"unsafe-{index}-{selection}")
 
@@ -88,6 +90,7 @@ class SymlinkWorkflowTests(WorkflowFixture):
         self.commit()
         self.base = self.git("rev-parse", "HEAD").strip()
         result = self.run_check()
+        # [utest->req~ib-safe-symlinks~1]
         self.assertEqual(result["status"], "passed", result)
         items = read_json(self.out / "evidence.json")["predicate"]["requirements"]["candidate"]
         self.assertEqual(len(items), 1)
@@ -126,6 +129,7 @@ class SymlinkWorkflowTests(WorkflowFixture):
         self.commit()
         self.base = self.git("rev-parse", "HEAD").strip()
         self.configure(lambda scope: scope["inputs"].append("alias.py"))
+        # [utest->req~ib-safe-symlinks~1]
         self.assert_problem(self.run_check(), "actual source path instead of symlink")
 
     def test_adding_aliases_does_not_change_imported_artifact_ids(self):

@@ -24,6 +24,7 @@ def skipped(case):
     return case.is_skipped or case.status in {"skipped", "disabled", "notrun"}
 
 
+# [impl->req~ib-junit-completion~1]
 def junit_counts(path):
     root = xml_tree(path)
     if root.tag not in {"testsuite", "testsuites"}:
@@ -68,6 +69,7 @@ def junit_counts(path):
     return counts
 
 
+# [impl->req~ib-junit-completion~1]
 def counts_pass(counts, scope):
     return bool(
         counts["passed"]
@@ -79,6 +81,7 @@ def counts_pass(counts, scope):
     )
 
 
+# [impl->req~ib-report-merge~1]
 def merge_reports(reports):
     """Preserve report-level outcomes and namespace suites by their source path."""
     merged = ET.Element("testsuites")
@@ -103,6 +106,7 @@ def execute_tests(snap, scope, out):
         else []
     )
     reports = [snap.root / name for name in names]
+    # [impl->req~ib-fresh-reports~1]
     for report in reports:
         if report.exists() or report.is_symlink():
             raise CheckError(
@@ -118,11 +122,13 @@ def execute_tests(snap, scope, out):
     result = run(config["command"], snap.root, out / "tests.log", config["timeout_seconds"], env)
     result["format"] = config.get("format", "junit")
     result["level"] = "suite" if reports else "command"
+    # [impl->req~ib-command-results~1]
     if not reports:
         return result
     target = out / "tests.xml"
     try:
         retained = []
+        # [impl->req~ib-fresh-reports~1]
         for index, (name, report) in enumerate(zip(names, reports), 1):
             if (
                 not report.is_file()

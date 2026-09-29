@@ -61,6 +61,7 @@ def interpret(receipt, command):
         return "error", "unknown"
     if not isinstance(query.get("answer_smt2"), str) or not query["answer_smt2"]:
         raise CheckError("Missing native Spacer answer")
+    # [impl->req~ib-chc-certificates~1]
     if query["result"] == "unsat":
         certificate = receipt.get("certificate")
         if not isinstance(certificate, dict) or certificate.get("status") != "validated":
@@ -81,6 +82,7 @@ def interpret(receipt, command):
             if command["kind"] == "check"
             else ("failed", "unreachable_witness")
         )
+    # [impl->req~ib-chc-certificates~1]
     trace = receipt.get("trace")
     if (
         not isinstance(trace, dict)
